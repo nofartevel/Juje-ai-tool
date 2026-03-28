@@ -730,20 +730,30 @@
                 body: JSON.stringify({
                     input: userInputText,
                     intent: userIntent,
-                    answers: selectedAnswers
+                    answers: selectedAnswers,
+                    products: currentProducts
                 })
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Save failed:", errorText);
+                alert(`Saving failed:\n${errorText}`);
+                return;
+            }
+
             const data = await response.json();
-            savedListId = data.id;
+            const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
 
-            const shareUrl = `${window.location.origin}/list-view.html?id=${savedListId}`;
-            await navigator.clipboard.writeText(shareUrl);
-
-            alert(`Your list was saved! Link copied:\n${shareUrl}`);
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(shareUrl);
+                alert(`Your list was saved 💛\n\nLink copied:\n${shareUrl}`);
+            } else {
+                alert(`Your list was saved 💛\n\nShare link:\n${shareUrl}`);
+            }
         } catch (error) {
-            console.error(error);
-            alert("Something went wrong while saving your list.");
+            console.error("Save error:", error);
+            alert("Something went wrong while saving your list");
         }
     }
 
