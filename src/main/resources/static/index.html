@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JUJE Lists</title>
+    <style>
+        :root {
+            --bg: #FCF8F5;
+            --card: #FFFDFB;
+            --primary: #D8AFA0;
+            --primary-hover: #C99A8A;
+            --secondary: #F6E7DF;
+            --text: #4B3F3A;
+            --muted: #8A7B74;
+            --border: #EFE3DC;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(75, 63, 58, 0.08);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #FCF8F5 0%, #F9F3EF 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px 32px;
+        }
+
+        .app-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .top-bar {
+            padding: 18px 20px 0;
+        }
+
+        .brand {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .brand img {
+            height: 42px;
+            max-width: 140px;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .progress-wrap {
+            margin-top: 18px;
+            background: #F3E7E0;
+            border-radius: 999px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: var(--primary);
+            border-radius: 999px;
+            transition: width 0.35s ease;
+        }
+
+        .screen {
+            padding: 28px 20px 24px;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .eyebrow {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        h1, h2 {
+            margin: 0 0 12px;
+            line-height: 1.15;
+            color: var(--text);
+        }
+
+        h1 {
+            font-size: 32px;
+        }
+
+        h2 {
+            font-size: 27px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .hero-space {
+            margin-top: 26px;
+        }
+
+        .main-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            border-radius: 18px;
+            padding: 16px 18px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        .main-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(216, 175, 160, 0.18);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            appearance: none;
+            border: none;
+            border-radius: 18px;
+            min-height: 52px;
+            padding: 14px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #F8F1EC;
+            color: var(--text);
+            border: 1px solid var(--border);
+            min-width: 88px;
+        }
+
+        .question-title {
+            font-size: 28px;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .question-subtitle {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card {
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            background: var(--white);
+            border-radius: 18px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            background: #FFF8F4;
+            transform: translateY(-1px);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(216, 175, 160, 0.12);
+        }
+
+        .step-counter {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .loading-wrap {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            border: 4px solid #F2E4DC;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        .results-header {
+            margin-bottom: 18px;
+        }
+
+        .results-title {
+            font-size: 28px;
+            margin: 0 0 10px;
+        }
+
+        .results-subtitle {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .chosen-summary {
+            margin: 18px 0 8px;
+            padding: 14px;
+            background: #FBF5F1;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .chosen-summary-title {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .summary-chip-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .summary-chip {
+            background: var(--secondary);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .product {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .product:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-why {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .product-link {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #F6E7DF;
+            color: var(--text);
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .product-link:hover {
+            background: #EFD7CB;
+        }
+
+        .empty-state {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (min-width: 640px) {
+            .app-shell {
+                padding: 32px;
+            }
+
+            .screen {
+                padding: 34px 28px 28px;
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            h2,
+            .question-title,
+            .results-title {
+                font-size: 32px;
+            }
+
+            .options {
+                gap: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <div class="app-card">
+        <div class="top-bar">
+            <div class="brand">
+                <img src="/logo.png" alt="JUJE logo" onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
+                <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
+            </div>
+            <div class="progress-wrap">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="screen" class="screen"></div>
+    </div>
+</div>
+
+<script>
+    let flowData = null;
+    let currentQuestionIndex = 0;
+    let selectedAnswers = {};
+    let userIntent = "";
+    let userInputText = "";
+    let currentProducts = [];
+    let savedListId = null;
+
+    function updateProgress(value) {
+        document.getElementById("progressBar").style.width = value + "%";
+    }
+
+    function renderIntroScreen() {
+        updateProgress(8);
+
+        const screen = document.getElementById("screen");
+        screen.innerHTML = `
+            <div class="eyebrow">Smart lists for real mom life</div>
+            <h1>What do you need help with today?</h1>
+            <p class="subtitle">
+                Tell me your situation, and I’ll guide you step by step to build a personalized list.
+            </p>
+
+            <div class="hero-space">
+                <input
+                    id="userInput"
+                    class="main-input"
+                    type="text"
+                    placeholder="Example: trip with a 9 month old"
+                />
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="startFlow()">Continue</button>
+                </div>
+            </div>
+        `;
+    }
+
+    async function startFlow() {
+        const inputEl = document.getElementById("userInput");
+        const input = inputEl.value.trim();
+
+        if (!input) {
+            alert("Please tell me a little about what you need 😊");
+            return;
+        }
+
+        userInputText = input;
+        selectedAnswers = {};
+        currentQuestionIndex = 0;
+        currentProducts = [];
+
+        const screen = document.getElementById("screen");
+        screen.innerHTML = `
+            <div class="loading-wrap">
+                <div class="spinner"></div>
+                <h2>Understanding your request…</h2>
+                <p class="subtitle">Just a second while I prepare the right flow for you.</p>
+            </div>
+        `;
+        updateProgress(16);
+
+        try {
+            const response = await fetch(`/flow?input=${encodeURIComponent(input)}`);
+            flowData = await response.json();
+            userIntent = flowData.intent || "general";
+
+            if (!flowData.questions || !flowData.questions.length) {
+                renderNoQuestionsState();
+                return;
+            }
+
+            renderQuestionScreen();
+        } catch (error) {
+            screen.innerHTML = `<p class="empty-state">Something went wrong while starting the flow.</p>`;
+            console.error(error);
+        }
+    }
+
+    function renderNoQuestionsState() {
+        const screen = document.getElementById("screen");
+        updateProgress(30);
+
+        screen.innerHTML = `
+            <div class="eyebrow">Not enough detail yet</div>
+            <h2>I need a little more direction</h2>
+            <p class="subtitle">
+                Try something like “trip with baby”, “park essentials”, or “quiet play ideas”.
+            </p>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="renderIntroScreen()">Back</button>
+            </div>
+        `;
+    }
+
+    function renderQuestionScreen() {
+        const screen = document.getElementById("screen");
+        const question = flowData.questions[currentQuestionIndex];
+        const selectedValue = selectedAnswers[question.id];
+
+        const totalSteps = flowData.questions.length;
+        const progress = 20 + ((currentQuestionIndex + 1) / totalSteps) * 45;
+        updateProgress(progress);
+
+        const optionsHtml = question.options.map(option => {
+            let isSelected = false;
+
+            if (question.type === "multi-select") {
+                const selectedArray = selectedAnswers[question.id] || [];
+                isSelected = selectedArray.includes(option);
+            } else {
+                isSelected = selectedValue === option;
+            }
+
+            return `
+                <button
+                    class="option-card ${isSelected ? 'selected' : ''}"
+                    onclick="selectOption('${question.id}', '${escapeSingleQuotes(option)}', '${question.type}')"
+                >
+                    ${option}
+                </button>
+            `;
+        }).join("");
+
+        screen.innerHTML = `
+            <div class="eyebrow">${capitalize(userIntent)} list</div>
+            <div class="question-title">${question.text}</div>
+            <div class="question-subtitle">Choose the option that fits best. You can always go back.</div>
+
+            <div class="options">
+                ${optionsHtml}
+            </div>
+
+            <div class="step-counter">Step ${currentQuestionIndex + 1} of ${totalSteps}</div>
+
+            <div class="footer-actions">
+                <button class="btn btn-secondary" onclick="goBack()" ${currentQuestionIndex === 0 ? 'disabled style="opacity:.55;cursor:not-allowed;"' : ''}>Back</button>
+                <button class="btn btn-primary" onclick="goNext()">${currentQuestionIndex === totalSteps - 1 ? 'Build my list' : 'Continue'}</button>
+            </div>
+        `;
+    }
+
+    function selectOption(questionId, answer, questionType) {
+        if (questionType === "multi-select") {
+            const currentValues = selectedAnswers[questionId] || [];
+
+            if (currentValues.includes(answer)) {
+                selectedAnswers[questionId] = currentValues.filter(item => item !== answer);
+            } else {
+                selectedAnswers[questionId] = [...currentValues, answer];
+            }
+        } else {
+            selectedAnswers[questionId] = answer;
+        }
+
+        renderQuestionScreen();
+    }
+
+    function goBack() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            renderQuestionScreen();
+        } else {
+            renderIntroScreen();
+        }
+    }
+
+    async function goNext() {
+        const question = flowData.questions[currentQuestionIndex];
+
+        const answer = selectedAnswers[question.id];
+
+        if (
+            !answer ||
+            (Array.isArray(answer) && answer.length === 0)
+        ) {
+            alert("Please choose at least one option before continuing 😊");
+            return;
+        }
+
+        if (currentQuestionIndex < flowData.questions.length - 1) {
+            currentQuestionIndex++;
+            renderQuestionScreen();
+            return;
+        }
+
+        await buildList();
+    }
+
+    async function buildList() {
+        const screen = document.getElementById("screen");
+        updateProgress(78);
+
+        screen.innerHTML = `
+            <div class="loading-wrap">
+                <div class="spinner"></div>
+                <h2>Building your JUJE list… ✨</h2>
+                <p class="subtitle">Putting together a personalized list based on your answers.</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch("/recommend-from-answers", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(selectedAnswers)
+            });
+
+            const data = await response.json();
+            currentProducts = data || [];
+            renderResultsScreen();
+        } catch (error) {
+            screen.innerHTML = `<p class="empty-state">Something went wrong while building your list.</p>`;
+            console.error(error);
+        }
+    }
+
+    function renderResultsScreen() {
+        const screen = document.getElementById("screen");
+        updateProgress(100);
+
+        const summaryEntries = Object.entries(selectedAnswers).map(([key, value]) => {
+            const displayValue = Array.isArray(value) ? value.join(", ") : value;
+            return `<div class="summary-chip">${prettyLabel(key)}: ${displayValue}</div>`;
+        }).join("");
+
+        if (!currentProducts.length) {
+            screen.innerHTML = `
+                <div class="results-header">
+                    <h2 class="results-title">Your JUJE list</h2>
+                    <p class="results-subtitle">
+                        I couldn’t find matching products yet for this exact combination.
+                    </p>
+                </div>
+
+                <div class="chosen-summary">
+                    <div class="chosen-summary-title">Your selections</div>
+                    <div class="summary-chip-wrap">${summaryEntries}</div>
+                </div>
+
+                <div class="footer-actions">
+                    <button class="btn btn-secondary" onclick="restartFlow()">Start over</button>
+                    <button class="btn btn-primary" onclick="saveCurrentList()">Save this list</button>
+                </div>
+            `;
+            return;
+        }
+
+        const productsHtml = currentProducts.map(product => `
+            <div class="product">
+                <div class="product-name">${product.name}</div>
+                <div class="product-why">${product.why}</div>
+                <a class="product-link" href="${product.link}" target="_blank">View product</a>
+            </div>
+        `).join("");
+
+        screen.innerHTML = `
+            <div class="results-header">
+                <div class="eyebrow">Personalized for you</div>
+                <h2 class="results-title">Your JUJE list ✨</h2>
+                <p class="results-subtitle">
+                    Based on your answers, here are some helpful picks to make life easier and more organized.
+                </p>
+            </div>
+
+            <div class="chosen-summary">
+                <div class="chosen-summary-title">Your selections</div>
+                <div class="summary-chip-wrap">${summaryEntries}</div>
+            </div>
+
+            ${productsHtml}
+
+            <div class="footer-actions">
+                <button class="btn btn-secondary" onclick="restartFlow()">Start over</button>
+                <button class="btn btn-primary" onclick="saveCurrentList()">Save this list</button>
+            </div>
+        `;
+    }
+
+    function restartFlow() {
+        flowData = null;
+        currentQuestionIndex = 0;
+        selectedAnswers = {};
+        userIntent = "";
+        userInputText = "";
+        currentProducts = [];
+        renderIntroScreen();
+    }
+
+    function capitalize(text) {
+        if (!text) return "";
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function prettyLabel(key) {
+        const labels = {
+            transport: "Travel",
+            age_groups: "Ages",
+            feeding: "Feeding",
+            trip_length: "Trip length",
+            place_type: "Place",
+            need_type: "Need",
+            play_type: "Play type",
+            location: "Location",
+            clarify: "Category"
+        };
+        return labels[key] || key;
+    }
+
+    function escapeSingleQuotes(str) {
+        return str.replace(/'/g, "\\'");
+    }
+
+    async function saveCurrentList() {
+        try {
+            const response = await fetch("/save-list", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    input: userInputText,
+                    intent: userIntent,
+                    answers: selectedAnswers
+                })
+            });
+
+            const data = await response.json();
+            savedListId = data.id;
+
+            const shareUrl = `${window.location.origin}/list-view.html?id=${savedListId}`;
+            await navigator.clipboard.writeText(shareUrl);
+
+            alert(`Your list was saved! Link copied:\n${shareUrl}`);
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong while saving your list.");
+        }
+    }
+
+    renderIntroScreen();
+</script>
+</body>
+</html>

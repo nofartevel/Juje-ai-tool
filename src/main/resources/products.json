@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Busy Book",
+    "link": "https://www.amazon.com/dp/EXAMPLE1?tag=YOURTAG",
+    "tags": ["flight", "baby", "travel"],
+    "why": "Keeps babies busy quietly during flights"
+  },
+  {
+    "name": "Snack Container",
+    "link": "https://www.amazon.com/dp/EXAMPLE2?tag=YOURTAG",
+    "tags": ["flight", "feeding", "travel"],
+    "why": "Great for mess-free snacks on the go"
+  },
+  {
+    "name": "Outdoor Mat",
+    "link": "https://www.amazon.com/dp/EXAMPLE3?tag=YOURTAG",
+    "tags": ["park", "outdoor"],
+    "why": "Useful for sitting and playing outside"
+  }
+]

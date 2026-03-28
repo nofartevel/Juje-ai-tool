@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JUJE Saved List</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #FCF8F5;
+            color: #4B3F3A;
+            padding: 24px 16px;
+        }
+
+        .wrap {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #FFFDFB;
+            border: 1px solid #EFE3DC;
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .summary {
+            background: #FBF5F1;
+            border: 1px solid #EFE3DC;
+            border-radius: 16px;
+            padding: 14px;
+            margin: 18px 0 22px;
+        }
+
+        .chip {
+            display: inline-block;
+            background: #F6E7DF;
+            border-radius: 999px;
+            padding: 8px 12px;
+            margin: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .product {
+            padding: 18px 0;
+            border-bottom: 1px solid #EFE3DC;
+        }
+
+        .product:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-why {
+            color: #8A7B74;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .product-link {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #F6E7DF;
+            color: #4B3F3A;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap" id="content">
+    Loading saved list...
+</div>
+
+<script>
+    function prettyLabel(key) {
+        const labels = {
+            transport: "Travel",
+            age_groups: "Ages",
+            feeding: "Feeding",
+            trip_length: "Trip length",
+            place_type: "Place",
+            need_type: "Need",
+            play_type: "Play type",
+            location: "Location",
+            clarify: "Category"
+        };
+        return labels[key] || key;
+    }
+
+    async function loadList() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        const content = document.getElementById("content");
+
+        if (!id) {
+            content.innerHTML = "Missing list id.";
+            return;
+        }
+
+        try {
+            const response = await fetch(`/list/${id}`);
+            const data = await response.json();
+
+            if (!data || !data.products) {
+                content.innerHTML = "List not found.";
+                return;
+            }
+
+            const summaryHtml = Object.entries(data.answers || {}).map(([key, value]) => {
+                const displayValue = Array.isArray(value) ? value.join(", ") : value;
+                return `<span class="chip">${prettyLabel(key)}: ${displayValue}</span>`;
+            }).join("");
+
+            const productsHtml = (data.products || []).map(product => `
+                <div class="product">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-why">${product.why}</div>
+                    <a class="product-link" href="${product.link}" target="_blank">View product</a>
+                </div>
+            `).join("");
+
+            content.innerHTML = `
+                <h1>Your JUJE saved list ✨</h1>
+                <p>Originally created for: <strong>${data.input || "custom request"}</strong></p>
+
+                <div class="summary">
+                    ${summaryHtml}
+                </div>
+
+                ${productsHtml}
+            `;
+        } catch (error) {
+            console.error(error);
+            content.innerHTML = "Something went wrong while loading the list.";
+        }
+    }
+
+    loadList();
+</script>
+</body>
+</html>
