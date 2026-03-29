@@ -211,12 +211,16 @@
             color: var(--text);
             cursor: pointer;
             transition: 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
-        .option-card:hover {
-            border-color: var(--primary);
-            background: #FFF8F4;
-            transform: translateY(-1px);
+        @media (hover: hover) and (pointer: fine) {
+            .option-card:hover {
+                border-color: var(--primary);
+                background: #FFF8F4;
+                transform: translateY(-1px);
+            }
         }
 
         .option-card.selected {
@@ -738,19 +742,14 @@
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Save failed:", errorText);
-                alert(`Saving failed:\n${errorText}`);
+                alert("Something went wrong while saving your list");
                 return;
             }
 
             const data = await response.json();
             const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
 
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(shareUrl);
-                alert(`Your list was saved 💛\n\nLink copied:\n${shareUrl}`);
-            } else {
-                alert(`Your list was saved 💛\n\nShare link:\n${shareUrl}`);
-            }
+            window.prompt("Your list was saved 💛 Copy your share link:", shareUrl);
         } catch (error) {
             console.error("Save error:", error);
             alert("Something went wrong while saving your list");
