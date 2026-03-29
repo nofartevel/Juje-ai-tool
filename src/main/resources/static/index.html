@@ -455,6 +455,42 @@
             color: var(--muted);
             margin-top: 6px;
         }
+
+        .input {
+            width: 100%;
+            display: block;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            border-radius: 18px;
+            padding: 16px 18px;
+            font-size: 16px;
+            line-height: 1.4;
+            outline: none;
+            transition: 0.2s ease;
+            margin: 18px 0 12px;
+            box-sizing: border-box;
+            min-height: 56px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .input::placeholder {
+            color: #b3a39b;
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .input {
+                width: 100%;
+                font-size: 16px;
+                padding: 15px 16px;
+            }
+        }
+        .logo img {
+            height: 28px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -488,34 +524,34 @@
     }
 
     function renderIntroScreen() {
-        updateProgress(8);
+        updateProgress(0);
 
         const screen = document.getElementById("screen");
 
         screen.innerHTML = `
-            <div class="hero">
-                <div class="logo">juje</div>
+        <div class="hero">
+            <!--<div class="logo">juje</div>-->
 
-                <h1 class="hero-title">
-                    Smart lists for real mom life 💛
-                </h1>
+            <h1 class="hero-title">
+                Smart lists for real mom life 💛
+            </h1>
 
-                <p class="hero-subtitle">
-                    From travel to beach days to everyday chaos —
-                    I’ll help you build a practical list in seconds.
-                </p>
+            <p class="hero-subtitle">
+                From travel to beach days to everyday chaos — I’ll help you build a practical list in seconds.
+            </p>
 
-                <input
-                    id="userInput"
-                    class="input"
-                    placeholder="Try: beach day with baby, bath time setup, travel with toddler..."
-                />
+            <input
+                id="userInput"
+                class="input"
+                type="text"
+                placeholder="Try: beach day with baby, bath time setup..."
+            />
 
-                <button class="btn btn-primary btn-full" onclick="startFlow()">
-                    Build my list ✨
-                </button>
-            </div>
-        `;
+            <button class="btn btn-primary btn-full" onclick="startFlow()">
+                Build my list ✨
+            </button>
+        </div>
+    `;
     }
 
     async function startFlow() {
