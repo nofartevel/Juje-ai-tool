@@ -414,6 +414,47 @@
                 gap: 14px;
             }
         }
+
+        .hero {
+            text-align: center;
+            padding: 10px 0 20px;
+        }
+
+        .hero-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .hero-subtitle {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loader-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        .loader-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
@@ -450,23 +491,29 @@
         updateProgress(8);
 
         const screen = document.getElementById("screen");
-        screen.innerHTML = `
-            <div class="eyebrow">Smart lists for real mom life</div>
-            <h1>What do you need help with today?</h1>
-            <p class="subtitle">
-                Tell me your situation, and I’ll guide you step by step to build a personalized list.
-            </p>
 
-            <div class="hero-space">
+        screen.innerHTML = `
+            <div class="hero">
+                <div class="logo">juje</div>
+
+                <h1 class="hero-title">
+                    Smart lists for real mom life 💛
+                </h1>
+
+                <p class="hero-subtitle">
+                    From travel to beach days to everyday chaos —
+                    I’ll help you build a practical list in seconds.
+                </p>
+
                 <input
                     id="userInput"
-                    class="main-input"
-                    type="text"
-                    placeholder="Example: trip with a 9 month old"
+                    class="input"
+                    placeholder="Try: beach day with baby, bath time setup, travel with toddler..."
                 />
-                <div class="actions">
-                    <button class="btn btn-primary" onclick="startFlow()">Continue</button>
-                </div>
+
+                <button class="btn btn-primary btn-full" onclick="startFlow()">
+                    Build my list ✨
+                </button>
             </div>
         `;
     }
@@ -548,32 +595,49 @@
             }
 
             return `
-                <button
-                    type="button"
-                    class="option-card ${isSelected ? 'selected' : ''}"
-                    onclick="selectOption('${question.id}', '${escapeSingleQuotes(option)}', '${question.type}')"
-                >
-                    ${option}
-                </button>
-            `;
+            <button
+                type="button"
+                class="option-card ${isSelected ? 'selected' : ''}"
+                onclick="selectOption('${question.id}', '${escapeSingleQuotes(option)}', '${question.type}')"
+            >
+                ${option}
+            </button>
+        `;
         }).join("");
 
         screen.innerHTML = `
-            <div class="eyebrow">${capitalize(userIntent)} list</div>
-            <div class="question-title">${question.text}</div>
-            <div class="question-subtitle">Choose the option that fits best. You can always go back.</div>
+        <div class="eyebrow">${capitalize(userIntent)} list</div>
 
-            <div class="options">
-                ${optionsHtml}
-            </div>
+        <div class="question-title">
+            ${question.text}
+        </div>
 
-            <div class="step-counter">Step ${currentQuestionIndex + 1} of ${totalSteps}</div>
+        <div class="question-subtitle">
+            Just pick what feels right 💛
+        </div>
 
-            <div class="footer-actions">
-                <button class="btn btn-secondary" onclick="goBack()" ${currentQuestionIndex === 0 ? 'disabled style="opacity:.55;cursor:not-allowed;"' : ''}>Back</button>
-                <button class="btn btn-primary" onclick="goNext()">${currentQuestionIndex === totalSteps - 1 ? 'Build my list' : 'Continue'}</button>
-            </div>
-        `;
+        <div class="options">
+            ${optionsHtml}
+        </div>
+
+        <div class="step-counter">
+            Step ${currentQuestionIndex + 1} of ${totalSteps}
+        </div>
+
+        <div class="footer-actions">
+            <button
+                class="btn btn-secondary"
+                onclick="goBack()"
+                ${currentQuestionIndex === 0 ? 'disabled style="opacity:.55;cursor:not-allowed;"' : ''}
+            >
+                Back
+            </button>
+
+            <button class="btn btn-primary" onclick="goNext()">
+                ${currentQuestionIndex === totalSteps - 1 ? 'Build my list ✨' : 'Next'}
+            </button>
+        </div>
+    `;
     }
 
     function selectOption(questionId, answer, questionType) {
@@ -628,10 +692,16 @@
         updateProgress(78);
 
         screen.innerHTML = `
-            <div class="loading-wrap">
+            <div class="loader">
                 <div class="spinner"></div>
-                <h2>Building your JUJE list… ✨</h2>
-                <p class="subtitle">Putting together a personalized list based on your answers.</p>
+
+                <div class="loader-title">
+                    Putting your list together… ✨
+                </div>
+
+                <div class="loader-subtitle">
+                    This will just take a second
+                </div>
             </div>
         `;
 
@@ -665,20 +735,34 @@
         if (!currentProducts.length) {
             screen.innerHTML = `
                 <div class="results-header">
-                    <h2 class="results-title">Your JUJE list</h2>
+                    <div class="eyebrow">Made just for you</div>
+
+                    <h2 class="results-title">
+                        Your JUJE list ✨
+                    </h2>
+
                     <p class="results-subtitle">
-                        I couldn’t find matching products yet for this exact combination.
+                        Here’s a simple, practical list to make things feel easier 💛
                     </p>
                 </div>
 
                 <div class="chosen-summary">
-                    <div class="chosen-summary-title">Your selections</div>
-                    <div class="summary-chip-wrap">${summaryEntries}</div>
+                    <div class="chosen-summary-title">Your setup</div>
+                    <div class="summary-chip-wrap">
+                        ${summaryEntries}
+                    </div>
                 </div>
 
+                ${productsHtml}
+
                 <div class="footer-actions">
-                    <button class="btn btn-secondary" onclick="restartFlow()">Start over</button>
-                    <button class="btn btn-primary" onclick="saveCurrentList()">Save this list</button>
+                    <button class="btn btn-secondary" onclick="restartFlow()">
+                        Start over
+                    </button>
+
+                    <button class="btn btn-primary" onclick="saveCurrentList()">
+                        Save this list 💛
+                    </button>
                 </div>
             `;
             return;
