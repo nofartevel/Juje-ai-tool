@@ -211,8 +211,32 @@
             color: var(--text);
             cursor: pointer;
             transition: 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .option-card:focus,
+        .option-card:focus-visible,
+        .option-card:active {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .option-card:not(.selected) {
+            background: var(--white);
+            border-color: var(--border);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .option-card:hover {
+                border-color: var(--primary);
+                background: #FFF8F4;
+                transform: translateY(-1px);
+            }
         }
 
         @media (hover: hover) and (pointer: fine) {
@@ -525,6 +549,7 @@
 
             return `
                 <button
+                    type="button"
                     class="option-card ${isSelected ? 'selected' : ''}"
                     onclick="selectOption('${question.id}', '${escapeSingleQuotes(option)}', '${question.type}')"
                 >
@@ -739,16 +764,27 @@
                 })
             });
 
+            const rawText = await response.text();
+            console.log("save-list status:", response.status);
+            console.log("save-list raw response:", rawText);
+
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Save failed:", errorText);
-                alert("Something went wrong while saving your list");
+                alert(`Saving failed (status ${response.status})`);
                 return;
             }
 
-            const data = await response.json();
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch (e) {
+                console.error("Invalid JSON from /save-list:", rawText);
+                alert("The server returned an invalid response while saving.");
+                return;
+            }
+
             const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
 
+            // בלי clipboard כרגע - הכי בטוח למובייל
             window.prompt("Your list was saved 💛 Copy your share link:", shareUrl);
         } catch (error) {
             console.error("Save error:", error);

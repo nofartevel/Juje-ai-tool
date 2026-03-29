@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Map;
 import java.util.*;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 public class HomeController {
@@ -249,24 +250,31 @@ public class HomeController {
     }
 
     @PostMapping("/save-list")
-    public Map<String, String> saveList(@RequestBody SaveListRequest request) {
-        List<Product> products = recommendFromAnswers(request.getAnswers());
+    public ResponseEntity<?> saveList(@RequestBody SaveListRequest request) {
+        try {
+            SearchSession session = sessionService.createSession(
+                    request.getInput(),
+                    request.getIntent(),
+                    request.getAnswers(),
+                    request.getProducts()
+            );
 
-        sessionService.logSearch(
-                request.getInput(),
-                request.getIntent(),
-                request.getAnswers(),
-                products
-        );
+            try {
+                sessionService.logSession(session);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        String id = sessionService.saveList(
-                request.getInput(),
-                request.getIntent(),
-                request.getAnswers(),
-                products
-        );
+            String id = sessionService.saveList(session);
+            return ResponseEntity.ok(Map.of("id", id));
 
-        return Map.of("id", id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "save_failed",
+                    "message", e.getMessage() == null ? "Unknown server error" : e.getMessage()
+            ));
+        }
     }
 
     @GetMapping("/list/{id}")

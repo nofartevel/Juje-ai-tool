@@ -1,6 +1,5 @@
 package com.example.jujeaibackend;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +45,26 @@ public class SearchSession {
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public void setIntent(String intent) {
+        this.intent = intent;
+    }
+
+    public void setAnswers(Map<String, Object> answers) {
+        this.answers = answers;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public void setCreatedAt(String createdAt) {
