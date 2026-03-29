@@ -1,20 +1,20 @@
 [
   {
-    "name": "Busy Book",
-    "link": "https://www.amazon.com/dp/EXAMPLE1?tag=YOURTAG",
-    "tags": ["flight", "baby", "travel"],
-    "why": "Keeps babies busy quietly during flights"
+    "name": "Inflatable Airplane Bed Pillow",
+    "link": "https://amzn.to/4tjc68E",
+    "image": "https://m.media-amazon.com/images/I/71gJQd4LLmL._AC_SL1500_.jpg",
+    "tags": ["travel", "flight", "sleep", "toddler", "baby", "long_flight", "comfort", "portable"],
+    "section": "sleep",
+    "priority": "nice-to-have",
+    "why": "Turns the seat into a little bed so your child can actually sleep on the flight — a lifesaver on long or overnight trips ✈️"
   },
   {
-    "name": "Snack Container",
-    "link": "https://www.amazon.com/dp/EXAMPLE2?tag=YOURTAG",
-    "tags": ["flight", "feeding", "travel"],
-    "why": "Great for mess-free snacks on the go"
-  },
-  {
-    "name": "Outdoor Mat",
-    "link": "https://www.amazon.com/dp/EXAMPLE3?tag=YOURTAG",
-    "tags": ["park", "outdoor"],
-    "why": "Useful for sitting and playing outside"
+    "name": "Portable Diaper Changing Pad",
+    "link": "https://amzn.to/3O3SUfY",
+    "image": "https://m.media-amazon.com/images/I/81YhRtOzjML._SL1500_.jpg",
+    "tags": ["diaper", "changing", "travel", "outdoor", "baby", "newborn", "portable", "daily"],
+    "section": "diapering",
+    "priority": "must-have",
+    "why": "Makes diaper changes anywhere feel easy and clean — everything you need in one simple setup"
   }
 ]
