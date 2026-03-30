@@ -16,5 +16,86 @@
     "section": "diapering",
     "priority": "must-have",
     "why": "Makes diaper changes anywhere feel easy and clean — everything you need in one simple setup"
+  },
+  {
+    "name": "Waterproof Wet Dry Bag Set",
+    "link": "https://amzn.to/4sAGV8J",
+    "image": "https://m.media-amazon.com/images/I/71b2dsvBGBL._SL1500_.jpg",
+    "tags": ["travel", "diaper", "changing", "outdoor", "beach", "pool", "storage", "organizer", "baby", "toddler", "portable", "daily"],
+    "section": "organization",
+    "priority": "must-have",
+    "why": "Makes it so much easier to keep diapers, spare clothes, and messy items organized without getting the whole bag dirty"
+  },
+  {
+    "name": "Kids Travel Tray for Car Seat",
+    "link": "https://amzn.to/4sHRR4D",
+    "image": "https://m.media-amazon.com/images/I/81t+xZ7QMDL._AC_SL1500_.jpg",
+    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organizer", "long_trip"],
+    "section": "travel",
+    "priority": "must-have",
+    "why": "Keeps everything in one place during trips — snacks, toys, and activities without the mess or constant reaching back"
+  },
+  {
+    "name": "Toddler Busy Board Activity Book",
+    "link": "https://amzn.to/4dgV2eH",
+    "image": "https://m.media-amazon.com/images/I/817zIh6rbGL._AC_SL1500_.jpg",
+    "tags": ["travel", "flight", "car", "activity", "play", "quiet", "toddler", "learning", "portable", "long_trip"],
+    "section": "play",
+    "priority": "must-have",
+    "why": "Keeps little hands busy and minds engaged during trips — a lifesaver when you need quiet and screen-free play"
+  },
+  {
+    "name": "Silicone Baby Bib with Food Catcher",
+    "link": "https://amzn.to/47Qb7ob",
+    "image": "https://m.media-amazon.com/images/I/6140UNlasyL._AC_SX679_.jpg",
+    "tags": ["feeding", "travel", "flight", "car", "baby", "toddler", "mess", "easy_clean", "portable", "daily"],
+    "section": "feeding",
+    "priority": "must-have",
+    "why": "Catches food mess before it gets everywhere — perfect for feeding on the go without the stress"
+  },
+  {
+    "name": "Multi-Use Nursing Cover",
+    "link": "https://amzn.to/4m75HLm",
+    "image": "https://m.media-amazon.com/images/I/71-95Mi0EVL._SL1200_.jpg",
+    "tags": ["feeding", "nursing", "privacy", "travel", "outdoor", "baby", "newborn", "portable", "multi_use", "daily"],
+    "section": "feeding",
+    "priority": "nice-to-have",
+    "why": "Makes feeding on the go feel more private and comfortable — plus doubles as a lightweight cover for naps or shade"
+  },
+  {
+    "name": "Portable Baby Feeding Arm Pillow",
+    "link": "https://amzn.to/3PvSYpl",
+    "image": "https://m.media-amazon.com/images/I/81pMH8EvtCL._SL1500_.jpg",
+    "tags": ["feeding", "nursing", "bottle", "comfort", "travel", "baby", "newborn", "portable", "support", "daily"],
+    "section": "feeding",
+    "priority": "nice-to-have",
+    "why": "Gives extra support during feeding so your arms don’t get tired — especially helpful on long trips or feeding on the go"
+  },
+  {
+    "name": "Reusable Water Coloring Activity Book",
+    "link": "https://amzn.to/4bDGQv0",
+    "image": "https://m.media-amazon.com/images/I/71LnGb42tzL._AC_SL1500_.jpg",
+    "tags": ["travel", "flight", "car", "activity", "play", "quiet", "no_mess", "toddler", "kids", "portable"],
+    "section": "play",
+    "priority": "must-have",
+    "why": "A no-mess activity that keeps kids busy and calm — perfect for travel or anytime you need a quiet moment"
+  },
+  {
+    "name": "Silicone Suction Plate Set with Lids",
+    "link": "https://amzn.to/4bTQIj7",
+    "image": "https://m.media-amazon.com/images/I/71GMdOyQSUL._SL1500_.jpg",
+    "tags": ["feeding", "snacks", "travel", "baby", "toddler", "mess", "self_feeding", "on_the_go", "portable", "easy_clean"],
+    "section": "feeding",
+    "priority": "must-have",
+    "why": "Keeps meals in place and reduces mess — perfect for feeding at home or on the go"
+  },
+  {
+    "name": "Bento Snack & Meal Container",
+    "link": "https://amzn.to/4s64Go2",
+    "image": "https://m.media-amazon.com/images/I/71fuW8+KfrL._AC_SL1500_.jpg",
+    "tags": ["feeding", "snacks", "meal_prep", "travel", "on_the_go", "toddler", "kids", "portable", "organized", "daily"],
+    "section": "feeding",
+    "priority": "must-have",
+    "why": "Keeps meals and snacks organized and ready — perfect for travel days or feeding on the go"
   }
 ]
