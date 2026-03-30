@@ -363,7 +363,9 @@
 
             <div class="footer-actions">
                 <button class="btn btn-secondary" onclick="restartFlow()">Start over</button>
-                <button class="btn btn-primary" onclick="saveCurrentList()">Save this list</button>
+                <button class="btn btn-primary" onclick="shareList()">
+                    Share this list ✨
+                </button>
             </div>
         `;
     }
@@ -402,7 +404,7 @@
         return str.replace(/'/g, "\\'");
     }
 
-    async function saveCurrentList() {
+    async function shareList() {
         try {
             const response = await fetch("/save-list", {
                 method: "POST",
@@ -417,31 +419,23 @@
                 })
             });
 
-            const rawText = await response.text();
-            console.log("save-list status:", response.status);
-            console.log("save-list raw response:", rawText);
-
-            if (!response.ok) {
-                alert(`Saving failed (status ${response.status})`);
-                return;
-            }
-
-            let data;
-            try {
-                data = JSON.parse(rawText);
-            } catch (e) {
-                console.error("Invalid JSON from /save-list:", rawText);
-                alert("The server returned an invalid response while saving.");
-                return;
-            }
-
+            const data = await response.json();
             const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
 
-            // בלי clipboard כרגע - הכי בטוח למובייל
-            window.prompt("Your list was saved 💛 Copy your share link:", shareUrl);
+            // אם יש תמיכה (מובייל)
+            if (navigator.share) {
+                await navigator.share({
+                    title: "My JUJE list",
+                    text: "Check out this list I built",
+                    url: shareUrl
+                });
+            } else {
+                window.prompt("Copy your link:", shareUrl);
+            }
+
         } catch (error) {
-            console.error("Save error:", error);
-            alert("Something went wrong while saving your list");
+            console.error(error);
+            alert("Something went wrong");
         }
     }
 
