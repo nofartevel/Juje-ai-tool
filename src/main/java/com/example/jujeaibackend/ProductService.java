@@ -13,7 +13,6 @@ import java.util.List;
 public class ProductService {
 
     private final List<Product> products;
-
     public ProductService() {
         this.products = loadProducts();
     }
@@ -31,5 +30,18 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         return products;
+    }
+
+    public List<Product> filterProductsByTags(List<String> inputTags) {
+
+        List<Product> allProducts = getAllProducts();
+
+        return allProducts.stream()
+                .filter(product -> product.getTags() != null &&
+                        product.getTags().stream()
+                                .anyMatch(tag -> inputTags.stream()
+                                        .anyMatch(input -> input.equalsIgnoreCase(tag)))
+                )
+                .toList();
     }
 }

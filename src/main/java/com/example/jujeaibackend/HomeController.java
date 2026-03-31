@@ -11,10 +11,14 @@ public class HomeController {
 
     private final ProductService productService;
     private final SessionService sessionService;
+    private final OpenAiParseService openAiParseService;
 
-    public HomeController(ProductService productService, SessionService sessionService) {
+    public HomeController(ProductService productService,
+                          SessionService sessionService,
+                          OpenAiParseService openAiParseService) {
         this.productService = productService;
         this.sessionService = sessionService;
+        this.openAiParseService = openAiParseService;
     }
 
     @GetMapping("/recommend")
@@ -280,6 +284,32 @@ public class HomeController {
     @GetMapping("/list/{id}")
     public SearchSession getSavedList(@PathVariable String id) {
         return sessionService.getSavedList(id);
+    }
+
+    @PostMapping("/ai-parse")
+    public AiParseResult aiParse(@RequestBody AiParseRequest request) {
+        return openAiParseService.parseUserInput(request.getInput());
+    }
+
+    @GetMapping("/ai-test2")
+    public AiParseResult aiTest2() {
+        return openAiParseService.parseUserInput("beach day with toddler");
+    }
+
+    @PostMapping("/generate-list")
+    public List<Product> generateList(@RequestBody AiParseRequest request) {
+
+        AiParseResult parsed = openAiParseService.parseUserInput(request.getInput());
+
+        List<Product> products = productService.filterProductsByTags(parsed.getCandidate_tags());
+
+        return products;
+    }
+
+    @GetMapping("/generate-test")
+    public List<Product> generateTest() {
+        AiParseResult parsed = openAiParseService.parseUserInput("beach day with toddler");
+        return productService.filterProductsByTags(parsed.getCandidate_tags());
     }
 }
 

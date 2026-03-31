@@ -3,7 +3,7 @@
     "name": "Inflatable Airplane Bed Pillow",
     "link": "https://amzn.to/4tjc68E",
     "image": "https://m.media-amazon.com/images/I/71gJQd4LLmL._AC_SL1500_.jpg",
-    "tags": ["travel", "flight", "sleep", "toddler", "baby", "long_flight", "comfort", "portable"],
+    "tags": ["travel", "flight", "sleep", "toddler", "baby", "comfort", "portable"],
     "section": "sleep",
     "priority": "nice-to-have",
     "why": "Turns the seat into a little bed so your child can actually sleep on the flight — a lifesaver on long or overnight trips ✈️"
@@ -12,7 +12,7 @@
     "name": "Portable Diaper Changing Pad",
     "link": "https://amzn.to/3O3SUfY",
     "image": "https://m.media-amazon.com/images/I/81YhRtOzjML._SL1500_.jpg",
-    "tags": ["diaper", "changing", "travel", "outdoor", "baby", "newborn", "portable", "daily"],
+    "tags": ["diaper", "changing", "travel", "outdoor", "baby", "newborn", "portable"],
     "section": "diapering",
     "priority": "must-have",
     "why": "Makes diaper changes anywhere feel easy and clean — everything you need in one simple setup"
@@ -21,7 +21,7 @@
     "name": "Waterproof Wet Dry Bag Set",
     "link": "https://amzn.to/4sAGV8J",
     "image": "https://m.media-amazon.com/images/I/71b2dsvBGBL._SL1500_.jpg",
-    "tags": ["travel", "diaper", "changing", "outdoor", "beach", "pool", "storage", "organizer", "baby", "toddler", "portable", "daily"],
+    "tags": ["travel", "diaper", "changing", "outdoor", "beach", "pool", "storage", "organization", "baby", "toddler", "portable"],
     "section": "organization",
     "priority": "must-have",
     "why": "Makes it so much easier to keep diapers, spare clothes, and messy items organized without getting the whole bag dirty"
@@ -30,7 +30,7 @@
     "name": "Kids Travel Tray for Car Seat",
     "link": "https://amzn.to/4sHRR4D",
     "image": "https://m.media-amazon.com/images/I/81t+xZ7QMDL._AC_SL1500_.jpg",
-    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organizer", "long_trip"],
+    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organization"],
     "section": "travel",
     "priority": "must-have",
     "why": "Keeps everything in one place during trips — snacks, toys, and activities without the mess or constant reaching back"
@@ -39,7 +39,7 @@
     "name": "Toddler Busy Board Activity Book",
     "link": "https://amzn.to/4dgV2eH",
     "image": "https://m.media-amazon.com/images/I/817zIh6rbGL._AC_SL1500_.jpg",
-    "tags": ["travel", "flight", "car", "activity", "play", "quiet", "toddler", "learning", "portable", "long_trip"],
+    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organization"],
     "section": "play",
     "priority": "must-have",
     "why": "Keeps little hands busy and minds engaged during trips — a lifesaver when you need quiet and screen-free play"
@@ -48,7 +48,7 @@
     "name": "Silicone Baby Bib with Food Catcher",
     "link": "https://amzn.to/47Qb7ob",
     "image": "https://m.media-amazon.com/images/I/6140UNlasyL._AC_SX679_.jpg",
-    "tags": ["feeding", "travel", "flight", "car", "baby", "toddler", "mess", "easy_clean", "portable", "daily"],
+    "tags": ["feeding", "travel", "flight", "car", "baby", "toddler", "easy_clean", "portable"],
     "section": "feeding",
     "priority": "must-have",
     "why": "Catches food mess before it gets everywhere — perfect for feeding on the go without the stress"
@@ -57,7 +57,7 @@
     "name": "Multi-Use Nursing Cover",
     "link": "https://amzn.to/4m75HLm",
     "image": "https://m.media-amazon.com/images/I/71-95Mi0EVL._SL1200_.jpg",
-    "tags": ["feeding", "nursing", "privacy", "travel", "outdoor", "baby", "newborn", "portable", "multi_use", "daily"],
+    "tags": ["feeding", "travel", "outdoor", "baby", "newborn", "portable"],
     "section": "feeding",
     "priority": "nice-to-have",
     "why": "Makes feeding on the go feel more private and comfortable — plus doubles as a lightweight cover for naps or shade"
@@ -66,7 +66,7 @@
     "name": "Portable Baby Feeding Arm Pillow",
     "link": "https://amzn.to/3PvSYpl",
     "image": "https://m.media-amazon.com/images/I/81pMH8EvtCL._SL1500_.jpg",
-    "tags": ["feeding", "nursing", "bottle", "comfort", "travel", "baby", "newborn", "portable", "support", "daily"],
+    "tags": ["feeding", "comfort", "travel", "baby", "newborn", "portable"],
     "section": "feeding",
     "priority": "nice-to-have",
     "why": "Gives extra support during feeding so your arms don’t get tired — especially helpful on long trips or feeding on the go"
@@ -84,7 +84,7 @@
     "name": "Silicone Suction Plate Set with Lids",
     "link": "https://amzn.to/4bTQIj7",
     "image": "https://m.media-amazon.com/images/I/71GMdOyQSUL._SL1500_.jpg",
-    "tags": ["feeding", "snacks", "travel", "baby", "toddler", "mess", "self_feeding", "on_the_go", "portable", "easy_clean"],
+    "tags": ["feeding", "snacks", "travel", "baby", "toddler", "self_feeding", "portable", "easy_clean"],
     "section": "feeding",
     "priority": "must-have",
     "why": "Keeps meals in place and reduces mess — perfect for feeding at home or on the go"
@@ -93,7 +93,7 @@
     "name": "Bento Snack & Meal Container",
     "link": "https://amzn.to/4s64Go2",
     "image": "https://m.media-amazon.com/images/I/71fuW8+KfrL._AC_SL1500_.jpg",
-    "tags": ["feeding", "snacks", "meal_prep", "travel", "on_the_go", "toddler", "kids", "portable", "organized", "daily"],
+    "tags": ["feeding", "snacks", "meal_prep", "travel", "toddler", "kids", "portable", "storage"],
     "section": "feeding",
     "priority": "must-have",
     "why": "Keeps meals and snacks organized and ready — perfect for travel days or feeding on the go"
