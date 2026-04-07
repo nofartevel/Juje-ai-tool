@@ -4,25 +4,32 @@ import java.util.List;
 
 public class Product {
 
+    private String id;
     private String name;
     private String link;
     private String image;
-    private List<String> tags;
     private String section;
-    private String priority;
     private String why;
+    private List<String> keywords;
+    private List<String> use_cases;
 
     public Product() {
     }
 
-    public Product(String name, String link, String image, List<String> tags, String section, String priority, String why) {
+    public Product(String id, String name, String link, String image, String section, String why,
+                   List<String> keywords, List<String> use_cases) {
+        this.id = id;
         this.name = name;
         this.link = link;
         this.image = image;
-        this.tags = tags;
         this.section = section;
-        this.priority = priority;
         this.why = why;
+        this.keywords = keywords;
+        this.use_cases = use_cases;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -37,20 +44,24 @@ public class Product {
         return image;
     }
 
-    public List<String> getTags() {
-        return tags;
-    }
-
     public String getSection() {
         return section;
     }
 
-    public String getPriority() {
-        return priority;
-    }
-
     public String getWhy() {
         return why;
+    }
+
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
+    public List<String> getUse_cases() {
+        return use_cases;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -65,19 +76,19 @@ public class Product {
         this.image = image;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
     public void setSection(String section) {
         this.section = section;
     }
 
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
     public void setWhy(String why) {
         this.why = why;
+    }
+
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
+    }
+
+    public void setUse_cases(List<String> use_cases) {
+        this.use_cases = use_cases;
     }
 }

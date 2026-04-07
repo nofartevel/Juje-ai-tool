@@ -1,101 +1,112 @@
 [
   {
+    "id": "airplane_bed",
     "name": "Inflatable Airplane Bed Pillow",
     "link": "https://amzn.to/4tjc68E",
     "image": "https://m.media-amazon.com/images/I/71gJQd4LLmL._AC_SL1500_.jpg",
-    "tags": ["travel", "flight", "sleep", "toddler", "baby", "comfort", "portable"],
     "section": "sleep",
-    "priority": "nice-to-have",
-    "why": "Turns the seat into a little bed so your child can actually sleep on the flight — a lifesaver on long or overnight trips ✈️"
+    "why": "Turns the seat into a flat surface so your child can actually sleep comfortably on flights",
+    "keywords": ["airplane bed", "sleep", "flight", "leg rest", "travel pillow"],
+    "use_cases": ["flight", "long flight", "night flight", "travel sleep"]
   },
   {
+    "id": "changing_pad",
     "name": "Portable Diaper Changing Pad",
     "link": "https://amzn.to/3O3SUfY",
     "image": "https://m.media-amazon.com/images/I/81YhRtOzjML._SL1500_.jpg",
-    "tags": ["diaper", "changing", "travel", "outdoor", "baby", "newborn", "portable"],
     "section": "diapering",
-    "priority": "must-have",
-    "why": "Makes diaper changes anywhere feel easy and clean — everything you need in one simple setup"
+    "why": "Makes diaper changes anywhere clean and easy — especially when you're outside",
+    "keywords": ["diaper", "changing", "portable", "baby", "outdoor"],
+    "use_cases": ["travel", "outdoor day", "beach day", "on the go"]
   },
   {
+    "id": "wet_dry_bag",
     "name": "Waterproof Wet Dry Bag Set",
     "link": "https://amzn.to/4sAGV8J",
     "image": "https://m.media-amazon.com/images/I/71b2dsvBGBL._SL1500_.jpg",
-    "tags": ["travel", "diaper", "changing", "outdoor", "beach", "pool", "storage", "organization", "baby", "toddler", "portable"],
     "section": "organization",
-    "priority": "must-have",
-    "why": "Makes it so much easier to keep diapers, spare clothes, and messy items organized without getting the whole bag dirty"
+    "why": "Keeps wet, dirty, and clean items separated — perfect for messy days",
+    "keywords": ["wet bag", "diapers", "dirty clothes", "storage", "waterproof"],
+    "use_cases": ["beach day", "pool day", "travel", "diaper bag", "spare clothes"]
   },
   {
+    "id": "travel_tray",
     "name": "Kids Travel Tray for Car Seat",
     "link": "https://amzn.to/4sHRR4D",
     "image": "https://m.media-amazon.com/images/I/81t+xZ7QMDL._AC_SL1500_.jpg",
-    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organization"],
     "section": "travel",
-    "priority": "must-have",
-    "why": "Keeps everything in one place during trips — snacks, toys, and activities without the mess or constant reaching back"
+    "why": "Keeps snacks, toys, and activities organized during trips — less mess and stress",
+    "keywords": ["travel tray", "snacks", "organizer", "car", "activity"],
+    "use_cases": ["car ride", "road trip", "flight"]
   },
   {
+    "id": "busy_board",
     "name": "Toddler Busy Board Activity Book",
     "link": "https://amzn.to/4dgV2eH",
     "image": "https://m.media-amazon.com/images/I/817zIh6rbGL._AC_SL1500_.jpg",
-    "tags": ["travel", "car", "flight", "activity", "play", "toddler", "kids", "snacks", "organization"],
     "section": "play",
-    "priority": "must-have",
-    "why": "Keeps little hands busy and minds engaged during trips — a lifesaver when you need quiet and screen-free play"
+    "why": "Keeps toddlers busy and engaged without screens — perfect for quiet play",
+    "keywords": ["activity toy", "quiet play", "learning", "fine motor", "toddler"],
+    "use_cases": ["flight", "car ride", "restaurant", "waiting time"]
   },
   {
+    "id": "silicone_bib",
     "name": "Silicone Baby Bib with Food Catcher",
     "link": "https://amzn.to/47Qb7ob",
     "image": "https://m.media-amazon.com/images/I/6140UNlasyL._AC_SX679_.jpg",
-    "tags": ["feeding", "travel", "flight", "car", "baby", "toddler", "easy_clean", "portable"],
     "section": "feeding",
-    "priority": "must-have",
-    "why": "Catches food mess before it gets everywhere — perfect for feeding on the go without the stress"
+    "why": "Catches food mess and keeps things clean — especially when feeding outside",
+    "keywords": ["bib", "feeding", "mess", "baby", "easy clean"],
+    "use_cases": ["feeding on the go", "travel", "outdoor meals"]
   },
   {
+    "id": "nursing_cover",
     "name": "Multi-Use Nursing Cover",
     "link": "https://amzn.to/4m75HLm",
     "image": "https://m.media-amazon.com/images/I/71-95Mi0EVL._SL1200_.jpg",
-    "tags": ["feeding", "travel", "outdoor", "baby", "newborn", "portable"],
     "section": "feeding",
-    "priority": "nice-to-have",
-    "why": "Makes feeding on the go feel more private and comfortable — plus doubles as a lightweight cover for naps or shade"
+    "why": "Provides privacy for feeding and can also be used as a light cover or shade",
+    "keywords": ["nursing cover", "feeding", "privacy", "baby", "light cover"],
+    "use_cases": ["feeding on the go", "outdoor day", "travel", "shade"]
   },
   {
+    "id": "feeding_pillow",
     "name": "Portable Baby Feeding Arm Pillow",
     "link": "https://amzn.to/3PvSYpl",
     "image": "https://m.media-amazon.com/images/I/81pMH8EvtCL._SL1500_.jpg",
-    "tags": ["feeding", "comfort", "travel", "baby", "newborn", "portable"],
     "section": "feeding",
-    "priority": "nice-to-have",
-    "why": "Gives extra support during feeding so your arms don’t get tired — especially helpful on long trips or feeding on the go"
+    "why": "Gives extra support during feeding so your arms don’t get tired",
+    "keywords": ["feeding pillow", "support", "baby", "comfort"],
+    "use_cases": ["feeding", "travel", "on the go"]
   },
   {
+    "id": "water_coloring",
     "name": "Reusable Water Coloring Activity Book",
     "link": "https://amzn.to/4bDGQv0",
     "image": "https://m.media-amazon.com/images/I/71LnGb42tzL._AC_SL1500_.jpg",
-    "tags": ["travel", "flight", "car", "activity", "play", "quiet", "no_mess", "toddler", "kids", "portable"],
     "section": "play",
-    "priority": "must-have",
-    "why": "A no-mess activity that keeps kids busy and calm — perfect for travel or anytime you need a quiet moment"
+    "why": "No-mess activity that keeps kids calm and busy",
+    "keywords": ["coloring", "no mess", "activity", "kids"],
+    "use_cases": ["flight", "car ride", "restaurant", "quiet time"]
   },
   {
+    "id": "suction_plate",
     "name": "Silicone Suction Plate Set with Lids",
     "link": "https://amzn.to/4bTQIj7",
     "image": "https://m.media-amazon.com/images/I/71GMdOyQSUL._SL1500_.jpg",
-    "tags": ["feeding", "snacks", "travel", "baby", "toddler", "self_feeding", "portable", "easy_clean"],
     "section": "feeding",
-    "priority": "must-have",
-    "why": "Keeps meals in place and reduces mess — perfect for feeding at home or on the go"
+    "why": "Keeps food in place and reduces mess",
+    "keywords": ["plate", "feeding", "snacks", "baby"],
+    "use_cases": ["home feeding", "outdoor meals", "travel"]
   },
   {
+    "id": "bento_box",
     "name": "Bento Snack & Meal Container",
     "link": "https://amzn.to/4s64Go2",
     "image": "https://m.media-amazon.com/images/I/71fuW8+KfrL._AC_SL1500_.jpg",
-    "tags": ["feeding", "snacks", "meal_prep", "travel", "toddler", "kids", "portable", "storage"],
     "section": "feeding",
-    "priority": "must-have",
-    "why": "Keeps meals and snacks organized and ready — perfect for travel days or feeding on the go"
+    "why": "Keeps meals and snacks organized and easy to carry",
+    "keywords": ["bento box", "snacks", "meal prep", "container"],
+    "use_cases": ["travel", "day out", "meal prep", "snacks on the go"]
   }
 ]

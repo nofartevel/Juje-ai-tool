@@ -12,16 +12,19 @@ public class HomeController {
     private final ProductService productService;
     private final SessionService sessionService;
     private final OpenAiParseService openAiParseService;
+    private final OpenAiSelectorService openAiSelectorService;
 
     public HomeController(ProductService productService,
                           SessionService sessionService,
-                          OpenAiParseService openAiParseService) {
-        this.productService = productService;
+                          OpenAiParseService openAiParseService,
+                          OpenAiSelectorService openAiSelectorService) {
         this.sessionService = sessionService;
         this.openAiParseService = openAiParseService;
+        this.productService = productService;
+        this.openAiSelectorService = openAiSelectorService;
     }
 
-    @GetMapping("/recommend")
+    /*@GetMapping("/recommend")
     public List<Product> recommend(@RequestParam String input) {
         List<String> matchedTags = new ArrayList<>();
         String lowerInput = input.toLowerCase();
@@ -45,7 +48,7 @@ public class HomeController {
         }
 
         return results;
-    }
+    }*/
 
     @GetMapping("/flow")
     public FlowResponse flow(@RequestParam String input) {
@@ -152,7 +155,7 @@ public class HomeController {
         );
     }
 
-    @PostMapping("/recommend-from-answers")
+    /*@PostMapping("/recommend-from-answers")
     public List<Product> recommendFromAnswers(@RequestBody Map<String, Object> answers) {
 
         List<String> tags = new ArrayList<>();
@@ -251,7 +254,7 @@ public class HomeController {
         }
 
         return results;
-    }
+    }*/
 
     @PostMapping("/save-list")
     public ResponseEntity<?> saveList(@RequestBody SaveListRequest request) {
@@ -296,7 +299,7 @@ public class HomeController {
         return openAiParseService.parseUserInput("beach day with toddler");
     }
 
-    @PostMapping("/generate-list")
+    /*@PostMapping("/generate-list")
     public List<Product> generateList(@RequestBody AiParseRequest request) {
 
         AiParseResult parsed = openAiParseService.parseUserInput(request.getInput());
@@ -304,12 +307,93 @@ public class HomeController {
         List<Product> products = productService.filterProductsByTags(parsed.getCandidate_tags());
 
         return products;
+    }*/
+
+    /*@GetMapping("/generate-test")
+    public GeneratedListResponse generateTest() {
+        AiParseRequest request = new AiParseRequest();
+        request.setInput("beach day with toddler");
+        return generateList(request);
+    }*/
+
+    /*@PostMapping("/generate-list")
+    public GeneratedListResponse generateList(@RequestBody AiParseRequest request) {
+        AiParseResult aiResult = openAiParseService.parseUserInput(request.getInput());
+
+        java.util.List<ProductScore> scoredProducts =
+                productService.scoreProducts(aiResult.getCandidate_tags(), aiResult.getPrimary_intent());
+
+        java.util.List<Product> goodProducts = scoredProducts.stream()
+                .filter(this::isGoodProduct)
+                .map(ProductScore::getProduct)
+                .limit(8)
+                .toList();
+
+        java.util.List<Product> partialProducts = scoredProducts.stream()
+                .filter(this::isPartialProduct)
+                .map(ProductScore::getProduct)
+                .limit(5)
+                .toList();
+
+        String confidence = aiResult.getConfidence() == null ? "low" : aiResult.getConfidence();
+
+        if (goodProducts.size() >= 2 && ("high".equals(confidence) || "medium".equals(confidence))) {
+            return new GeneratedListResponse(
+                    "good",
+                    "I found a strong match for this list 💛",
+                    goodProducts,
+                    aiResult
+            );
+        }
+
+        if (!partialProducts.isEmpty()) {
+            return new GeneratedListResponse(
+                    "partial",
+                    "I found a few relevant items, but I don’t fully cover this type of list yet.",
+                    partialProducts,
+                    aiResult
+            );
+        }
+
+        return new GeneratedListResponse(
+                "missing",
+                "I don’t have a strong enough list for this yet, but I saved your request so I can improve this topic.",
+                java.util.List.of(),
+                aiResult
+        );
+    }*/
+
+    @PostMapping("/ai-generate-list")
+    public GeneratedListResponse aiGenerateList(@RequestBody AiSelectorRequest request) {
+        AiSelectorResult selectorResult = openAiSelectorService.selectProducts(request.getInput());
+
+        java.util.List<Product> selectedProducts =
+                productService.getProductsByIds(selectorResult.getSelected_product_ids());
+
+        return new GeneratedListResponse(
+                selectorResult.getStatus(),
+                selectorResult.getMessage(),
+                selectedProducts,
+                null
+        );
     }
 
-    @GetMapping("/generate-test")
-    public List<Product> generateTest() {
-        AiParseResult parsed = openAiParseService.parseUserInput("beach day with toddler");
-        return productService.filterProductsByTags(parsed.getCandidate_tags());
+    @GetMapping("/ai-generate-test")
+    public GeneratedListResponse aiGenerateTest() {
+        AiSelectorRequest request = new AiSelectorRequest();
+        request.setInput("beach day with toddler");
+        return aiGenerateList(request);
+    }
+
+    private boolean isGoodProduct(ProductScore ps) {
+        return ps.getStrongMatches() >= 2
+                || (ps.getStrongMatches() >= 1 && ps.isSectionMatch() && ps.getScore() >= 6);
+    }
+
+    private boolean isPartialProduct(ProductScore ps) {
+        return (ps.getStrongMatches() == 0 && ps.getWeakMatches() >= 2 && ps.isSectionMatch())
+                || (ps.getStrongMatches() == 1 && !isGoodProduct(ps))
+                || (ps.getStrongMatches() == 0 && ps.isSectionMatch() && ps.getWeakMatches() >= 1);
     }
 }
 
