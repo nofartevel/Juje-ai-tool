@@ -11,258 +11,21 @@ public class HomeController {
 
     private final ProductService productService;
     private final SessionService sessionService;
-    private final OpenAiParseService openAiParseService;
     private final OpenAiSelectorService openAiSelectorService;
 
     public HomeController(ProductService productService,
                           SessionService sessionService,
-                          OpenAiParseService openAiParseService,
                           OpenAiSelectorService openAiSelectorService) {
         this.sessionService = sessionService;
-        this.openAiParseService = openAiParseService;
         this.productService = productService;
         this.openAiSelectorService = openAiSelectorService;
     }
-
-    /*@GetMapping("/recommend")
-    public List<Product> recommend(@RequestParam String input) {
-        List<String> matchedTags = new ArrayList<>();
-        String lowerInput = input.toLowerCase();
-
-        if (lowerInput.contains("flight")) matchedTags.add("flight");
-        if (lowerInput.contains("baby")) matchedTags.add("baby");
-        if (lowerInput.contains("travel")) matchedTags.add("travel");
-        if (lowerInput.contains("feeding")) matchedTags.add("feeding");
-        if (lowerInput.contains("park")) matchedTags.add("park");
-        if (lowerInput.contains("outdoor")) matchedTags.add("outdoor");
-
-        List<Product> results = new ArrayList<>();
-
-        for (Product product : productService.getAllProducts()) {
-            for (String tag : product.getTags()) {
-                if (matchedTags.contains(tag)) {
-                    results.add(product);
-                    break;
-                }
-            }
-        }
-
-        return results;
-    }*/
-
-    @GetMapping("/flow")
-    public FlowResponse flow(@RequestParam String input) {
-        String lowerInput = input.toLowerCase();
-
-        if (lowerInput.contains("trip") ||
-                lowerInput.contains("travel") ||
-                lowerInput.contains("flight") ||
-                lowerInput.contains("vacation")) {
-
-            return new FlowResponse(
-                    "travel",
-                    List.of(
-                            new Question(
-                                    "transport",
-                                    "How are you traveling?",
-                                    "single-select",
-                                    List.of("flight", "car", "cruise", "mixed")
-                            ),
-                            new Question(
-                                    "age_groups",
-                                    "What age groups are you shopping for?",
-                                    "multi-select",
-                                    List.of("0-6 months", "6-12 months", "12-24 months", "2+ years")
-                            ),
-                            new Question(
-                                    "feeding",
-                                    "How do you feed your baby?",
-                                    "single-select",
-                                    List.of("breastfeeding", "formula", "solids", "combination")
-                            ),
-                            new Question(
-                                    "trip_length",
-                                    "How long is the trip?",
-                                    "single-select",
-                                    List.of("1 day", "weekend", "1 week+")
-                            )
-                    )
-            );
-        }
-
-        if (lowerInput.contains("park") || lowerInput.contains("outdoor") || lowerInput.contains("playground")) {
-            return new FlowResponse(
-                    "outdoor",
-                    List.of(
-                            new Question(
-                                    "place_type",
-                                    "Where are you going?",
-                                    "single-select",
-                                    List.of("playground", "park", "beach", "mixed")
-                            ),
-                            new Question(
-                                    "age_groups",
-                                    "What age groups are you shopping for?",
-                                    "multi-select",
-                                    List.of("0-6 months", "6-12 months", "12-24 months", "2+ years")
-                            ),
-                            new Question(
-                                    "need_type",
-                                    "What do you need most?",
-                                    "single-select",
-                                    List.of("toys", "sitting area", "snacks", "sun protection")
-                            )
-                    )
-            );
-        }
-
-        if (lowerInput.contains("play") || lowerInput.contains("activity") || lowerInput.contains("game")) {
-            return new FlowResponse(
-                    "activities",
-                    List.of(
-                            new Question(
-                                    "age_groups",
-                                    "What age groups are you shopping for?",
-                                    "multi-select",
-                                    List.of("0-6 months", "6-12 months", "12-24 months", "2+ years")
-                            ),
-                            new Question(
-                                    "play_type",
-                                    "What kind of play do you want?",
-                                    "single-select",
-                                    List.of("quiet", "creative", "sensory", "active")
-                            ),
-                            new Question(
-                                    "location",
-                                    "Where will they play?",
-                                    "single-select",
-                                    List.of("indoors", "outdoors", "both")
-                            )
-                    )
-            );
-        }
-
-        return new FlowResponse(
-                "general",
-                List.of(
-                        new Question(
-                                "clarify",
-                                "Tell me a bit more about what you need",
-                                "single-select",
-                                List.of("travel", "outdoor", "activities")
-                        )
-                )
-        );
-    }
-
-    /*@PostMapping("/recommend-from-answers")
-    public List<Product> recommendFromAnswers(@RequestBody Map<String, Object> answers) {
-
-        List<String> tags = new ArrayList<>();
-
-        String transport = (String) answers.get("transport");
-        if ("flight".equals(transport)) {
-            tags.add("flight");
-            tags.add("travel");
-        }
-        if ("car".equals(transport)) {
-            tags.add("car");
-            tags.add("travel");
-        }
-        if ("cruise".equals(transport)) {
-            tags.add("cruise");
-            tags.add("travel");
-        }
-        if ("mixed".equals(transport)) {
-            tags.add("travel");
-        }
-
-        Object ageGroupsObject = answers.get("age_groups");
-        if (ageGroupsObject instanceof List<?>) {
-            List<?> ageGroups = (List<?>) ageGroupsObject;
-
-            if (ageGroups.contains("0-6 months")) {
-                tags.add("baby");
-                tags.add("infant");
-            }
-            if (ageGroups.contains("6-12 months")) {
-                tags.add("baby");
-            }
-            if (ageGroups.contains("12-24 months")) {
-                tags.add("toddler");
-            }
-            if (ageGroups.contains("2+ years")) {
-                tags.add("toddler");
-                tags.add("kid");
-            }
-        }
-
-        String feeding = (String) answers.get("feeding");
-        if ("breastfeeding".equals(feeding)) {
-            tags.add("feeding");
-            tags.add("breastfeeding");
-        }
-        if ("formula".equals(feeding)) {
-            tags.add("feeding");
-            tags.add("formula");
-        }
-        if ("solids".equals(feeding)) {
-            tags.add("feeding");
-            tags.add("solids");
-        }
-        if ("combination".equals(feeding)) {
-            tags.add("feeding");
-        }
-
-        String tripLength = (String) answers.get("trip_length");
-        if ("weekend".equals(tripLength)) {
-            tags.add("travel_short");
-        }
-        if ("1 week+".equals(tripLength)) {
-            tags.add("travel_extended");
-        }
-
-        String placeType = (String) answers.get("place_type");
-        if ("playground".equals(placeType) || "park".equals(placeType) || "beach".equals(placeType)) {
-            tags.add("outdoor");
-        }
-
-        String needType = (String) answers.get("need_type");
-        if (needType != null) {
-            tags.add(needType);
-        }
-
-        String playType = (String) answers.get("play_type");
-        if (playType != null) {
-            tags.add(playType);
-        }
-
-        String location = (String) answers.get("location");
-        if (location != null) {
-            tags.add(location);
-        }
-
-        List<Product> results = new ArrayList<>();
-
-        for (Product product : productService.getAllProducts()) {
-            for (String tag : product.getTags()) {
-                if (tags.contains(tag)) {
-                    results.add(product);
-                    break;
-                }
-            }
-        }
-
-        return results;
-    }*/
 
     @PostMapping("/save-list")
     public ResponseEntity<?> saveList(@RequestBody SaveListRequest request) {
         try {
             SearchSession session = sessionService.createSession(
                     request.getInput(),
-                    request.getIntent(),
-                    request.getAnswers(),
                     request.getProducts()
             );
 
@@ -289,92 +52,16 @@ public class HomeController {
         return sessionService.getSavedList(id);
     }
 
-    @PostMapping("/ai-parse")
-    public AiParseResult aiParse(@RequestBody AiParseRequest request) {
-        return openAiParseService.parseUserInput(request.getInput());
-    }
-
-    @GetMapping("/ai-test2")
-    public AiParseResult aiTest2() {
-        return openAiParseService.parseUserInput("beach day with toddler");
-    }
-
-    /*@PostMapping("/generate-list")
-    public List<Product> generateList(@RequestBody AiParseRequest request) {
-
-        AiParseResult parsed = openAiParseService.parseUserInput(request.getInput());
-
-        List<Product> products = productService.filterProductsByTags(parsed.getCandidate_tags());
-
-        return products;
-    }*/
-
-    /*@GetMapping("/generate-test")
-    public GeneratedListResponse generateTest() {
-        AiParseRequest request = new AiParseRequest();
-        request.setInput("beach day with toddler");
-        return generateList(request);
-    }*/
-
-    /*@PostMapping("/generate-list")
-    public GeneratedListResponse generateList(@RequestBody AiParseRequest request) {
-        AiParseResult aiResult = openAiParseService.parseUserInput(request.getInput());
-
-        java.util.List<ProductScore> scoredProducts =
-                productService.scoreProducts(aiResult.getCandidate_tags(), aiResult.getPrimary_intent());
-
-        java.util.List<Product> goodProducts = scoredProducts.stream()
-                .filter(this::isGoodProduct)
-                .map(ProductScore::getProduct)
-                .limit(8)
-                .toList();
-
-        java.util.List<Product> partialProducts = scoredProducts.stream()
-                .filter(this::isPartialProduct)
-                .map(ProductScore::getProduct)
-                .limit(5)
-                .toList();
-
-        String confidence = aiResult.getConfidence() == null ? "low" : aiResult.getConfidence();
-
-        if (goodProducts.size() >= 2 && ("high".equals(confidence) || "medium".equals(confidence))) {
-            return new GeneratedListResponse(
-                    "good",
-                    "I found a strong match for this list 💛",
-                    goodProducts,
-                    aiResult
-            );
-        }
-
-        if (!partialProducts.isEmpty()) {
-            return new GeneratedListResponse(
-                    "partial",
-                    "I found a few relevant items, but I don’t fully cover this type of list yet.",
-                    partialProducts,
-                    aiResult
-            );
-        }
-
-        return new GeneratedListResponse(
-                "missing",
-                "I don’t have a strong enough list for this yet, but I saved your request so I can improve this topic.",
-                java.util.List.of(),
-                aiResult
-        );
-    }*/
-
     @PostMapping("/ai-generate-list")
     public GeneratedListResponse aiGenerateList(@RequestBody AiSelectorRequest request) {
         AiSelectorResult selectorResult = openAiSelectorService.selectProducts(request.getInput());
 
-        java.util.List<Product> selectedProducts =
-                productService.getProductsByIds(selectorResult.getSelected_product_ids());
+        java.util.List<Product> selectedProducts = productService.getProductsByIds(selectorResult.getSelectedProductIds());
 
         return new GeneratedListResponse(
                 selectorResult.getStatus(),
                 selectorResult.getMessage(),
-                selectedProducts,
-                null
+                selectedProducts
         );
     }
 
@@ -383,17 +70,6 @@ public class HomeController {
         AiSelectorRequest request = new AiSelectorRequest();
         request.setInput("beach day with toddler");
         return aiGenerateList(request);
-    }
-
-    private boolean isGoodProduct(ProductScore ps) {
-        return ps.getStrongMatches() >= 2
-                || (ps.getStrongMatches() >= 1 && ps.isSectionMatch() && ps.getScore() >= 6);
-    }
-
-    private boolean isPartialProduct(ProductScore ps) {
-        return (ps.getStrongMatches() == 0 && ps.getWeakMatches() >= 2 && ps.isSectionMatch())
-                || (ps.getStrongMatches() == 1 && !isGoodProduct(ps))
-                || (ps.getStrongMatches() == 0 && ps.isSectionMatch() && ps.getWeakMatches() >= 1);
     }
 }
 

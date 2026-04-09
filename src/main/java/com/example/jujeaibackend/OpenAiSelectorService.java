@@ -94,17 +94,17 @@ public class OpenAiSelectorService {
             AiSelectorResult fallback = new AiSelectorResult();
             fallback.setStatus("missing");
             fallback.setMessage("I couldn’t confidently match products for this request right now.");
-            fallback.setSelected_product_ids(List.of());
+            fallback.setSelectedProductIds(List.of());
             return fallback;
         }
     }
 
     private void normalizeResult(AiSelectorResult result) {
-        if (result.getSelected_product_ids() == null) {
-            result.setSelected_product_ids(List.of());
+        if (result.getSelectedProductIds() == null) {
+            result.setSelectedProductIds(List.of());
         }
 
-        if ("good".equalsIgnoreCase(result.getStatus()) && result.getSelected_product_ids().size() < 2) {
+        if ("good".equalsIgnoreCase(result.getStatus()) && result.getSelectedProductIds().size() < 2) {
             result.setStatus("partial");
         }
     }

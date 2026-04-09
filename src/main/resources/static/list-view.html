@@ -4,195 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>JUJE Saved List</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #FCF8F5;
-            color: #4B3F3A;
-            padding: 24px 16px;
-        }
-
-        .wrap {
-            max-width: 700px;
-            margin: 0 auto;
-            background: #FFFDFB;
-            border: 1px solid #EFE3DC;
-            border-radius: 24px;
-            padding: 24px;
-        }
-
-        h1 {
-            margin-top: 0;
-        }
-
-        .summary {
-            background: #FBF5F1;
-            border: 1px solid #EFE3DC;
-            border-radius: 16px;
-            padding: 14px;
-            margin: 18px 0 22px;
-        }
-
-        .chip {
-            display: inline-block;
-            background: #F6E7DF;
-            border-radius: 999px;
-            padding: 8px 12px;
-            margin: 4px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .product {
-            padding: 18px 0;
-            border-bottom: 1px solid #EFE3DC;
-        }
-
-        .product:last-child {
-            border-bottom: none;
-        }
-
-        .product-name {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .product-why {
-            color: #8A7B74;
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .product-link {
-            display: inline-block;
-            text-decoration: none;
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: #F6E7DF;
-            color: #4B3F3A;
-            font-weight: 700;
-        }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            border-radius: 16px;
-            background: #fff;
-            border: 1px solid #eee;
-            margin-bottom: 10px;
-        }
-
-        .product-left {
-            flex-shrink: 0;
-        }
-
-        .check-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e7c3b4, #d8afa0);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .product-content {
-            flex: 1;
-        }
-
-        .product-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .product-why {
-            color: #8A7B74;
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .product-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            min-width: 120px;
-            min-height: 40px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: #d8afa0;
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff;
-            font-weight: 700;
-            font-size: 13px;
-            line-height: 1;
-            text-decoration: none;
-            white-space: nowrap;
-            border: none;
-            box-shadow: 0 3px 8px rgba(216, 175, 160, 0.22);
-            transition: 0.2s ease;
-        }
-
-        .product-link:visited {
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff;
-        }
-
-        .product-link:hover,
-        .product-link:focus,
-        .product-link:active {
-            background: #c99a8a;
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff;
-            text-decoration: none;
-            transform: translateY(-1px);
-        }
-
-        .product-image img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<div class="wrap" id="content">
-    Loading saved list...
+
+<div class="app-shell">
+    <div class="app-card">
+
+        <div class="top-bar">
+            <div class="brand">
+                <img src="/logo.png" alt="JUJE logo"
+                     onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
+                <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
+            </div>
+        </div>
+
+        <div class="screen" id="content">
+            Loading saved list...
+        </div>
+
+    </div>
 </div>
 
 <script>
-    function prettyLabel(key) {
-        const labels = {
-            transport: "Travel",
-            age_groups: "Ages",
-            feeding: "Feeding",
-            trip_length: "Trip length",
-            place_type: "Place",
-            need_type: "Need",
-            play_type: "Play type",
-            location: "Location",
-            clarify: "Category"
-        };
-        return labels[key] || key;
-    }
-
     async function loadList() {
         const params = new URLSearchParams(window.location.search);
         const id = params.get("id");
         const content = document.getElementById("content");
 
         if (!id) {
-            content.innerHTML = "Missing list id.";
+            content.innerHTML = `
+                <div class="empty-state">
+                    Missing list id
+                </div>
+            `;
             return;
         }
 
@@ -201,14 +46,13 @@
             const data = await response.json();
 
             if (!data || !data.products) {
-                content.innerHTML = "List not found.";
+                content.innerHTML = `
+                    <div class="empty-state">
+                        List not found
+                    </div>
+                `;
                 return;
             }
-
-            const summaryHtml = Object.entries(data.answers || {}).map(([key, value]) => {
-                const displayValue = Array.isArray(value) ? value.join(", ") : value;
-                return `<span class="chip">${prettyLabel(key)}: ${displayValue}</span>`;
-            }).join("");
 
             const productsHtml = (data.products || []).map(product => `
                 <div class="product-item">
@@ -220,32 +64,49 @@
                     <div class="product-content">
                         <div class="product-title">${product.name}</div>
                         <div class="product-why">${product.why}</div>
-                        <a class="product-link" href="${product.link}" target="_blank">View product</a>
+
+                        <a class="product-link" href="${product.link}" target="_blank">
+                            View product →
+                        </a>
                     </div>
 
                     <div class="product-image">
                         <img src="${product.image}" alt="${product.name}" />
                     </div>
+
                 </div>
             `).join("");
 
             content.innerHTML = `
-                <h1>Your JUJE saved list ✨</h1>
-                <p>Originally created for: <strong>${data.input || "custom request"}</strong></p>
+                <div class="results-header">
+                    <h2 class="results-title">
+                        Your JUJE list ✨
+                    </h2>
 
-                <div class="summary">
-                    ${summaryHtml}
+                    <p class="results-subtitle">
+                        Created for: <strong>${data.input || "custom request"}</strong>
+                    </p>
                 </div>
 
-                ${productsHtml}
+                ${productsHtml || `
+                    <div class="empty-state">
+                        No saved products yet
+                    </div>
+                `}
             `;
+
         } catch (error) {
             console.error(error);
-            content.innerHTML = "Something went wrong while loading the list.";
+            content.innerHTML = `
+                <div class="empty-state">
+                    Something went wrong while loading the list
+                </div>
+            `;
         }
     }
 
     loadList();
 </script>
+
 </body>
 </html>

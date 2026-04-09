@@ -6,16 +6,14 @@ public class GeneratedListResponse {
     private String status;
     private String message;
     private List<Product> products;
-    private AiParseResult aiResult;
 
     public GeneratedListResponse() {
     }
 
-    public GeneratedListResponse(String status, String message, List<Product> products, AiParseResult aiResult) {
+    public GeneratedListResponse(String status, String message, List<Product> products) {
         this.status = status;
         this.message = message;
         this.products = products;
-        this.aiResult = aiResult;
     }
 
     public String getStatus() {
@@ -30,10 +28,6 @@ public class GeneratedListResponse {
         return products;
     }
 
-    public AiParseResult getAiResult() {
-        return aiResult;
-    }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -46,7 +40,5 @@ public class GeneratedListResponse {
         this.products = products;
     }
 
-    public void setAiResult(AiParseResult aiResult) {
-        this.aiResult = aiResult;
-    }
+
 }

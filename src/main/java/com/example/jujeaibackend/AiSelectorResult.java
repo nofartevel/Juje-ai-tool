@@ -1,12 +1,15 @@
 package com.example.jujeaibackend;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AiSelectorResult {
-    private String status; // good / partial / missing
+    private String status;
     private String message;
-    private List<String> selected_product_ids = new ArrayList<>();
+
+    @JsonProperty("selected_product_ids")
+    private List<String> selectedProductIds = new ArrayList<>();
 
     public AiSelectorResult() {
     }
@@ -19,8 +22,8 @@ public class AiSelectorResult {
         return message;
     }
 
-    public List<String> getSelected_product_ids() {
-        return selected_product_ids;
+    public List<String> getSelectedProductIds() {
+        return selectedProductIds;
     }
 
     public void setStatus(String status) {
@@ -31,7 +34,7 @@ public class AiSelectorResult {
         this.message = message;
     }
 
-    public void setSelected_product_ids(List<String> selected_product_ids) {
-        this.selected_product_ids = selected_product_ids != null ? selected_product_ids : new ArrayList<>();
+    public void setSelectedProductIds(List<String> selectedProductIds) {
+        this.selectedProductIds = selectedProductIds != null ? selectedProductIds : new ArrayList<>();
     }
 }

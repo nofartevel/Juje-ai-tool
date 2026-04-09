@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/styles.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>JUJE Lists</title>
+    <title>JUJE</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
 <div class="app-shell">
     <div class="app-card">
+
         <div class="top-bar">
             <div class="brand">
-                <img src="/logo.png" alt="JUJE logo" onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
+                <img src="/logo.png" alt="JUJE logo"
+                     onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
                 <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
             </div>
+
             <div class="progress-wrap">
-                <div id="progressBar" class="progress-bar"></div>
+                <div class="progress-bar" id="progressBar"></div>
             </div>
         </div>
 
-        <div id="screen" class="screen"></div>
+        <div class="screen" id="screen"></div>
+
     </div>
 </div>
 
 <script>
-    let flowData = null;
-    let currentQuestionIndex = 0;
-    let selectedAnswers = {};
-    let userIntent = "";
     let userInputText = "";
     let currentProducts = [];
-    let savedListId = null;
 
     function updateProgress(value) {
         document.getElementById("progressBar").style.width = value + "%";
@@ -42,29 +42,27 @@
         const screen = document.getElementById("screen");
 
         screen.innerHTML = `
-        <div class="hero">
-            <!--<div class="logo">juje</div>-->
+            <div class="hero">
+                <h1 class="hero-title">
+                    Smart lists for real mom life 💛
+                </h1>
 
-            <h1 class="hero-title">
-                Smart lists for real mom life 💛
-            </h1>
+                <p class="hero-subtitle">
+                    Tell me what you need — I’ll build you a smart list in seconds.
+                </p>
 
-            <p class="hero-subtitle">
-                From travel to beach days to everyday chaos — I’ll help you build a practical list in seconds.
-            </p>
+                <input
+                    id="userInput"
+                    class="input"
+                    type="text"
+                    placeholder="Try: beach day with toddler, flight with baby..."
+                />
 
-            <input
-                id="userInput"
-                class="input"
-                type="text"
-                placeholder="Try: beach day with baby, bath time setup..."
-            />
-
-            <button class="btn btn-primary btn-full" onclick="startFlow()">
-                Build my list ✨
-            </button>
-        </div>
-    `;
+                <button class="btn btn-primary btn-full" onclick="startFlow()">
+                    Build my list ✨
+                </button>
+            </div>
+        `;
     }
 
     async function startFlow() {
@@ -72,252 +70,62 @@
         const input = inputEl.value.trim();
 
         if (!input) {
-            alert("Please tell me a little about what you need 😊");
+            alert("Please tell me what you need 😊");
             return;
         }
 
         userInputText = input;
-        selectedAnswers = {};
-        currentQuestionIndex = 0;
-        currentProducts = [];
 
         const screen = document.getElementById("screen");
+
         screen.innerHTML = `
             <div class="loading-wrap">
                 <div class="spinner"></div>
-                <h2>Understanding your request…</h2>
-                <p class="subtitle">Just a second while I prepare the right flow for you.</p>
+                <h2>Building your list… ✨</h2>
+                <p class="subtitle">Just a second while I find the best matches</p>
             </div>
         `;
-        updateProgress(16);
+
+        updateProgress(60);
 
         try {
-            const response = await fetch(`/flow?input=${encodeURIComponent(input)}`);
-            flowData = await response.json();
-            userIntent = flowData.intent || "general";
-
-            if (!flowData.questions || !flowData.questions.length) {
-                renderNoQuestionsState();
-                return;
-            }
-
-            renderQuestionScreen();
-        } catch (error) {
-            screen.innerHTML = `<p class="empty-state">Something went wrong while starting the flow.</p>`;
-            console.error(error);
-        }
-    }
-
-    function renderNoQuestionsState() {
-        const screen = document.getElementById("screen");
-        updateProgress(30);
-
-        screen.innerHTML = `
-            <div class="eyebrow">Not enough detail yet</div>
-            <h2>I need a little more direction</h2>
-            <p class="subtitle">
-                Try something like “trip with baby”, “park essentials”, or “quiet play ideas”.
-            </p>
-            <div class="actions">
-                <button class="btn btn-secondary" onclick="renderIntroScreen()">Back</button>
-            </div>
-        `;
-    }
-
-    function renderQuestionScreen() {
-        const screen = document.getElementById("screen");
-        const question = flowData.questions[currentQuestionIndex];
-        const selectedValue = selectedAnswers[question.id];
-
-        const totalSteps = flowData.questions.length;
-        const progress = 20 + ((currentQuestionIndex + 1) / totalSteps) * 45;
-        updateProgress(progress);
-
-        const optionsHtml = question.options.map(option => {
-            let isSelected = false;
-
-            if (question.type === "multi-select") {
-                const selectedArray = selectedAnswers[question.id] || [];
-                isSelected = selectedArray.includes(option);
-            } else {
-                isSelected = selectedValue === option;
-            }
-
-            return `
-            <button
-                type="button"
-                class="option-card ${isSelected ? 'selected' : ''}"
-                onclick="selectOption('${question.id}', '${escapeSingleQuotes(option)}', '${question.type}')"
-            >
-                ${option}
-            </button>
-        `;
-        }).join("");
-
-        screen.innerHTML = `
-        <div class="eyebrow">${capitalize(userIntent)} list</div>
-
-        <div class="question-title">
-            ${question.text}
-        </div>
-
-        <div class="question-subtitle">
-            Just pick what feels right 💛
-        </div>
-
-        <div class="options">
-            ${optionsHtml}
-        </div>
-
-        <div class="step-counter">
-            Step ${currentQuestionIndex + 1} of ${totalSteps}
-        </div>
-
-        <div class="footer-actions">
-            <button
-                class="btn btn-secondary"
-                onclick="goBack()"
-                ${currentQuestionIndex === 0 ? 'disabled style="opacity:.55;cursor:not-allowed;"' : ''}
-            >
-                Back
-            </button>
-
-            <button class="btn btn-primary" onclick="goNext()">
-                ${currentQuestionIndex === totalSteps - 1 ? 'Build my list ✨' : 'Next'}
-            </button>
-        </div>
-    `;
-    }
-
-    function selectOption(questionId, answer, questionType) {
-        if (questionType === "multi-select") {
-            const currentValues = selectedAnswers[questionId] || [];
-
-            if (currentValues.includes(answer)) {
-                selectedAnswers[questionId] = currentValues.filter(item => item !== answer);
-            } else {
-                selectedAnswers[questionId] = [...currentValues, answer];
-            }
-        } else {
-            selectedAnswers[questionId] = answer;
-        }
-
-        renderQuestionScreen();
-    }
-
-    function goBack() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            renderQuestionScreen();
-        } else {
-            renderIntroScreen();
-        }
-    }
-
-    async function goNext() {
-        const question = flowData.questions[currentQuestionIndex];
-
-        const answer = selectedAnswers[question.id];
-
-        if (
-            !answer ||
-            (Array.isArray(answer) && answer.length === 0)
-        ) {
-            alert("Please choose at least one option before continuing 😊");
-            return;
-        }
-
-        if (currentQuestionIndex < flowData.questions.length - 1) {
-            currentQuestionIndex++;
-            renderQuestionScreen();
-            return;
-        }
-
-        await buildList();
-    }
-
-    async function buildList() {
-        const screen = document.getElementById("screen");
-        updateProgress(78);
-
-        screen.innerHTML = `
-            <div class="loader">
-                <div class="spinner"></div>
-
-                <div class="loader-title">
-                    Putting your list together… ✨
-                </div>
-
-                <div class="loader-subtitle">
-                    This will just take a second
-                </div>
-            </div>
-        `;
-
-        try {
-            const response = await fetch("/recommend-from-answers", {
+            const response = await fetch("/ai-generate-list", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(selectedAnswers)
+                body: JSON.stringify({
+                    input: input
+                })
             });
 
             const data = await response.json();
-            currentProducts = data || [];
-            renderResultsScreen();
+
+            currentProducts = data.products || [];
+
+            renderResultsScreen(data);
+
         } catch (error) {
-            screen.innerHTML = `<p class="empty-state">Something went wrong while building your list.</p>`;
             console.error(error);
+            screen.innerHTML = `
+                <div class="empty-state">
+                    Something went wrong
+                </div>
+            `;
         }
     }
 
-    function renderResultsScreen() {
+    function renderResultsScreen(data) {
         const screen = document.getElementById("screen");
         updateProgress(100);
 
-        const summaryEntries = Object.entries(selectedAnswers).map(([key, value]) => {
-            const displayValue = Array.isArray(value) ? value.join(", ") : value;
-            return `<div class="summary-chip">${prettyLabel(key)}: ${displayValue}</div>`;
-        }).join("");
+        const statusText = {
+            good: "Perfect match 💛",
+            partial: "Almost there ✨",
+            missing: "Still building this 💭"
+        };
 
-        if (!currentProducts.length) {
-            screen.innerHTML = `
-                <div class="results-header">
-                    <div class="eyebrow">Made just for you</div>
-
-                    <h2 class="results-title">
-                        Your JUJE list ✨
-                    </h2>
-
-                    <p class="results-subtitle">
-                        Here’s a simple, practical list to make things feel easier 💛
-                    </p>
-                </div>
-
-                <div class="chosen-summary">
-                    <div class="chosen-summary-title">Your setup</div>
-                    <div class="summary-chip-wrap">
-                        ${summaryEntries}
-                    </div>
-                </div>
-
-                ${productsHtml}
-
-                <div class="footer-actions">
-                    <button class="btn btn-secondary" onclick="restartFlow()">
-                        Start over
-                    </button>
-
-                    <button class="btn btn-primary" onclick="saveCurrentList()">
-                        Save this list 💛
-                    </button>
-                </div>
-            `;
-            return;
-        }
-
-        const productsHtml = currentProducts.map(p => `
+        const productsHtml = (data.products || []).map(p => `
             <div class="product-item">
 
                 <div class="product-left">
@@ -325,13 +133,8 @@
                 </div>
 
                 <div class="product-content">
-                    <div class="product-title">
-                        ${p.name}
-                    </div>
-
-                    <div class="product-why">
-                        ${p.why}
-                    </div>
+                    <div class="product-title">${p.name}</div>
+                    <div class="product-why">${p.why}</div>
 
                     <a href="${p.link}" target="_blank" class="product-link">
                         See product →
@@ -339,7 +142,7 @@
                 </div>
 
                 <div class="product-image">
-                    <img src="${p.image}" alt="${p.name}" />
+                    <img src="${p.image}" />
                 </div>
 
             </div>
@@ -347,61 +150,29 @@
 
         screen.innerHTML = `
             <div class="results-header">
-                <div class="eyebrow">Personalized for you</div>
-                <h2 class="results-title">Your JUJE list ✨</h2>
+                <div class="eyebrow">${statusText[data.status] || ""}</div>
+
+                <h2 class="results-title">
+                    Your JUJE list ✨
+                </h2>
+
                 <p class="results-subtitle">
-                    Based on your answers, here are some helpful picks to make life easier and more organized.
+                    ${data.message}
                 </p>
             </div>
 
-            <div class="chosen-summary">
-                <div class="chosen-summary-title">Your selections</div>
-                <div class="summary-chip-wrap">${summaryEntries}</div>
-            </div>
-
-            ${productsHtml}
+            ${productsHtml || `<div class="empty-state">No products found</div>`}
 
             <div class="footer-actions">
-                <button class="btn btn-secondary" onclick="restartFlow()">Start over</button>
+                <button class="btn btn-secondary" onclick="renderIntroScreen()">
+                    Start over
+                </button>
+
                 <button class="btn btn-primary" onclick="shareList()">
-                    Share this list ✨
+                    Save / Share 💛
                 </button>
             </div>
         `;
-    }
-
-    function restartFlow() {
-        flowData = null;
-        currentQuestionIndex = 0;
-        selectedAnswers = {};
-        userIntent = "";
-        userInputText = "";
-        currentProducts = [];
-        renderIntroScreen();
-    }
-
-    function capitalize(text) {
-        if (!text) return "";
-        return text.charAt(0).toUpperCase() + text.slice(1);
-    }
-
-    function prettyLabel(key) {
-        const labels = {
-            transport: "Travel",
-            age_groups: "Ages",
-            feeding: "Feeding",
-            trip_length: "Trip length",
-            place_type: "Place",
-            need_type: "Need",
-            play_type: "Play type",
-            location: "Location",
-            clarify: "Category"
-        };
-        return labels[key] || key;
-    }
-
-    function escapeSingleQuotes(str) {
-        return str.replace(/'/g, "\\'");
     }
 
     async function shareList() {
@@ -413,8 +184,6 @@
                 },
                 body: JSON.stringify({
                     input: userInputText,
-                    intent: userIntent,
-                    answers: selectedAnswers,
                     products: currentProducts
                 })
             });
@@ -422,7 +191,6 @@
             const data = await response.json();
             const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
 
-            // אם יש תמיכה (מובייל)
             if (navigator.share) {
                 await navigator.share({
                     title: "My JUJE list",
@@ -435,11 +203,12 @@
 
         } catch (error) {
             console.error(error);
-            alert("Something went wrong");
+            alert("Something went wrong while saving");
         }
     }
 
     renderIntroScreen();
 </script>
+
 </body>
 </html>
