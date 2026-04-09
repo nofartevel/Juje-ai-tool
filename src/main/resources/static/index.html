@@ -31,9 +31,20 @@
 <script>
     let userInputText = "";
     let currentProducts = [];
+    let isLoading = false;
 
     function updateProgress(value) {
         document.getElementById("progressBar").style.width = value + "%";
+    }
+
+    function escapeHtml(text) {
+        if (!text) return "";
+        return text
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
     function renderIntroScreen() {
@@ -43,12 +54,14 @@
 
         screen.innerHTML = `
             <div class="hero">
+                <div class="eyebrow">Smart product lists</div>
+
                 <h1 class="hero-title">
                     Smart lists for real mom life 💛
                 </h1>
 
                 <p class="hero-subtitle">
-                    Tell me what you need — I’ll build you a smart list in seconds.
+                    Tell me what you need, and I’ll pull together a practical list from the products already in the JUJE bank.
                 </p>
 
                 <input
@@ -56,17 +69,65 @@
                     class="input"
                     type="text"
                     placeholder="Try: beach day with toddler, flight with baby..."
+                    autocomplete="off"
                 />
 
-                <button class="btn btn-primary btn-full" onclick="startFlow()">
+                <button id="buildBtn" class="btn btn-primary btn-full" onclick="startFlow()">
                     Build my list ✨
                 </button>
+
+                <div class="chosen-summary" style="margin-top:18px;">
+                    <div class="chosen-summary-title">Try one of these</div>
+                    <div class="summary-chip-wrap">
+                        <button type="button" class="summary-chip" onclick="fillExample('beach day with toddler')">beach day with toddler</button>
+                        <button type="button" class="summary-chip" onclick="fillExample('flight with baby')">flight with baby</button>
+                        <button type="button" class="summary-chip" onclick="fillExample('diaper bag essentials')">diaper bag essentials</button>
+                        <button type="button" class="summary-chip" onclick="fillExample('pool day with baby')">pool day with baby</button>
+                    </div>
+                </div>
             </div>
         `;
+
+        const input = document.getElementById("userInput");
+        input.focus();
+
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                startFlow();
+            }
+        });
+    }
+
+    function fillExample(text) {
+        const input = document.getElementById("userInput");
+        if (!input) return;
+        input.value = text;
+        input.focus();
+    }
+
+    function setLoadingState(loading) {
+        isLoading = loading;
+
+        const button = document.getElementById("buildBtn");
+        const input = document.getElementById("userInput");
+
+        if (button) {
+            button.disabled = loading;
+            button.style.opacity = loading ? "0.7" : "1";
+            button.style.cursor = loading ? "wait" : "pointer";
+        }
+
+        if (input) {
+            input.disabled = loading;
+        }
     }
 
     async function startFlow() {
+        if (isLoading) return;
+
         const inputEl = document.getElementById("userInput");
+        if (!inputEl) return;
+
         const input = inputEl.value.trim();
 
         if (!input) {
@@ -75,6 +136,7 @@
         }
 
         userInputText = input;
+        setLoadingState(true);
 
         const screen = document.getElementById("screen");
 
@@ -82,11 +144,11 @@
             <div class="loading-wrap">
                 <div class="spinner"></div>
                 <h2>Building your list… ✨</h2>
-                <p class="subtitle">Just a second while I find the best matches</p>
+                <p class="subtitle">Looking for the best matches in your product bank</p>
             </div>
         `;
 
-        updateProgress(60);
+        updateProgress(62);
 
         try {
             const response = await fetch("/ai-generate-list", {
@@ -99,19 +161,38 @@
                 })
             });
 
-            const data = await response.json();
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
 
+            const data = await response.json();
             currentProducts = data.products || [];
 
             renderResultsScreen(data);
 
         } catch (error) {
             console.error(error);
+
             screen.innerHTML = `
-                <div class="empty-state">
-                    Something went wrong
+                <div class="results-header">
+                    <div class="eyebrow">Something went wrong</div>
+                    <h2 class="results-title">Couldn’t build the list</h2>
+                    <p class="results-subtitle">
+                        Please try again in a second.
+                    </p>
+                </div>
+
+                <div class="footer-actions">
+                    <button class="btn btn-secondary" onclick="renderIntroScreen()">
+                        Back
+                    </button>
+                    <button class="btn btn-primary" onclick="renderIntroScreen()">
+                        Try again
+                    </button>
                 </div>
             `;
+        } finally {
+            setLoadingState(false);
         }
     }
 
@@ -119,56 +200,98 @@
         const screen = document.getElementById("screen");
         updateProgress(100);
 
-        const statusText = {
-            good: "Perfect match 💛",
-            partial: "Almost there ✨",
-            missing: "Still building this 💭"
+        const statusMap = {
+            good: {
+                eyebrow: "Perfect match 💛",
+                title: "Your JUJE list ✨"
+            },
+            partial: {
+                eyebrow: "Almost there ✨",
+                title: "A good starting list"
+            },
+            missing: {
+                eyebrow: "Still building this 💭",
+                title: "Not enough strong matches yet"
+            }
         };
+
+        const statusUi = statusMap[data.status] || {
+            eyebrow: "",
+            title: "Your JUJE list ✨"
+        };
+
+        const safeMessage = escapeHtml(data.message || "");
+        const safeInput = escapeHtml(userInputText);
 
         const productsHtml = (data.products || []).map(p => `
             <div class="product-item">
-
                 <div class="product-left">
                     <div class="check-icon">✔</div>
                 </div>
 
                 <div class="product-content">
-                    <div class="product-title">${p.name}</div>
-                    <div class="product-why">${p.why}</div>
+                    <div class="product-title">${escapeHtml(p.name)}</div>
+                    <div class="product-why">${escapeHtml(p.why)}</div>
 
-                    <a href="${p.link}" target="_blank" class="product-link">
+                    <a href="${p.link}" target="_blank" class="product-link" rel="noopener noreferrer">
                         See product →
                     </a>
                 </div>
 
                 <div class="product-image">
-                    <img src="${p.image}" />
+                    <img src="${p.image}" alt="${escapeHtml(p.name)}" />
                 </div>
-
             </div>
         `).join("");
 
+        const helperCard = data.status === "partial"
+            ? `
+                <div class="chosen-summary">
+                    <div class="chosen-summary-title">What this means</div>
+                    <div class="results-subtitle">
+                        I found a few relevant items, but your current product bank does not fully cover this kind of request yet.
+                    </div>
+                </div>
+            `
+            : data.status === "missing"
+                ? `
+                    <div class="chosen-summary">
+                        <div class="chosen-summary-title">What this means</div>
+                        <div class="results-subtitle">
+                            I don’t have strong enough products in the bank for this request yet, so I’d rather be honest than force weak matches.
+                        </div>
+                    </div>
+                `
+                : "";
+
         screen.innerHTML = `
             <div class="results-header">
-                <div class="eyebrow">${statusText[data.status] || ""}</div>
+                <div class="eyebrow">${statusUi.eyebrow}</div>
 
                 <h2 class="results-title">
-                    Your JUJE list ✨
+                    ${statusUi.title}
                 </h2>
 
                 <p class="results-subtitle">
-                    ${data.message}
+                    ${safeMessage}
                 </p>
             </div>
 
-            ${productsHtml || `<div class="empty-state">No products found</div>`}
+            <div class="chosen-summary">
+                <div class="chosen-summary-title">Your request</div>
+                <div class="results-subtitle">${safeInput}</div>
+            </div>
+
+            ${helperCard}
+
+            ${productsHtml || `<div class="empty-state">No products found for this request yet.</div>`}
 
             <div class="footer-actions">
                 <button class="btn btn-secondary" onclick="renderIntroScreen()">
                     Start over
                 </button>
 
-                <button class="btn btn-primary" onclick="shareList()">
+                <button class="btn btn-primary" onclick="shareList()" ${currentProducts.length === 0 ? 'disabled style="opacity:.65;cursor:not-allowed;"' : ''}>
                     Save / Share 💛
                 </button>
             </div>
@@ -176,6 +299,10 @@
     }
 
     async function shareList() {
+        if (!currentProducts.length) {
+            return;
+        }
+
         try {
             const response = await fetch("/save-list", {
                 method: "POST",
@@ -187,6 +314,10 @@
                     products: currentProducts
                 })
             });
+
+            if (!response.ok) {
+                throw new Error("Save failed");
+            }
 
             const data = await response.json();
             const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;

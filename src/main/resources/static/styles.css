@@ -477,3 +477,21 @@ h2 {
         width: 100%;
     }
 }
+
+.summary-chip {
+    background: var(--secondary);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.summary-chip:hover {
+    border-color: var(--primary);
+    background: #fff8f4;
+    transform: translateY(-1px);
+}
