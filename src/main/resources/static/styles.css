@@ -33,6 +33,10 @@ body {
     min-height: 100vh;
 }
 
+.logo {
+    height: 36px;
+}
+
 img {
     display: block;
     max-width: 100%;
@@ -71,7 +75,7 @@ input {
 }
 
 .brand img {
-    height: 42px;
+    height: 80px;
     max-width: 140px;
     object-fit: contain;
     margin: 0 auto;
@@ -85,20 +89,13 @@ input {
     font-weight: 700;
 }
 
-.progress-wrap {
-    margin-top: 18px;
-    background: #F3E7E0;
-    border-radius: 999px;
-    height: 8px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    width: 0;
+.top-divider {
+    height: 4px;
+    width: 60px;
     background: var(--primary);
     border-radius: 999px;
-    transition: width 0.35s ease;
+    margin: 12px auto 6px;
+    opacity: 0.5;
 }
 
 .screen {
@@ -263,12 +260,14 @@ h2 {
 
 .results-header {
     margin-bottom: 18px;
+    text-align: center;
 }
 
 .results-title {
     font-size: 28px;
     margin: 0 0 10px;
     line-height: 1.2;
+    text-align: center;
 }
 
 .product-item {
@@ -349,14 +348,14 @@ h2 {
     justify-content: center;
     gap: 6px;
     min-width: 120px;
-    min-height: 40px;
-    padding: 10px 16px;
+    min-height: 34px;
+    padding: 8px 12px;
     border-radius: 999px;
     background: var(--primary);
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
@@ -462,6 +461,10 @@ h2 {
     .product-item {
         align-items: flex-start;
     }
+    .product-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
 
     .product-image img {
         width: 56px;
@@ -494,4 +497,126 @@ h2 {
     border-color: var(--primary);
     background: #fff8f4;
     transform: translateY(-1px);
+}
+.status-card {
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid var(--border);
+}
+
+.status-good {
+    background: #F6FBF8;
+    border-color: #D6EDE2;
+}
+
+.status-partial {
+    background: #FFF8F4;
+    border-color: #F1D8CC;
+}
+
+.status-missing {
+    background: #FDF3F3;
+    border-color: #EED0D0;
+}
+
+.results-header-clean {
+    margin-bottom: 18px;
+}
+
+.results-request {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.product-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: 0.2s ease;
+    animation: fadeInUp 0.4s ease forwards;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.product-card:nth-of-type(1) { animation-delay: 0.05s; }
+.product-card:nth-of-type(2) { animation-delay: 0.1s; }
+.product-card:nth-of-type(3) { animation-delay: 0.15s; }
+.product-card:nth-of-type(4) { animation-delay: 0.2s; }
+.product-card:nth-of-type(5) { animation-delay: 0.25s; }
+
+.product-card-image-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f8f3ef;
+    overflow: hidden;
+}
+
+.product-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-card-body {
+    padding: 12px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.product-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.product-card-why {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.product-card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+}
+
+
+@media (max-width: 640px) {
+    .products-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .product-card-title {
+        font-size: 15px;
+    }
+
+    .product-card-why {
+        font-size: 13px;
+    }
 }

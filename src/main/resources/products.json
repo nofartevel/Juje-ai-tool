@@ -108,5 +108,103 @@
     "why": "Keeps meals and snacks organized and easy to carry",
     "keywords": ["bento box", "snacks", "meal prep", "container"],
     "use_cases": ["travel", "day out", "meal prep", "snacks on the go"]
+  },
+  {
+    "id": "beach_toy_set_1",
+    "name": "19-Piece Beach Toy Set with Bucket & Mesh Bag",
+    "link": "https://amzn.to/4cA5WLD",
+    "image": "https://m.media-amazon.com/images/I/81oCBPYaWPL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Keeps toddlers busy and happy at the beach with simple, engaging sand play",
+    "keywords": [
+      "beach toys",
+      "sand toys",
+      "toddler",
+      "summer"
+    ],
+    "use_cases": [
+      "beach day"
+    ]
+  },
+  {
+    "id": "baby_beach_tent_1",
+    "name": "Baby Beach Tent with UV Protection & Mini Pool",
+    "link": "https://amzn.to/4tLbed9",
+    "image": "https://m.media-amazon.com/images/I/81BO6rpR0ML._AC_SL1500_.jpg",
+    "section": "outdoor",
+    "why": "Creates a shaded, safe spot for babies to play at the beach, with built-in mini pool for water play",
+    "keywords": [
+      "beach tent",
+      "baby shade",
+      "uv protection",
+      "baby",
+      "sun protection"
+    ],
+    "use_cases": [
+      "beach day",
+      "pool day",
+      "outdoor day"
+    ]
+  },
+  {
+    "id": "swim_diaper_1",
+    "name": "Pampers Splashers Swim Diapers",
+    "link": "https://amzn.to/3Q0Zogo",
+    "image": "https://m.media-amazon.com/images/I/812JzwkSlGL._AC_SL1500_.jpg",
+    "section": "diapering",
+    "why": "Essential for safe water play — won’t swell in water like regular diapers",
+    "keywords": [
+      "swim diaper",
+      "baby",
+      "water",
+      "beach",
+      "pool"
+    ],
+    "use_cases": [
+      "beach day",
+      "pool day"
+    ]
+  },
+  {
+    "id": "baby_sunscreen_1",
+    "name": "Baby Bum SPF 50 Mineral Sunscreen Lotion",
+    "link": "https://amzn.to/4tACxGO",
+    "image": "https://m.media-amazon.com/images/I/810dFJTjawL._SL1500_.jpg",
+    "section": "care",
+    "why": "Protects baby's sensitive skin from strong sun exposure during outdoor and beach days",
+    "keywords": [
+      "baby sunscreen",
+      "spf 50",
+      "sun protection",
+      "mineral",
+      "sensitive skin"
+    ],
+    "use_cases": [
+      "beach day",
+      "pool day",
+      "outdoor day",
+      "travel"
+    ]
+  },
+  {
+    "id": "beach_mat_1",
+    "name": "Sandproof Waterproof Beach Blanket",
+    "link": "https://amzn.to/3QzEtRB",
+    "image": "https://m.media-amazon.com/images/I/81VvwgeiZ5L._AC_SL1500_.jpg",
+    "section": "outdoor",
+    "why": "Creates a clean, sand-free space to sit, relax, and play at the beach",
+    "keywords": [
+      "beach mat",
+      "beach blanket",
+      "sandproof",
+      "outdoor",
+      "family"
+    ],
+    "use_cases": [
+      "beach day",
+      "picnic",
+      "outdoor day",
+      "travel"
+    ]
   }
 ]

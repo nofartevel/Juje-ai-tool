@@ -13,13 +13,9 @@
 
         <div class="top-bar">
             <div class="brand">
-                <img src="/logo.png" alt="JUJE logo"
+                <img src="/logo.png" alt="JUJE logo" class="logo"
                      onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
                 <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
-            </div>
-
-            <div class="progress-wrap">
-                <div class="progress-bar" id="progressBar"></div>
             </div>
         </div>
 
@@ -33,10 +29,6 @@
     let currentProducts = [];
     let isLoading = false;
 
-    function updateProgress(value) {
-        document.getElementById("progressBar").style.width = value + "%";
-    }
-
     function escapeHtml(text) {
         if (!text) return "";
         return text
@@ -48,8 +40,6 @@
     }
 
     function renderIntroScreen() {
-        updateProgress(0);
-
         const screen = document.getElementById("screen");
 
         screen.innerHTML = `
@@ -75,16 +65,6 @@
                 <button id="buildBtn" class="btn btn-primary btn-full" onclick="startFlow()">
                     Build my list ✨
                 </button>
-
-                <div class="chosen-summary" style="margin-top:18px;">
-                    <div class="chosen-summary-title">Try one of these</div>
-                    <div class="summary-chip-wrap">
-                        <button type="button" class="summary-chip" onclick="fillExample('beach day with toddler')">beach day with toddler</button>
-                        <button type="button" class="summary-chip" onclick="fillExample('flight with baby')">flight with baby</button>
-                        <button type="button" class="summary-chip" onclick="fillExample('diaper bag essentials')">diaper bag essentials</button>
-                        <button type="button" class="summary-chip" onclick="fillExample('pool day with baby')">pool day with baby</button>
-                    </div>
-                </div>
             </div>
         `;
 
@@ -96,13 +76,6 @@
                 startFlow();
             }
         });
-    }
-
-    function fillExample(text) {
-        const input = document.getElementById("userInput");
-        if (!input) return;
-        input.value = text;
-        input.focus();
     }
 
     function setLoadingState(loading) {
@@ -147,8 +120,6 @@
                 <p class="subtitle">Looking for the best matches in your product bank</p>
             </div>
         `;
-
-        updateProgress(62);
 
         try {
             const response = await fetch("/ai-generate-list", {
@@ -198,104 +169,45 @@
 
     function renderResultsScreen(data) {
         const screen = document.getElementById("screen");
-        updateProgress(100);
-
-        const statusMap = {
-            good: {
-                eyebrow: "Perfect match 💛",
-                title: "Your JUJE list ✨"
-            },
-            partial: {
-                eyebrow: "Almost there ✨",
-                title: "A good starting list"
-            },
-            missing: {
-                eyebrow: "Still building this 💭",
-                title: "Not enough strong matches yet"
-            }
-        };
-
-        const statusUi = statusMap[data.status] || {
-            eyebrow: "",
-            title: "Your JUJE list ✨"
-        };
-
-        const safeMessage = escapeHtml(data.message || "");
         const safeInput = escapeHtml(userInputText);
 
         const productsHtml = (data.products || []).map(p => `
-            <div class="product-item">
-                <div class="product-left">
-                    <div class="check-icon">✔</div>
-                </div>
+        <div class="product-card">
+            <div class="product-card-image-wrap">
+                <img class="product-card-image" src="${p.image}" alt="${escapeHtml(p.name)}" />
+            </div>
 
-                <div class="product-content">
-                    <div class="product-title">${escapeHtml(p.name)}</div>
-                    <div class="product-why">${escapeHtml(p.why)}</div>
+            <div class="product-card-body">
+                <div class="product-card-title">${escapeHtml(p.name)}</div>
 
+                <div class="product-card-footer">
                     <a href="${p.link}" target="_blank" class="product-link" rel="noopener noreferrer">
                         See product →
                     </a>
                 </div>
-
-                <div class="product-image">
-                    <img src="${p.image}" alt="${escapeHtml(p.name)}" />
-                </div>
             </div>
-        `).join("");
-
-        const helperCard = data.status === "partial"
-            ? `
-                <div class="chosen-summary">
-                    <div class="chosen-summary-title">What this means</div>
-                    <div class="results-subtitle">
-                        I found a few relevant items, but your current product bank does not fully cover this kind of request yet.
-                    </div>
-                </div>
-            `
-            : data.status === "missing"
-                ? `
-                    <div class="chosen-summary">
-                        <div class="chosen-summary-title">What this means</div>
-                        <div class="results-subtitle">
-                            I don’t have strong enough products in the bank for this request yet, so I’d rather be honest than force weak matches.
-                        </div>
-                    </div>
-                `
-                : "";
+        </div>
+    `).join("");
 
         screen.innerHTML = `
-            <div class="results-header">
-                <div class="eyebrow">${statusUi.eyebrow}</div>
+        <div class="results-header results-header-clean">
+            <h2 class="results-title">A list just for you 💛</h2>
+        </div>
 
-                <h2 class="results-title">
-                    ${statusUi.title}
-                </h2>
-
-                <p class="results-subtitle">
-                    ${safeMessage}
-                </p>
-            </div>
-
-            <div class="chosen-summary">
-                <div class="chosen-summary-title">Your request</div>
-                <div class="results-subtitle">${safeInput}</div>
-            </div>
-
-            ${helperCard}
-
+        <div class="products-grid">
             ${productsHtml || `<div class="empty-state">No products found for this request yet.</div>`}
+        </div>
 
-            <div class="footer-actions">
-                <button class="btn btn-secondary" onclick="renderIntroScreen()">
-                    Start over
-                </button>
+        <div class="footer-actions">
+            <button class="btn btn-secondary" onclick="renderIntroScreen()">
+                Start over
+            </button>
 
-                <button class="btn btn-primary" onclick="shareList()" ${currentProducts.length === 0 ? 'disabled style="opacity:.65;cursor:not-allowed;"' : ''}>
-                    Save / Share 💛
-                </button>
-            </div>
-        `;
+            <button class="btn btn-primary" onclick="shareList()" ${currentProducts.length === 0 ? 'disabled style="opacity:.65;cursor:not-allowed;"' : ''}>
+                Save / Share 💛
+            </button>
+        </div>
+    `;
     }
 
     async function shareList() {
