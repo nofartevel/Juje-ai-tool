@@ -5,9 +5,9 @@
     "link": "https://amzn.to/4tjc68E",
     "image": "https://m.media-amazon.com/images/I/71gJQd4LLmL._AC_SL1500_.jpg",
     "section": "sleep",
-    "why": "Turns the seat into a flat surface so your child can actually sleep comfortably on flights",
-    "keywords": ["airplane bed", "sleep", "flight", "leg rest", "travel pillow"],
-    "use_cases": ["flight", "long flight", "night flight", "travel sleep"]
+    "why": "Turns the seat into a flat surface so your child can sleep comfortably on flights",
+    "keywords": ["airplane bed", "sleep", "flight", "leg rest"],
+    "use_cases": ["flight", "sleep"]
   },
   {
     "id": "changing_pad",
@@ -15,9 +15,9 @@
     "link": "https://amzn.to/3O3SUfY",
     "image": "https://m.media-amazon.com/images/I/81YhRtOzjML._SL1500_.jpg",
     "section": "diapering",
-    "why": "Makes diaper changes anywhere clean and easy — especially when you're outside",
-    "keywords": ["diaper", "changing", "portable", "baby", "outdoor"],
-    "use_cases": ["travel", "outdoor day", "beach day", "on the go"]
+    "why": "Makes diaper changes anywhere clean and easy",
+    "keywords": ["diaper", "changing", "portable", "baby"],
+    "use_cases": ["travel", "on the go"]
   },
   {
     "id": "wet_dry_bag",
@@ -25,9 +25,9 @@
     "link": "https://amzn.to/4sAGV8J",
     "image": "https://m.media-amazon.com/images/I/71b2dsvBGBL._SL1500_.jpg",
     "section": "organization",
-    "why": "Keeps wet, dirty, and clean items separated — perfect for messy days",
-    "keywords": ["wet bag", "diapers", "dirty clothes", "storage", "waterproof"],
-    "use_cases": ["beach day", "pool day", "travel", "diaper bag", "spare clothes"]
+    "why": "Keeps wet and dry items separated during messy days",
+    "keywords": ["wet bag", "storage", "waterproof", "diapers"],
+    "use_cases": ["beach day", "travel"]
   },
   {
     "id": "travel_tray",
@@ -35,9 +35,9 @@
     "link": "https://amzn.to/4sHRR4D",
     "image": "https://m.media-amazon.com/images/I/81t+xZ7QMDL._AC_SL1500_.jpg",
     "section": "travel",
-    "why": "Keeps snacks, toys, and activities organized during trips — less mess and stress",
-    "keywords": ["travel tray", "snacks", "organizer", "car", "activity"],
-    "use_cases": ["car ride", "road trip", "flight"]
+    "why": "Keeps snacks and activities organized during trips",
+    "keywords": ["travel tray", "snacks", "organizer", "car"],
+    "use_cases": ["car ride", "flight"]
   },
   {
     "id": "busy_board",
@@ -45,9 +45,9 @@
     "link": "https://amzn.to/4dgV2eH",
     "image": "https://m.media-amazon.com/images/I/817zIh6rbGL._AC_SL1500_.jpg",
     "section": "play",
-    "why": "Keeps toddlers busy and engaged without screens — perfect for quiet play",
-    "keywords": ["activity toy", "quiet play", "learning", "fine motor", "toddler"],
-    "use_cases": ["flight", "car ride", "restaurant", "waiting time"]
+    "why": "Keeps toddlers busy without screens",
+    "keywords": ["activity toy", "quiet play", "learning", "toddler"],
+    "use_cases": ["flight", "quiet play"]
   },
   {
     "id": "silicone_bib",
@@ -55,9 +55,9 @@
     "link": "https://amzn.to/47Qb7ob",
     "image": "https://m.media-amazon.com/images/I/6140UNlasyL._AC_SX679_.jpg",
     "section": "feeding",
-    "why": "Catches food mess and keeps things clean — especially when feeding outside",
-    "keywords": ["bib", "feeding", "mess", "baby", "easy clean"],
-    "use_cases": ["feeding on the go", "travel", "outdoor meals"]
+    "why": "Catches food mess and keeps things clean",
+    "keywords": ["bib", "feeding", "mess", "easy clean"],
+    "use_cases": ["feeding", "travel"]
   },
   {
     "id": "nursing_cover",
@@ -65,9 +65,9 @@
     "link": "https://amzn.to/4m75HLm",
     "image": "https://m.media-amazon.com/images/I/71-95Mi0EVL._SL1200_.jpg",
     "section": "feeding",
-    "why": "Provides privacy for feeding and can also be used as a light cover or shade",
-    "keywords": ["nursing cover", "feeding", "privacy", "baby", "light cover"],
-    "use_cases": ["feeding on the go", "outdoor day", "travel", "shade"]
+    "why": "Provides privacy for feeding and light coverage",
+    "keywords": ["nursing cover", "feeding", "privacy", "baby"],
+    "use_cases": ["feeding", "outdoor day"]
   },
   {
     "id": "feeding_pillow",
@@ -75,9 +75,9 @@
     "link": "https://amzn.to/3PvSYpl",
     "image": "https://m.media-amazon.com/images/I/81pMH8EvtCL._SL1500_.jpg",
     "section": "feeding",
-    "why": "Gives extra support during feeding so your arms don’t get tired",
-    "keywords": ["feeding pillow", "support", "baby", "comfort"],
-    "use_cases": ["feeding", "travel", "on the go"]
+    "why": "Gives support during feeding so your arms don’t get tired",
+    "keywords": ["feeding pillow", "support", "comfort", "baby"],
+    "use_cases": ["feeding", "travel"]
   },
   {
     "id": "water_coloring",
@@ -87,7 +87,7 @@
     "section": "play",
     "why": "No-mess activity that keeps kids calm and busy",
     "keywords": ["coloring", "no mess", "activity", "kids"],
-    "use_cases": ["flight", "car ride", "restaurant", "quiet time"]
+    "use_cases": ["flight", "quiet play"]
   },
   {
     "id": "suction_plate",
@@ -97,7 +97,7 @@
     "section": "feeding",
     "why": "Keeps food in place and reduces mess",
     "keywords": ["plate", "feeding", "snacks", "baby"],
-    "use_cases": ["home feeding", "outdoor meals", "travel"]
+    "use_cases": ["feeding", "travel"]
   },
   {
     "id": "bento_box",
@@ -105,9 +105,9 @@
     "link": "https://amzn.to/4s64Go2",
     "image": "https://m.media-amazon.com/images/I/71fuW8+KfrL._AC_SL1500_.jpg",
     "section": "feeding",
-    "why": "Keeps meals and snacks organized and easy to carry",
-    "keywords": ["bento box", "snacks", "meal prep", "container"],
-    "use_cases": ["travel", "day out", "meal prep", "snacks on the go"]
+    "why": "Keeps snacks organized and easy to carry",
+    "keywords": ["bento box", "snacks", "container", "meal prep"],
+    "use_cases": ["travel", "snacks"]
   },
   {
     "id": "beach_toy_set_1",
@@ -115,36 +115,19 @@
     "link": "https://amzn.to/4cA5WLD",
     "image": "https://m.media-amazon.com/images/I/81oCBPYaWPL._AC_SL1500_.jpg",
     "section": "play",
-    "why": "Keeps toddlers busy and happy at the beach with simple, engaging sand play",
-    "keywords": [
-      "beach toys",
-      "sand toys",
-      "toddler",
-      "summer"
-    ],
-    "use_cases": [
-      "beach day"
-    ]
+    "why": "Keeps toddlers busy at the beach with sand play",
+    "keywords": ["beach toys", "sand toys", "toddler"],
+    "use_cases": ["beach day"]
   },
   {
     "id": "baby_beach_tent_1",
-    "name": "Baby Beach Tent with UV Protection & Mini Pool",
+    "name": "Baby Beach Tent with UV Protection",
     "link": "https://amzn.to/4tLbed9",
     "image": "https://m.media-amazon.com/images/I/81BO6rpR0ML._AC_SL1500_.jpg",
     "section": "outdoor",
-    "why": "Creates a shaded, safe spot for babies to play at the beach, with built-in mini pool for water play",
-    "keywords": [
-      "beach tent",
-      "baby shade",
-      "uv protection",
-      "baby",
-      "sun protection"
-    ],
-    "use_cases": [
-      "beach day",
-      "pool day",
-      "outdoor day"
-    ]
+    "why": "Creates a shaded safe space for babies at the beach",
+    "keywords": ["beach tent", "uv protection", "baby shade"],
+    "use_cases": ["beach day", "outdoor day"]
   },
   {
     "id": "swim_diaper_1",
@@ -152,39 +135,19 @@
     "link": "https://amzn.to/3Q0Zogo",
     "image": "https://m.media-amazon.com/images/I/812JzwkSlGL._AC_SL1500_.jpg",
     "section": "diapering",
-    "why": "Essential for safe water play — won’t swell in water like regular diapers",
-    "keywords": [
-      "swim diaper",
-      "baby",
-      "water",
-      "beach",
-      "pool"
-    ],
-    "use_cases": [
-      "beach day",
-      "pool day"
-    ]
+    "why": "Essential for safe water play",
+    "keywords": ["swim diaper", "baby", "water", "pool"],
+    "use_cases": ["beach day", "pool day"]
   },
   {
     "id": "baby_sunscreen_1",
-    "name": "Baby Bum SPF 50 Mineral Sunscreen Lotion",
+    "name": "Baby Bum SPF 50 Mineral Sunscreen",
     "link": "https://amzn.to/4tACxGO",
     "image": "https://m.media-amazon.com/images/I/810dFJTjawL._SL1500_.jpg",
     "section": "care",
-    "why": "Protects baby's sensitive skin from strong sun exposure during outdoor and beach days",
-    "keywords": [
-      "baby sunscreen",
-      "spf 50",
-      "sun protection",
-      "mineral",
-      "sensitive skin"
-    ],
-    "use_cases": [
-      "beach day",
-      "pool day",
-      "outdoor day",
-      "travel"
-    ]
+    "why": "Protects baby's skin from sun exposure",
+    "keywords": ["baby sunscreen", "spf 50", "sun protection", "mineral"],
+    "use_cases": ["beach day", "outdoor day"]
   },
   {
     "id": "beach_mat_1",
@@ -192,19 +155,118 @@
     "link": "https://amzn.to/3QzEtRB",
     "image": "https://m.media-amazon.com/images/I/81VvwgeiZ5L._AC_SL1500_.jpg",
     "section": "outdoor",
-    "why": "Creates a clean, sand-free space to sit, relax, and play at the beach",
-    "keywords": [
-      "beach mat",
-      "beach blanket",
-      "sandproof",
-      "outdoor",
-      "family"
-    ],
-    "use_cases": [
-      "beach day",
-      "picnic",
-      "outdoor day",
-      "travel"
-    ]
+    "why": "Creates a clean space to sit and play at the beach",
+    "keywords": ["beach mat", "beach blanket", "sandproof"],
+    "use_cases": ["beach day", "picnic"]
+  },
+  {
+    "id": "baby_sun_hat_1",
+    "name": "Baby Sun Hat with UV Protection",
+    "link": "https://amzn.to/4e2hmJt",
+    "image": "https://m.media-amazon.com/images/I/61crBL37QvL._AC_SX679_.jpg",
+    "section": "clothing",
+    "why": "Protects baby's head and face from the sun",
+    "keywords": ["baby sun hat", "uv protection", "summer"],
+    "use_cases": ["beach day", "outdoor day"]
+  },
+  {
+    "id": "pop_fidget_toy_1",
+    "name": "Pop It Sensory Fidget Toy",
+    "link": "https://amzn.to/4cn7uau",
+    "image": "https://m.media-amazon.com/images/I/61MJ2WJdF-L._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Keeps toddlers calm and busy during flights",
+    "keywords": ["fidget toy", "sensory toy", "quiet play", "toddler"],
+    "use_cases": ["flight", "quiet play"]
+  },
+  {
+    "id": "sticker_activity_book_1",
+    "name": "Reusable Sticker Activity Book",
+    "link": "https://amzn.to/4crfY0l",
+    "image": "https://m.media-amazon.com/images/I/81hTMwH062L._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Keeps toddlers entertained for long periods",
+    "keywords": ["sticker book", "activity book", "toddler"],
+    "use_cases": ["flight", "quiet play"]
+  },
+  {
+    "id": "stroller_fan_1",
+    "name": "Portable Stroller Fan",
+    "link": "https://amzn.to/3Q7vqqZ",
+    "image": "https://m.media-amazon.com/images/I/71AlOG0ju1L._AC_SL1500_.jpg",
+    "section": "outdoor",
+    "why": "Keeps babies cool on hot days",
+    "keywords": ["stroller fan", "portable fan", "cooling"],
+    "use_cases": ["outdoor day", "travel"]
+  },
+  {
+    "id": "baby_bath_support_1",
+    "name": "Baby Bath Support Seat",
+    "link": "https://amzn.to/481sDWx",
+    "image": "https://m.media-amazon.com/images/I/61x79D9WpNL._SL1500_.jpg",
+    "section": "bath",
+    "why": "Supports newborns safely during bath time",
+    "keywords": ["bath support", "newborn", "bath seat"],
+    "use_cases": ["bath time", "baby care"]
+  },
+  {
+    "id": "bath_toy_squirters_1",
+    "name": "Ocean Bath Squirter Toys",
+    "link": "https://amzn.to/4elaira",
+    "image": "https://m.media-amazon.com/images/I/71YLFmyGSSL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Makes bath time fun and engaging",
+    "keywords": ["bath toys", "water toys", "toddler"],
+    "use_cases": ["bath time"]
+  },
+  {
+    "id": "hooded_towel_1",
+    "name": "Organic Cotton Hooded Baby Towel",
+    "link": "https://amzn.to/4el5XV1",
+    "image": "https://m.media-amazon.com/images/I/7155yfK9IqL._AC_SL1500_.jpg",
+    "section": "bath",
+    "why": "Keeps baby warm and dry after bath",
+    "keywords": ["hooded towel", "baby towel", "bath"],
+    "use_cases": ["bath time", "baby care"]
+  },
+  {
+    "id": "suction_bath_toy_1",
+    "name": "Suction Cup Sensory Bath Toy",
+    "link": "https://amzn.to/4cbG6xm",
+    "image": "https://m.media-amazon.com/images/I/71HY-VoqZNL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Keeps babies engaged during bath time",
+    "keywords": ["bath toy", "sensory toy", "suction toy"],
+    "use_cases": ["bath time"]
+  },
+  {
+    "id": "bath_toy_organizer_1",
+    "name": "Bath Toy Organizer",
+    "link": "https://amzn.to/4el6dmX",
+    "image": "https://m.media-amazon.com/images/I/71wifRHZDQL._AC_SL1500_.jpg",
+    "section": "organization",
+    "why": "Keeps bath toys organized and easy to dry",
+    "keywords": ["bath organizer", "toy storage", "bathroom"],
+    "use_cases": ["bath time"]
+  },
+  {
+    "id": "bath_color_tablets_1",
+    "name": "Bath Color Fizzies Tablets",
+    "link": "https://amzn.to/4tKOSbs",
+    "image": "https://m.media-amazon.com/images/I/81I3HuqUv+L._SL1500_.jpg",
+    "section": "play",
+    "why": "Adds fun and color to bath time",
+    "keywords": ["bath toys", "color tablets", "bath fun"],
+    "use_cases": ["bath time"]
+  },
+  {
+    "id": "bath_thermometer_1",
+    "name": "Baby Bath Thermometer",
+    "link": "https://amzn.to/4mvo4cT",
+    "image": "https://m.media-amazon.com/images/I/51s9syJcz5L._SL1000_.jpg",
+    "section": "bath",
+    "why": "Ensures safe bath water temperature",
+    "keywords": ["bath thermometer", "water temperature", "baby"],
+    "use_cases": ["bath time", "baby care"]
   }
 ]
