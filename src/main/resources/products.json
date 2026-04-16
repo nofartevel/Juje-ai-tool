@@ -268,5 +268,173 @@
     "why": "Ensures safe bath water temperature",
     "keywords": ["bath thermometer", "water temperature", "baby"],
     "use_cases": ["bath time", "baby care"]
+  },
+  {
+    "id": "sensory_bin_space_1",
+    "name": "Outer Space Sensory Bin",
+    "link": "https://amzn.to/3Q6OqG8",
+    "image": "https://m.media-amazon.com/images/I/81NkBAGJXbL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Encourages hands-on sensory play, imagination, and fine motor practice",
+    "keywords": ["sensory bin", "sensory play", "toddler activity", "fine motor", "pretend play"],
+    "use_cases": ["sensory play", "indoor play"],
+    "age_groups": ["2-4 years"]
+  },
+  {
+    "id": "farm_sound_puzzle_1",
+    "name": "Farm Animals Sound Puzzle",
+    "link": "https://amzn.to/4vuaomD",
+    "image": "https://m.media-amazon.com/images/I/91dy49+7flL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Builds matching, fine motor, and early learning skills through hands-on puzzle play",
+    "keywords": ["sound puzzle", "wooden puzzle", "farm animals", "fine motor", "toddler learning"],
+    "use_cases": ["indoor play", "quiet play"],
+    "age_groups": ["2-4 years"]
+  },
+  {
+    "id": "jumbo_knob_puzzle_1",
+    "name": "Jumbo Knob Pet Animals Puzzle",
+    "link": "https://amzn.to/3OzvsaJ",
+    "image": "https://m.media-amazon.com/images/I/81amQGhImUL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Perfect first puzzle that helps toddlers develop fine motor skills and early matching ability",
+    "keywords": ["knob puzzle", "wooden puzzle", "toddler", "fine motor", "early learning"],
+    "use_cases": ["indoor play", "quiet play"],
+    "age_groups": ["1-2 years"]
+  },
+  {
+    "id": "cloth_baby_book_1",
+    "name": "Touch and Feel Crinkle Cloth Baby Book",
+    "link": "https://amzn.to/4clVFRY",
+    "image": "https://m.media-amazon.com/images/I/715xyZapcXL._SL1500_.jpg",
+    "section": "play",
+    "why": "Encourages sensory play and keeps babies engaged during tummy time or on the go",
+    "keywords": [
+      "cloth book",
+      "baby book",
+      "sensory toy",
+      "crinkle toy",
+      "tummy time"
+    ],
+    "use_cases": [
+      "tummy time",
+      "travel"
+    ],
+    "age_groups": [
+      "0-6 months",
+      "6-12 months"
+    ]
+  },
+  {
+    "id": "baby_shape_sorter_1",
+    "name": "Baby's First Shape Sorter Blocks",
+    "link": "https://amzn.to/4sqZBXv",
+    "image": "https://m.media-amazon.com/images/I/61K+Kw7-LTL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Builds fine motor skills and introduces shapes and colors through simple play",
+    "keywords": [
+      "shape sorter",
+      "baby blocks",
+      "stacking toy",
+      "fine motor",
+      "learning toy"
+    ],
+    "use_cases": [
+      "indoor play",
+      "learning play"
+    ],
+    "age_groups": [
+      "6-12 months",
+      "1-2 years"
+    ]
+  },
+  {
+    "id": "stacking_rings_1",
+    "name": "Stacking Rings Baby Toy",
+    "link": "https://amzn.to/3OGEliH",
+    "image": "https://m.media-amazon.com/images/I/71AQF+jAL3L._SL1500_.jpg",
+    "section": "play",
+    "why": "Builds fine motor skills and hand-eye coordination through simple stacking play",
+    "keywords": [
+      "stacking rings",
+      "baby toy",
+      "fine motor",
+      "hand eye coordination",
+      "learning toy"
+    ],
+    "use_cases": [
+      "indoor play",
+      "learning play"
+    ],
+    "age_groups": [
+      "6-12 months",
+      "1-2 years"
+    ]
+  },
+  {
+    "id": "lacing_beads_1",
+    "name": "Primary Lacing Beads Set",
+    "link": "https://amzn.to/3Qabjsd",
+    "image": "https://m.media-amazon.com/images/I/71XVMX9ErOL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Builds fine motor skills and hand-eye coordination through hands-on threading play",
+    "keywords": [
+      "lacing beads",
+      "fine motor",
+      "threading toy",
+      "hand eye coordination",
+      "preschool toy"
+    ],
+    "use_cases": [
+      "indoor play",
+      "learning play"
+    ],
+    "age_groups": [
+      "2-4 years"
+    ]
+  },
+  {
+    "id": "waterfall_bath_toy_1",
+    "name": "Interactive Suction Cup Waterfall Bath Toy",
+    "link": "https://amzn.to/4msB3Mu",
+    "image": "https://m.media-amazon.com/images/I/71TlnfURezL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Makes bath time interactive and fun with pouring, spinning, and water play",
+    "keywords": [
+      "bath toy",
+      "waterfall toy",
+      "suction cup toy",
+      "water play",
+      "toddler bath"
+    ],
+    "use_cases": [
+      "bath time"
+    ],
+    "age_groups": [
+      "1-2 years",
+      "2-4 years"
+    ]
+  },
+  {
+    "id": "vet_play_set_1",
+    "name": "Pretend Play Vet Doctor Kit",
+    "link": "https://amzn.to/4mvucli",
+    "image": "https://m.media-amazon.com/images/I/714NIH2CVFL._AC_SL1500_.jpg",
+    "section": "play",
+    "why": "Encourages imaginative play and helps kids develop empathy and social skills",
+    "keywords": [
+      "pretend play",
+      "role play",
+      "doctor kit",
+      "imaginative play",
+      "preschool toy"
+    ],
+    "use_cases": [
+      "indoor play",
+      "imaginative play"
+    ],
+    "age_groups": [
+      "2-4 years"
+    ]
   }
 ]

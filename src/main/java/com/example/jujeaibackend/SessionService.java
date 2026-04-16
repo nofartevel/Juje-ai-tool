@@ -6,16 +6,14 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SessionService {
 
     private final Map<String, SearchSession> savedLists = new HashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final List<Map<String, String>> learningCases = new ArrayList<>();
 
     public SearchSession createSession(String input, List<Product> products) {
 
@@ -53,5 +51,30 @@ public class SessionService {
 
     public SearchSession getSavedList(String id) {
         return savedLists.get(id);
+    }
+
+    public void logLearningCase(String input, String status) {
+        if (input == null) return;
+
+        Map<String, String> entry = new HashMap<>();
+        entry.put("input", input);
+        entry.put("status", status == null ? "unknown" : status);
+        entry.put("time", LocalDateTime.now().toString());
+
+        learningCases.add(entry);
+    }
+
+    public List<Map<String, String>> getLearningCases() {
+        return learningCases;
+    }
+
+    public List<Map<String, String>> getLearningCasesByStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return learningCases;
+        }
+
+        return learningCases.stream()
+                .filter(entry -> status.equalsIgnoreCase(entry.get("status")))
+                .toList();
     }
 }

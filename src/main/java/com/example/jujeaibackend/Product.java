@@ -12,6 +12,7 @@ public class Product {
     private String why;
     private List<String> keywords;
     private List<String> use_cases;
+    private List<String> age_groups;
 
     public Product() {
     }
@@ -90,5 +91,13 @@ public class Product {
 
     public void setUse_cases(List<String> use_cases) {
         this.use_cases = use_cases;
+    }
+
+    public List<String> getAge_groups() {
+        return age_groups;
+    }
+
+    public void setAge_groups(List<String> age_groups) {
+        this.age_groups = age_groups;
     }
 }

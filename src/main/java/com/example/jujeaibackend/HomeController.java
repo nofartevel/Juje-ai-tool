@@ -54,15 +54,21 @@ public class HomeController {
 
     @PostMapping("/ai-generate-list")
     public GeneratedListResponse aiGenerateList(@RequestBody AiSelectorRequest request) {
+
         AiSelectorResult selectorResult = openAiSelectorService.selectProducts(request.getInput());
 
-        java.util.List<Product> selectedProducts = productService.getProductsByIds(selectorResult.getSelectedProductIds());
+        java.util.List<Product> selectedProducts =
+                productService.getProductsByIds(selectorResult.getSelectedProductIds());
 
-        return new GeneratedListResponse(
+        GeneratedListResponse response = new GeneratedListResponse(
                 selectorResult.getStatus(),
                 selectorResult.getMessage(),
                 selectedProducts
         );
+
+        sessionService.logLearningCase(request.getInput(), selectorResult.getStatus());
+
+        return response;
     }
 
     @GetMapping("/ai-generate-test")
@@ -71,5 +77,60 @@ public class HomeController {
         request.setInput("beach day with toddler");
         return aiGenerateList(request);
     }
+
+    @GetMapping("/learning")
+    public ResponseEntity<?> getLearningCases(@RequestParam(required = false) String status) {
+        return ResponseEntity.ok(sessionService.getLearningCasesByStatus(status));
+    }
+
+    /*
+        ========================================
+        LEARNING ENDPOINT USAGE
+        ========================================
+
+        This endpoint returns user searches ("learning data")
+        Optionally filtered by status.
+
+        Available statuses:
+        - good     → strong matches found
+        - partial  → some matches but not perfect
+        - missing  → no good matches
+
+        ----------------------------------------
+        How to use:
+
+        1. Get ALL searches:
+           /learning
+
+        2. Get only missing (most important for improving products):
+           /learning?status=missing
+
+        3. Get partial (almost good → refine products):
+           /learning?status=partial
+
+        4. Get good (successful searches):
+           /learning?status=good
+
+        ----------------------------------------
+        Notes:
+
+        - If no status is provided → returns ALL data
+        - Newest searches appear FIRST in the list
+        - Data is stored in memory (temporary):
+          → Will RESET on:
+             - server restart
+             - new deploy
+             - crash
+
+        ----------------------------------------
+        Goal:
+
+        Use this data to:
+        - Identify missing product scenarios
+        - Improve product matching
+        - Add new relevant products
+
+        ========================================
+*/
 }
 
