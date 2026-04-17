@@ -147,7 +147,7 @@
     "section": "care",
     "why": "Protects baby's skin from sun exposure",
     "keywords": ["baby sunscreen", "spf 50", "sun protection", "mineral"],
-    "use_cases": ["beach day", "outdoor day"]
+    "use_cases": ["beach day", "outdoor day", "travel", "road trip", "outdoor"]
   },
   {
     "id": "beach_mat_1",
@@ -167,7 +167,7 @@
     "section": "clothing",
     "why": "Protects baby's head and face from the sun",
     "keywords": ["baby sun hat", "uv protection", "summer"],
-    "use_cases": ["beach day", "outdoor day"]
+    "use_cases": ["beach day", "outdoor day","travel", "road trip", "outdoor"]
   },
   {
     "id": "pop_fidget_toy_1",
