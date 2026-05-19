@@ -54,8 +54,8 @@ public class HomeController {
 
     @PostMapping("/ai-generate-list")
     public GeneratedListResponse aiGenerateList(@RequestBody AiSelectorRequest request) {
-
-        AiSelectorResult selectorResult = openAiSelectorService.selectProducts(request.getInput());
+        AiSelectorResult selectorResult =
+                openAiSelectorService.selectProducts(request.getInput(), request.getCategory());
 
         java.util.List<Product> selectedProducts =
                 productService.getProductsByIds(selectorResult.getSelectedProductIds());
@@ -66,7 +66,10 @@ public class HomeController {
                 selectedProducts
         );
 
-        sessionService.logLearningCase(request.getInput(), selectorResult.getStatus());
+        sessionService.logLearningCase(
+                request.getCategory() + " | " + request.getInput(),
+                selectorResult.getStatus()
+        );
 
         return response;
     }
@@ -132,5 +135,10 @@ public class HomeController {
 
         ========================================
 */
+
+    @GetMapping("/products-count")
+    public Map<String, Integer> getProductsCount() {
+        return Map.of("count", productService.getAllProducts().size());
+    }
 }
 

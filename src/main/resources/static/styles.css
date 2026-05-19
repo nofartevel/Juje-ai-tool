@@ -620,3 +620,39 @@ h2 {
         font-size: 13px;
     }
 }
+
+.category-label {
+    margin: 18px 0 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b6b6b;
+    text-align: left;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.category-btn {
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: var(--shadow-soft);
+}
+
+.category-btn:hover {
+    transform: translateY(-1px);
+}
+
+.category-btn-active {
+    border: 1px solid var(--primary);
+    background: #fff7f3;
+}

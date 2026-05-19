@@ -7,7 +7,9 @@
     "section": "sleep",
     "why": "Turns the seat into a flat surface so your child can sleep comfortably on flights",
     "keywords": ["airplane bed", "sleep", "flight", "leg rest"],
-    "use_cases": ["flight", "sleep"]
+    "use_cases": ["flight", "sleep"],
+    "needs": ["sleep", "comfort", "travel"],
+    "activity_type": "travel"
   },
   {
     "id": "changing_pad",
@@ -17,7 +19,9 @@
     "section": "diapering",
     "why": "Makes diaper changes anywhere clean and easy",
     "keywords": ["diaper", "changing", "portable", "baby"],
-    "use_cases": ["travel", "on the go"]
+    "use_cases": ["travel", "on the go"],
+    "needs": ["diapering", "hygiene", "travel"],
+    "activity_type": "diapering"
   },
   {
     "id": "wet_dry_bag",
@@ -27,7 +31,9 @@
     "section": "organization",
     "why": "Keeps wet and dry items separated during messy days",
     "keywords": ["wet bag", "storage", "waterproof", "diapers"],
-    "use_cases": ["beach day", "travel"]
+    "use_cases": ["beach day", "travel"],
+    "needs": ["organization", "hygiene", "travel"],
+    "activity_type": "travel"
   },
   {
     "id": "travel_tray",
@@ -37,7 +43,9 @@
     "section": "travel",
     "why": "Keeps snacks and activities organized during trips",
     "keywords": ["travel tray", "snacks", "organizer", "car"],
-    "use_cases": ["car ride", "flight"]
+    "use_cases": ["car ride", "flight"],
+    "needs": ["organization", "feeding", "travel"],
+    "activity_type": "travel"
   },
   {
     "id": "busy_board",
@@ -47,7 +55,9 @@
     "section": "play",
     "why": "Keeps toddlers busy without screens",
     "keywords": ["activity toy", "quiet play", "learning", "toddler"],
-    "use_cases": ["flight", "quiet play"]
+    "use_cases": ["flight", "quiet play"],
+    "needs": ["entertainment", "learning"],
+    "activity_type": "play"
   },
   {
     "id": "silicone_bib",
@@ -57,7 +67,9 @@
     "section": "feeding",
     "why": "Catches food mess and keeps things clean",
     "keywords": ["bib", "feeding", "mess", "easy clean"],
-    "use_cases": ["feeding", "travel"]
+    "use_cases": ["feeding", "travel"],
+    "needs": ["feeding", "hygiene"],
+    "activity_type": "feeding"
   },
   {
     "id": "nursing_cover",
@@ -67,7 +79,9 @@
     "section": "feeding",
     "why": "Provides privacy for feeding and light coverage",
     "keywords": ["nursing cover", "feeding", "privacy", "baby"],
-    "use_cases": ["feeding", "outdoor day"]
+    "use_cases": ["feeding", "outdoor day"],
+    "needs": ["feeding", "comfort"],
+    "activity_type": "feeding"
   },
   {
     "id": "feeding_pillow",
@@ -77,7 +91,9 @@
     "section": "feeding",
     "why": "Gives support during feeding so your arms don’t get tired",
     "keywords": ["feeding pillow", "support", "comfort", "baby"],
-    "use_cases": ["feeding", "travel"]
+    "use_cases": ["feeding", "travel"],
+    "needs": ["feeding", "comfort"],
+    "activity_type": "feeding"
   },
   {
     "id": "water_coloring",
@@ -87,7 +103,9 @@
     "section": "play",
     "why": "No-mess activity that keeps kids calm and busy",
     "keywords": ["coloring", "no mess", "activity", "kids"],
-    "use_cases": ["flight", "quiet play"]
+    "use_cases": ["flight", "quiet play"],
+    "needs": ["entertainment"],
+    "activity_type": "play"
   },
   {
     "id": "suction_plate",
@@ -97,7 +115,9 @@
     "section": "feeding",
     "why": "Keeps food in place and reduces mess",
     "keywords": ["plate", "feeding", "snacks", "baby"],
-    "use_cases": ["feeding", "travel"]
+    "use_cases": ["feeding", "travel"],
+    "needs": ["feeding"],
+    "activity_type": "feeding"
   },
   {
     "id": "bento_box",
@@ -107,7 +127,9 @@
     "section": "feeding",
     "why": "Keeps snacks organized and easy to carry",
     "keywords": ["bento box", "snacks", "container", "meal prep"],
-    "use_cases": ["travel", "snacks"]
+    "use_cases": ["travel", "snacks"],
+    "needs": ["feeding", "organization"],
+    "activity_type": "feeding"
   },
   {
     "id": "beach_toy_set_1",
@@ -117,7 +139,9 @@
     "section": "play",
     "why": "Keeps toddlers busy at the beach with sand play",
     "keywords": ["beach toys", "sand toys", "toddler"],
-    "use_cases": ["beach day"]
+    "use_cases": ["beach day"],
+    "needs": ["entertainment", "outdoor_setup"],
+    "activity_type": "outdoor"
   },
   {
     "id": "baby_beach_tent_1",
@@ -127,7 +151,9 @@
     "section": "outdoor",
     "why": "Creates a shaded safe space for babies at the beach",
     "keywords": ["beach tent", "uv protection", "baby shade"],
-    "use_cases": ["beach day", "outdoor day"]
+    "use_cases": ["beach day", "outdoor day"],
+    "needs": ["outdoor_setup", "sun_protection", "comfort"],
+    "activity_type": "outdoor"
   },
   {
     "id": "swim_diaper_1",
@@ -137,7 +163,9 @@
     "section": "diapering",
     "why": "Essential for safe water play",
     "keywords": ["swim diaper", "baby", "water", "pool"],
-    "use_cases": ["beach day", "pool day"]
+    "use_cases": ["beach day", "pool day"],
+    "needs": ["diapering", "hygiene"],
+    "activity_type": "diapering"
   },
   {
     "id": "baby_sunscreen_1",
@@ -147,7 +175,9 @@
     "section": "care",
     "why": "Protects baby's skin from sun exposure",
     "keywords": ["baby sunscreen", "spf 50", "sun protection", "mineral"],
-    "use_cases": ["beach day", "outdoor day", "travel", "road trip", "outdoor"]
+    "use_cases": ["beach day", "outdoor day", "travel", "road trip", "outdoor"],
+    "needs": ["sun_protection", "comfort"],
+    "activity_type": "outdoor"
   },
   {
     "id": "beach_mat_1",
@@ -157,7 +187,9 @@
     "section": "outdoor",
     "why": "Creates a clean space to sit and play at the beach",
     "keywords": ["beach mat", "beach blanket", "sandproof"],
-    "use_cases": ["beach day", "picnic"]
+    "use_cases": ["beach day", "picnic"],
+    "needs": ["outdoor_setup", "comfort"],
+    "activity_type": "outdoor"
   },
   {
     "id": "baby_sun_hat_1",
@@ -167,7 +199,9 @@
     "section": "clothing",
     "why": "Protects baby's head and face from the sun",
     "keywords": ["baby sun hat", "uv protection", "summer"],
-    "use_cases": ["beach day", "outdoor day","travel", "road trip", "outdoor"]
+    "use_cases": ["beach day", "outdoor day","travel", "road trip", "outdoor"],
+    "needs": ["sun_protection", "comfort"],
+    "activity_type": "outdoor"
   },
   {
     "id": "pop_fidget_toy_1",
@@ -177,7 +211,9 @@
     "section": "play",
     "why": "Keeps toddlers calm and busy during flights",
     "keywords": ["fidget toy", "sensory toy", "quiet play", "toddler"],
-    "use_cases": ["flight", "quiet play"]
+    "use_cases": ["flight", "quiet play"],
+    "needs": ["entertainment", "sensory"],
+    "activity_type": "play"
   },
   {
     "id": "sticker_activity_book_1",
@@ -187,7 +223,9 @@
     "section": "play",
     "why": "Keeps toddlers entertained for long periods",
     "keywords": ["sticker book", "activity book", "toddler"],
-    "use_cases": ["flight", "quiet play"]
+    "use_cases": ["flight", "quiet play"],
+    "needs": ["entertainment"],
+    "activity_type": "play"
   },
   {
     "id": "stroller_fan_1",
@@ -197,7 +235,9 @@
     "section": "outdoor",
     "why": "Keeps babies cool on hot days",
     "keywords": ["stroller fan", "portable fan", "cooling"],
-    "use_cases": ["outdoor day", "travel"]
+    "use_cases": ["outdoor day", "travel"],
+    "needs": ["cooling", "comfort"],
+    "activity_type": "outdoor"
   },
   {
     "id": "baby_bath_support_1",
@@ -207,7 +247,9 @@
     "section": "bath",
     "why": "Supports newborns safely during bath time",
     "keywords": ["bath support", "newborn", "bath seat"],
-    "use_cases": ["bath time", "baby care"]
+    "use_cases": ["bath time", "baby care"],
+    "needs": ["hygiene", "baby_care"],
+    "activity_type": "bath"
   },
   {
     "id": "bath_toy_squirters_1",
@@ -217,7 +259,9 @@
     "section": "play",
     "why": "Makes bath time fun and engaging",
     "keywords": ["bath toys", "water toys", "toddler"],
-    "use_cases": ["bath time"]
+    "use_cases": ["bath time"],
+    "needs": ["entertainment"],
+    "activity_type": "bath"
   },
   {
     "id": "hooded_towel_1",
@@ -227,7 +271,9 @@
     "section": "bath",
     "why": "Keeps baby warm and dry after bath",
     "keywords": ["hooded towel", "baby towel", "bath"],
-    "use_cases": ["bath time", "baby care"]
+    "use_cases": ["bath time", "baby care"],
+    "needs": ["hygiene", "comfort"],
+    "activity_type": "bath"
   },
   {
     "id": "suction_bath_toy_1",
@@ -237,7 +283,9 @@
     "section": "play",
     "why": "Keeps babies engaged during bath time",
     "keywords": ["bath toy", "sensory toy", "suction toy"],
-    "use_cases": ["bath time"]
+    "use_cases": ["bath time"],
+    "needs": ["entertainment", "sensory"],
+    "activity_type": "bath"
   },
   {
     "id": "bath_toy_organizer_1",
@@ -247,7 +295,9 @@
     "section": "organization",
     "why": "Keeps bath toys organized and easy to dry",
     "keywords": ["bath organizer", "toy storage", "bathroom"],
-    "use_cases": ["bath time"]
+    "use_cases": ["bath time"],
+    "needs": ["organization", "hygiene"],
+    "activity_type": "bath"
   },
   {
     "id": "bath_color_tablets_1",
@@ -257,7 +307,9 @@
     "section": "play",
     "why": "Adds fun and color to bath time",
     "keywords": ["bath toys", "color tablets", "bath fun"],
-    "use_cases": ["bath time"]
+    "use_cases": ["bath time"],
+    "needs": ["entertainment"],
+    "activity_type": "bath"
   },
   {
     "id": "bath_thermometer_1",
@@ -267,7 +319,9 @@
     "section": "bath",
     "why": "Ensures safe bath water temperature",
     "keywords": ["bath thermometer", "water temperature", "baby"],
-    "use_cases": ["bath time", "baby care"]
+    "use_cases": ["bath time", "baby care"],
+    "needs": ["hygiene", "safety"],
+    "activity_type": "bath"
   },
   {
     "id": "sensory_bin_space_1",
@@ -278,7 +332,9 @@
     "why": "Encourages hands-on sensory play, imagination, and fine motor practice",
     "keywords": ["sensory bin", "sensory play", "toddler activity", "fine motor", "pretend play"],
     "use_cases": ["sensory play", "indoor play"],
-    "age_groups": ["2-4 years"]
+    "age_groups": ["2-4 years"],
+    "needs": ["sensory", "learning", "entertainment"],
+    "activity_type": "play"
   },
   {
     "id": "farm_sound_puzzle_1",
@@ -289,7 +345,9 @@
     "why": "Builds matching, fine motor, and early learning skills through hands-on puzzle play",
     "keywords": ["sound puzzle", "wooden puzzle", "farm animals", "fine motor", "toddler learning"],
     "use_cases": ["indoor play", "quiet play"],
-    "age_groups": ["2-4 years"]
+    "age_groups": ["2-4 years"],
+    "needs": ["learning", "entertainment"],
+    "activity_type": "play"
   },
   {
     "id": "jumbo_knob_puzzle_1",
@@ -300,7 +358,9 @@
     "why": "Perfect first puzzle that helps toddlers develop fine motor skills and early matching ability",
     "keywords": ["knob puzzle", "wooden puzzle", "toddler", "fine motor", "early learning"],
     "use_cases": ["indoor play", "quiet play"],
-    "age_groups": ["1-2 years"]
+    "age_groups": ["1-2 years"],
+    "needs": ["learning", "fine_motor"],
+    "activity_type": "play"
   },
   {
     "id": "cloth_baby_book_1",
@@ -309,21 +369,11 @@
     "image": "https://m.media-amazon.com/images/I/715xyZapcXL._SL1500_.jpg",
     "section": "play",
     "why": "Encourages sensory play and keeps babies engaged during tummy time or on the go",
-    "keywords": [
-      "cloth book",
-      "baby book",
-      "sensory toy",
-      "crinkle toy",
-      "tummy time"
-    ],
-    "use_cases": [
-      "tummy time",
-      "travel"
-    ],
-    "age_groups": [
-      "0-6 months",
-      "6-12 months"
-    ]
+    "keywords": ["cloth book", "baby book", "sensory toy", "crinkle toy", "tummy time"],
+    "use_cases": ["tummy time", "travel"],
+    "age_groups": ["0-6 months", "6-12 months"],
+    "needs": ["sensory", "entertainment"],
+    "activity_type": "play"
   },
   {
     "id": "baby_shape_sorter_1",
@@ -332,21 +382,11 @@
     "image": "https://m.media-amazon.com/images/I/61K+Kw7-LTL._AC_SL1500_.jpg",
     "section": "play",
     "why": "Builds fine motor skills and introduces shapes and colors through simple play",
-    "keywords": [
-      "shape sorter",
-      "baby blocks",
-      "stacking toy",
-      "fine motor",
-      "learning toy"
-    ],
-    "use_cases": [
-      "indoor play",
-      "learning play"
-    ],
-    "age_groups": [
-      "6-12 months",
-      "1-2 years"
-    ]
+    "keywords": ["shape sorter", "baby blocks", "stacking toy", "fine motor", "learning toy"],
+    "use_cases": ["indoor play", "learning play"],
+    "age_groups": ["6-12 months", "1-2 years"],
+    "needs": ["learning", "fine_motor"],
+    "activity_type": "play"
   },
   {
     "id": "stacking_rings_1",
@@ -355,21 +395,11 @@
     "image": "https://m.media-amazon.com/images/I/71AQF+jAL3L._SL1500_.jpg",
     "section": "play",
     "why": "Builds fine motor skills and hand-eye coordination through simple stacking play",
-    "keywords": [
-      "stacking rings",
-      "baby toy",
-      "fine motor",
-      "hand eye coordination",
-      "learning toy"
-    ],
-    "use_cases": [
-      "indoor play",
-      "learning play"
-    ],
-    "age_groups": [
-      "6-12 months",
-      "1-2 years"
-    ]
+    "keywords": ["stacking rings", "baby toy", "fine motor", "hand eye coordination", "learning toy"],
+    "use_cases": ["indoor play", "learning play"],
+    "age_groups": ["6-12 months", "1-2 years"],
+    "needs": ["learning", "fine_motor"],
+    "activity_type": "play"
   },
   {
     "id": "lacing_beads_1",
@@ -378,20 +408,11 @@
     "image": "https://m.media-amazon.com/images/I/71XVMX9ErOL._AC_SL1500_.jpg",
     "section": "play",
     "why": "Builds fine motor skills and hand-eye coordination through hands-on threading play",
-    "keywords": [
-      "lacing beads",
-      "fine motor",
-      "threading toy",
-      "hand eye coordination",
-      "preschool toy"
-    ],
-    "use_cases": [
-      "indoor play",
-      "learning play"
-    ],
-    "age_groups": [
-      "2-4 years"
-    ]
+    "keywords": ["lacing beads", "fine motor", "threading toy", "hand eye coordination", "preschool toy"],
+    "use_cases": ["indoor play", "learning play"],
+    "age_groups": ["2-4 years"],
+    "needs": ["learning", "fine_motor"],
+    "activity_type": "play"
   },
   {
     "id": "waterfall_bath_toy_1",
@@ -400,20 +421,11 @@
     "image": "https://m.media-amazon.com/images/I/71TlnfURezL._AC_SL1500_.jpg",
     "section": "play",
     "why": "Makes bath time interactive and fun with pouring, spinning, and water play",
-    "keywords": [
-      "bath toy",
-      "waterfall toy",
-      "suction cup toy",
-      "water play",
-      "toddler bath"
-    ],
-    "use_cases": [
-      "bath time"
-    ],
-    "age_groups": [
-      "1-2 years",
-      "2-4 years"
-    ]
+    "keywords": ["bath toy", "waterfall toy", "suction cup toy", "water play", "toddler bath"],
+    "use_cases": ["bath time"],
+    "age_groups": ["1-2 years", "2-4 years"],
+    "needs": ["entertainment", "sensory"],
+    "activity_type": "bath"
   },
   {
     "id": "vet_play_set_1",
@@ -422,19 +434,10 @@
     "image": "https://m.media-amazon.com/images/I/714NIH2CVFL._AC_SL1500_.jpg",
     "section": "play",
     "why": "Encourages imaginative play and helps kids develop empathy and social skills",
-    "keywords": [
-      "pretend play",
-      "role play",
-      "doctor kit",
-      "imaginative play",
-      "preschool toy"
-    ],
-    "use_cases": [
-      "indoor play",
-      "imaginative play"
-    ],
-    "age_groups": [
-      "2-4 years"
-    ]
+    "keywords": ["pretend play", "role play", "doctor kit", "imaginative play", "preschool toy"],
+    "use_cases": ["indoor play", "imaginative play"],
+    "age_groups": ["2-4 years"],
+    "needs": ["imaginative_play", "learning"],
+    "activity_type": "play"
   }
 ]

@@ -24,59 +24,95 @@ public class OpenAiSelectorService {
         this.productService = productService;
     }
 
-    public AiSelectorResult selectProducts(String userInput) {
+    public AiSelectorResult selectProducts(String userInput, String category) {
         try {
             List<Product> products = productService.getAllProducts();
 
             String productsJson = objectMapper.writeValueAsString(
-                    products.stream().map(p -> Map.of(
-                            "id", p.getId(),
-                            "name", p.getName(),
-                            "section", p.getSection(),
-                            "why", p.getWhy(),
-                            "keywords", p.getKeywords()
-                    )).toList()
+                    products.stream().map(p -> {
+                        Map<String, Object> productMap = new java.util.HashMap<>();
+                        productMap.put("id", p.getId());
+                        productMap.put("name", p.getName());
+                        productMap.put("section", p.getSection());
+                        productMap.put("why", p.getWhy());
+                        productMap.put("keywords", p.getKeywords());
+                        productMap.put("use_cases", p.getUse_cases());
+                        productMap.put("age_groups", p.getAge_groups() == null ? List.of() : p.getAge_groups());
+                        productMap.put("needs", p.getNeeds() == null ? List.of() : p.getNeeds());
+                        productMap.put("activity_type", p.getActivity_type());
+                        return productMap;
+                    }).toList()
             );
 
             String prompt = """
                 You are helping choose products from a curated baby/toddler product bank.
-        
+            
                 The user wrote a request.
+                The user also selected a category.
                 You must choose only from the provided products.
-        
-                Be strict.
-        
-                A product should be selected only if it would realistically belong in a curated list for that exact scenario.
-                Do NOT include items that are merely somewhat useful, loosely related, or generally useful for parenting.
-                Do NOT include generic food, travel, or diapering items unless they are clearly a strong fit for the exact request.
-        
+            
+                Be strict about relevance, but do not artificially limit the list.
+            
+                A product should be selected if it would realistically belong in a useful curated list for that exact scenario.
+                Do NOT include items that are only loosely related, weakly relevant, or generally useful for parenting without being a clear fit.
+            
                 For specific scenarios, prioritize scenario-specific usefulness over general usefulness.
-        
-                Status rules:
-                - good = the bank clearly covers the request with several strong matches
-                - partial = only a few items are genuinely relevant, or coverage is incomplete
-                - missing = there is no real coverage for this request
-        
+            
+                Each product may include:
+                - section
+                - keywords
+                - use_cases
+                - age_groups
+                - needs
+                - activity_type
+            
+                IMPORTANT:
+                The selected category defines the primary direction of the request.
+                Strongly prefer products that match the selected category.
+            
+                First, infer the main needs behind the user's request.
+                Also consider the full real-life scenario, not just the most obvious part of it.
+                Some requests may involve multiple phases or contexts, such as transit, stops, outdoor time, meals, cleanup, rest, or weather exposure.
+            
+                Also infer the main activity the user is trying to do.
+            
+                Then select all products that are clearly relevant to the full scenario.
+            
                 Selection rules:
                 - Use ONLY product ids from the product list
-                - Return at most 8 ids
-                - Prefer returning fewer items over adding weak ones
-                - If an item is borderline, leave it out
+                - Include all clearly relevant products
+                - Do not leave out a strong product just because other similar products were also selected
+                - It is okay to return a longer list if the products are genuinely useful
+                - Do NOT add weak, borderline, or filler products just to make the list longer
+                - If age is implied in the request, prefer products with matching age_groups
                 - If most candidate products are generic rather than scenario-specific, do NOT return good
-        
+                - Prefer products that directly match what the user is most likely trying to achieve, not just anything that is technically relevant to the scenario
+                - Avoid including products that belong to a different type of activity, even if they could be used in the same general environment
+                - Prioritize products that match the selected category
+                - Strongly prefer products with the same activity_type as the selected category
+                - Avoid including products with a different activity_type unless they clearly add important value to the scenario
+            
+                Status rules:
+                - good = the bank clearly covers the request with several genuinely relevant products
+                - partial = only a few items are genuinely relevant, or coverage is incomplete
+                - missing = there is no real coverage for this request
+            
                 Return ONLY valid JSON in this exact shape:
                 {
                   "status": "good | partial | missing",
                   "message": "short user-facing message",
                   "selected_product_ids": ["id1", "id2"]
                 }
-        
+            
+                User category:
+                "%s"
+            
                 User request:
                 "%s"
-        
+            
                 Product bank:
                 %s
-                """.formatted(userInput, productsJson);
+                """.formatted(category, userInput, productsJson);
 
             ResponseCreateParams params = ResponseCreateParams.builder()
                     .model(ChatModel.GPT_5_2)
@@ -91,6 +127,8 @@ public class OpenAiSelectorService {
             return result;
 
         } catch (Exception e) {
+            e.printStackTrace();
+
             AiSelectorResult fallback = new AiSelectorResult();
             fallback.setStatus("missing");
             fallback.setMessage("I couldn’t confidently match products for this request right now.");

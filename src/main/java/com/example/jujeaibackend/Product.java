@@ -13,12 +13,14 @@ public class Product {
     private List<String> keywords;
     private List<String> use_cases;
     private List<String> age_groups;
+    private List<String> needs;
+    private String activity_type;
 
     public Product() {
     }
 
     public Product(String id, String name, String link, String image, String section, String why,
-                   List<String> keywords, List<String> use_cases) {
+                   List<String> keywords, List<String> use_cases, List<String> age_groups, List<String> needs) {
         this.id = id;
         this.name = name;
         this.link = link;
@@ -27,6 +29,8 @@ public class Product {
         this.why = why;
         this.keywords = keywords;
         this.use_cases = use_cases;
+        this.age_groups = age_groups;
+        this.needs = needs;
     }
 
     public String getId() {
@@ -99,5 +103,21 @@ public class Product {
 
     public void setAge_groups(List<String> age_groups) {
         this.age_groups = age_groups;
+    }
+
+    public List<String> getNeeds() {
+        return needs;
+    }
+
+    public void setNeeds(List<String> needs) {
+        this.needs = needs;
+    }
+
+    public String getActivity_type() {
+        return activity_type;
+    }
+
+    public void setActivity_type(String activity_type) {
+        this.activity_type = activity_type;
     }
 }
