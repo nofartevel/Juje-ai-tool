@@ -14,6 +14,7 @@ The app features a high-impact landing page that immediately communicates value,
 4.  **Trip Details**: Duration, Destination (optional), and Weather.
 5.  **Plan Generation**: Engaging loading screen with travel-themed animations and concise mobile-optimized results.
 6.  **Export/Print**: User can print the checklist.
+7.  **Native Sharing**: User can share the plan using the native mobile share sheet or by copying a link.
 
 ## 4. Functional Requirements
 
@@ -34,8 +35,9 @@ The app features a high-impact landing page that immediately communicates value,
 *   Must be relevant to the specific trip scenario and child age.
 *   Displayed prominently in the middle of the results page for better visibility.
 
-### 4.5. Future Monetization Preparation
-*   Include placeholders for travel resources like eSIM providers, insurance, and lounge access.
+### 4.6. Native Mobile Sharing
+*   **Web Share API**: Integration with the native mobile share sheet for seamless sharing to WhatsApp, Messenger, etc.
+*   **Desktop Fallback**: Automated link copying for browsers that do not support native sharing.
 
 ## 5. Success Metrics
 *   User engagement with the checklist (items checked).

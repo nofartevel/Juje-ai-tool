@@ -65,7 +65,9 @@ The AI prompt will be redesigned to return a structured JSON containing all four
     *   **Priority Order**: 1. Reminders, 2. Recommended Gear, 3. Quick Tips, 4. Full Packing Checklist.
     *   **Accordion UI**: Packing checklist categories are collapsed by default.
     *   **Mobile-First**: Reduced product card heights and grid layouts.
-*   **Export**: Print support for physical checklists.
+*   **Export/Share**: 
+    *   Print support for physical checklists.
+    *   Native mobile sharing via Web Share API with a desktop fallback (prompt).
 
 ## 6. Implementation Phases
 1.  **Phase 1**: Backend Refactoring (DTOs, Controller, Service).
