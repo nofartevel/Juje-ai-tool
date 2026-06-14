@@ -22,8 +22,20 @@ public class HomeController {
     }
 
     @PostMapping("/api/v1/generate-travel-plan")
-    public TravelPlan generateTravelPlan(@RequestBody TripContext context) {
-        return openAiSelectorService.generateTravelPlan(context);
+    public ResponseEntity<?> generateTravelPlan(@RequestBody TripContext context) {
+        try {
+            return ResponseEntity.ok(openAiSelectorService.generateTravelPlan(context));
+        } catch (com.openai.errors.RateLimitException e) {
+            return ResponseEntity.status(429).body(Map.of(
+                "error", "Service Unavailable",
+                "message", "The travel planner is temporarily unavailable. Please try again later."
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "Generation Failed",
+                "message", e.getMessage()
+            ));
+        }
     }
 
     @PostMapping("/api/v1/save-plan")
@@ -39,7 +51,7 @@ public class HomeController {
 
 
     @GetMapping("/api/v1/generate-test")
-    public TravelPlan generateTest() {
+    public ResponseEntity<?> generateTest() {
         TripContext context = new TripContext();
         context.setTripType(TripType.FLIGHT);
         context.setChildren(List.of(new ChildDetail(18))); // 18 months

@@ -43,3 +43,9 @@ The app features a high-impact landing page that immediately communicates value,
 *   User engagement with the checklist (items checked).
 *   Plan saves/shares.
 *   CTR (Click-Through Rate) on recommended products.
+
+## 6. Performance Requirements
+*   **Generation Time**: The application should provide a seamless experience even during AI generation.
+*   **Progressive Loading**: The UI uses a travel-themed loading state with rotating messages to manage user expectations.
+*   **Hybrid Content**: Fast backend templates combined with focused AI generation to minimize total response time.
+*   **Data Efficiency**: Minimized JSON payloads between frontend and backend.

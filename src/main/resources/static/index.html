@@ -197,6 +197,7 @@
     }
 
     async function generatePlan() {
+        const startTime = performance.now();
         renderLoadingScreen();
         try {
             const res = await fetch('/api/v1/generate-travel-plan', {
@@ -204,10 +205,30 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(tripContext)
             });
-            currentPlan = await res.json();
+            const fetchEndTime = performance.now();
+            console.log(`[PERF] Frontend Fetch: ${Math.round(fetchEndTime - startTime)}ms`);
+            console.log("Response from server:", res);
+
+            const data = await res.json();
+            console.log("Parsed data:", data);
+            
+            if (!res.ok) {
+                alert(data.message || "Failed to generate plan");
+                renderIntroScreen();
+                return;
+            }
+
+            currentPlan = data;
+            const parseEndTime = performance.now();
+            console.log(`[PERF] Frontend JSON Parse: ${Math.round(parseEndTime - fetchEndTime)}ms`);
+
             renderPlanScreen();
+            const renderEndTime = performance.now();
+            console.log(`[PERF] Frontend Render: ${Math.round(renderEndTime - parseEndTime)}ms`);
+            console.log(`[PERF] Total Frontend Time: ${Math.round(renderEndTime - startTime)}ms`);
         } catch (e) {
-            alert("Failed to generate plan");
+            console.error("Generation error:", e);
+            alert("An error occurred: " + e.message);
             renderIntroScreen();
         }
     }
@@ -252,11 +273,18 @@
 
     function renderPlanScreen() {
         const screen = document.getElementById("screen");
+        const destination = (currentPlan.context && currentPlan.context.destination) || 'your destination';
+        const forgottenItems = currentPlan.forgottenItems || [];
+        const products = currentPlan.recommendedProducts || [];
+        const tips = currentPlan.travelTips || [];
+        const checklist = currentPlan.packingChecklist || [];
+        const resources = currentPlan.travelResources || [];
+
         screen.innerHTML = `
             <div class="result-container" style="animation: fadeInUp 0.5s ease;">
                 <div class="result-header" style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-weight: 800; color: var(--primary);">Your Travel Plan</h2>
-                    <p style="color: var(--text-light);">Customized for your family trip to ${currentPlan.context.destination || 'your destination'}</p>
+                    <p style="color: var(--text-light);">Customized for your family trip to ${destination}</p>
                     <button class="btn btn-primary" onclick="window.print()" style="margin-top: 10px;">Print Checklist</button>
                     <button class="btn btn-secondary" onclick="savePlan()" style="margin-top: 10px;">Share / Save Plan</button>
                 </div>
@@ -264,7 +292,7 @@
                 <div class="plan-section reminders">
                     <h3 style="color: #d9534f;">⚠️ Top 5 Things Parents Forget</h3>
                     <ul style="background: #fff5f5; border: 1px solid #ffe6e6; border-radius: 12px; padding: 20px; list-style: none;">
-                        ${currentPlan.forgottenItems.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;">
+                        ${forgottenItems.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;">
                             <span style="margin-right: 10px;">📍</span>
                             <span>${item}</span>
                         </li>`).join('')}
@@ -274,7 +302,7 @@
                 <div class="plan-section products">
                     <h3>🛒 Recommended Gear</h3>
                     <div class="products-grid">
-                        ${currentPlan.recommendedProducts.map(p => `
+                        ${products.map(p => `
                             <div class="product-card">
                                 <div class="product-card-image-wrap">
                                     <img src="${p.image}" onerror="this.src='/logo.png'" class="product-card-image">
@@ -294,7 +322,7 @@
                 <div class="plan-section pro-tips">
                     <h3>💡 Quick Travel Tips</h3>
                     <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                        ${currentPlan.travelTips.map(tip => `
+                        ${tips.map(tip => `
                             <div style="background: var(--bg-soft); padding: 15px; border-radius: 12px; border-left: 4px solid var(--primary);">
                                 ${tip}
                             </div>
@@ -305,15 +333,15 @@
                 <div class="plan-section checklist">
                     <h3>✅ Full Packing Checklist</h3>
                     <div class="accordion">
-                        ${currentPlan.packingChecklist.map((cat, i) => `
+                        ${checklist.map((cat, i) => `
                             <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden;">
                                 <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: var(--bg-soft); padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
-                                    <span>${cat.categoryName} (${cat.items.length} items)</span>
+                                    <span>${cat.categoryName} (${cat.items ? cat.items.length : 0} items)</span>
                                     <span id="acc-icon-${i}">▼</span>
                                 </div>
                                 <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid var(--border);">
                                     <ul style="list-style: none; padding: 0;">
-                                        ${cat.items.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;"><input type="checkbox" style="margin-right: 10px; margin-top: 4px;"> <span>${item}</span></li>`).join('')}
+                                        ${(cat.items || []).map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;"><input type="checkbox" style="margin-right: 10px; margin-top: 4px;"> <span>${item}</span></li>`).join('')}
                                     </ul>
                                 </div>
                             </div>
@@ -321,11 +349,11 @@
                     </div>
                 </div>
 
-                ${currentPlan.travelResources && currentPlan.travelResources.length > 0 ? `
+                ${resources && resources.length > 0 ? `
                 <div class="plan-section resources">
                     <h3>🌍 Useful Resources</h3>
                     <div class="resource-list">
-                        ${currentPlan.travelResources.map(r => `
+                        ${resources.map(r => `
                             <div class="resource-item" style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
                                 <strong>${r.type}: ${r.name}</strong><br>
                                 <small>${r.description}</small><br>

@@ -40,17 +40,39 @@ public class TravelResource {
 ```
 
 ## 3. AI Implementation (`OpenAiSelectorService` Update)
-The AI prompt will be redesigned to return a structured JSON containing all four sections. 
+The AI prompt is optimized for performance by reducing input size and delegating static content to the backend.
 
-### 3.1. System Prompt Strategy
+### 3.1. Performance Optimization Strategy
+*   **Prompt Reduction**: Only essential product metadata (ID, name, section, keywords) is sent to OpenAI, reducing input tokens.
+*   **Hybrid Content Generation**:
+    *   **Static Content**: The backend maintains templates for common items (e.g., passports, diapers) based on `tripType`.
+    *   **Dynamic Content**: AI generates only age-specific and destination-specific items, tips, and reminders.
+*   **Output Constraint**: AI returns only product IDs; backend enriches with full metadata. AI output is strictly limited to max 5 tips, 5 reminders, and concise checklist items (max 3 categories, max 5 items each).
+*   **Model Selection**: Uses `GPT_4O_MINI` (or fastest available model) for minimal latency.
+*   **Response Shaping**: AI is instructed to omit common essentials already covered by static templates, reducing output tokens and generation time.
+
+## 7. Troubleshooting & Resilience
+### 7.1. OpenAI Rate Limits & Quota (Error 429)
+*   **Cause**: OpenAI API quota exceeded or billing issues.
+*   **Backend Strategy**: 
+    *   Fail immediately on `RateLimitException` (no retries for quota/billing errors).
+    *   Return a user-friendly 429 response.
+*   **Frontend UX**: 
+    *   Informative alerts: "The travel planner is temporarily unavailable. Please try again later."
+    *   Graceful fallback to the intro screen.
+*   **Mitigation**: 
+    *   Monitor and fix OpenAI billing and usage limits in the OpenAI dashboard.
+
+### 3.2. Response Shaping
+*   **Prompt Instructions**: AI is instructed to omit common essentials already covered by static templates, reducing output tokens and generation time.
+
+### 3.3. System Prompt Strategy
 *   **Role**: Expert Family Travel Planner.
-*   **Input**: Structured `TripContext` (emphasizing `tripType` and `destination`).
+*   **Input**: Structured `TripContext` and reduced `Product Bank`.
 *   **Output**: Strict JSON format matching `TravelPlan`.
 *   **Constraints**: Limit `forgottenItems` and `travelTips` to exactly 5 high-impact items each.
-*   **Precision**: Use `ageMonths` to tailor advice (infant vs toddler vs child).
+*   **Precision**: Use `ageMonths` to tailor advice.
 *   **Destination**: Generate specific preparation tips if `destination` is provided.
-*   **Context**: Include the `products.json` bank for the "Recommended Products" section.
-*   **Enrichment**: AI returns only product IDs; backend enriches with full metadata.
 
 ## 4. API Endpoints
 *   `POST /api/v1/generate-travel-plan`: Main generation logic (now enriches product data).
