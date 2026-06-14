@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="/styles.css">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Smart lists for real mom life 💛">
-    <meta property="og:description" content="Tell me what you need and get a ready list in seconds ✨">
+    <meta property="og:title" content="Traveling with kids? We've got you covered ✈️">
+    <meta property="og:description" content="Get a personalized packing list, travel tips, and reminders in minutes ✨">
     <meta property="og:image" content="https://juje-smart-lists.up.railway.app/preview.png">
     <meta property="og:url" content="https://juje-smart-lists.up.railway.app">
     <meta property="og:type" content="website">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Smart lists for real mom life 💛">
-    <meta name="twitter:description" content="Get a ready list in seconds ✨">
+    <meta name="twitter:title" content="Traveling with kids? We've got you covered ✈️">
+    <meta name="twitter:description" content="Get a personalized packing list, travel tips, and reminders in minutes ✨">
     <meta name="twitter:image" content="https://juje-smart-lists.up.railway.app/preview.png">
 </head>
 <body>
@@ -60,15 +60,41 @@
         const screen = document.getElementById("screen");
         screen.innerHTML = `
             <div class="hero">
-                <h1 class="hero-title">Where are you going? 🌍</h1>
-                <p class="hero-subtitle">Select your trip type to get started</p>
+                <h1 class="hero-title">Traveling with kids? We've got you covered ✈️</h1>
+                <p class="hero-subtitle">Get a personalized packing list, travel tips, reminders and product recommendations in minutes.</p>
+                
+                <div class="value-props">
+                    <div class="v-prop">✅ Packing Checklist</div>
+                    <div class="v-prop">💡 Travel Tips</div>
+                    <div class="v-prop">⚠️ Things You'll Forget</div>
+                    <div class="v-prop">🛒 Gear Recommendations</div>
+                </div>
+
                 <div class="category-grid">
-                    <button class="category-btn" onclick="setTripType('FLIGHT')">Flight ✈️</button>
-                    <button class="category-btn" onclick="setTripType('ROAD_TRIP')">Road Trip 🚗</button>
-                    <button class="category-btn" onclick="setTripType('BEACH')">Beach Vacation 🏖️</button>
-                    <button class="category-btn" onclick="setTripType('CRUISE')">Cruise 🚢</button>
-                    <button class="category-btn" onclick="setTripType('CAMPING')">Camping ⛺</button>
-                    <button class="category-btn" onclick="setTripType('GENERAL')">General Travel 🧳</button>
+                    <div class="trip-card" onclick="setTripType('FLIGHT')">
+                        <span class="trip-icon">✈️</span>
+                        <span class="trip-label">Flight</span>
+                    </div>
+                    <div class="trip-card" onclick="setTripType('ROAD_TRIP')">
+                        <span class="trip-icon">🚗</span>
+                        <span class="trip-label">Road Trip</span>
+                    </div>
+                    <div class="trip-card" onclick="setTripType('BEACH')">
+                        <span class="trip-icon">🏖️</span>
+                        <span class="trip-label">Beach</span>
+                    </div>
+                    <div class="trip-card" onclick="setTripType('CRUISE')">
+                        <span class="trip-icon">🚢</span>
+                        <span class="trip-label">Cruise</span>
+                    </div>
+                    <div class="trip-card" onclick="setTripType('CAMPING')">
+                        <span class="trip-icon">🏕️</span>
+                        <span class="trip-label">Camping</span>
+                    </div>
+                    <div class="trip-card" onclick="setTripType('GENERAL')">
+                        <span class="trip-icon">🌍</span>
+                        <span class="trip-label">General</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -95,23 +121,49 @@
     }
 
     function addChild() {
-        tripContext.children.push({ ageMonths: 24 });
+        // Default new child to 0 months or 1 year? Let's go with empty/0.
+        tripContext.children.push({ ageMonths: 0 });
         updateChildrenList();
     }
 
     function updateChildrenList() {
         const list = document.getElementById("childrenList");
-        list.innerHTML = tripContext.children.map((c, i) => `
-            <div class="child-row">
-                <span>Child ${i+1}:</span>
-                <input type="number" value="${c.ageMonths}" onchange="updateChildAge(${i}, this.value)" style="width: 80px;">
-                <span>months</span>
-                <button onclick="removeChild(${i})">🗑️</button>
-            </div>
-        `).join('');
+        list.innerHTML = tripContext.children.map((c, i) => {
+            const isYears = c.ageMonths >= 12 && c.ageMonths % 12 === 0;
+            const displayValue = isYears ? c.ageMonths / 12 : c.ageMonths;
+            const unit = isYears ? 'years' : 'months';
+
+            return `
+                <div class="child-card">
+                    <div class="child-card-header">
+                        <span class="child-label">Child ${i+1}</span>
+                        <button class="btn-icon" onclick="removeChild(${i})">🗑️</button>
+                    </div>
+                    <div class="age-input-container">
+                        <input type="number" 
+                               class="age-input" 
+                               value="${displayValue}" 
+                               oninput="updateChildAge(${i}, this.value, document.getElementById('unit-${i}').value)"
+                               placeholder="0">
+                        <select id="unit-${i}" 
+                                class="unit-select" 
+                                onchange="updateChildAge(${i}, document.querySelector('#unit-${i}').previousElementSibling.value, this.value)">
+                            <option value="months" ${unit === 'months' ? 'selected' : ''}>Months</option>
+                            <option value="years" ${unit === 'years' ? 'selected' : ''}>Years</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
-    function updateChildAge(i, val) { tripContext.children[i].ageMonths = parseInt(val); }
+    function updateChildAge(i, val, unit) {
+        let ageMonths = parseInt(val) || 0;
+        if (unit === 'years') {
+            ageMonths = ageMonths * 12;
+        }
+        tripContext.children[i].ageMonths = ageMonths;
+    }
     function removeChild(i) { tripContext.children.splice(i, 1); updateChildrenList(); }
 
     function renderLogisticsStep() {
@@ -169,41 +221,74 @@
     function renderPlanScreen() {
         const screen = document.getElementById("screen");
         screen.innerHTML = `
-            <div class="plan-view">
-                <div class="plan-header">
-                    <h2>Your Travel Plan 🎒</h2>
-                    <button class="btn btn-secondary" onclick="savePlan()">Share Plan 🔗</button>
-                </div>
-
-                <div class="plan-section">
-                    <h3>✅ Packing Checklist</h3>
-                    <div class="plan-actions" style="margin-bottom: 10px;">
-                        <button class="btn btn-secondary btn-sm" onclick="window.print()">Print Checklist 🖨️</button>
-                    </div>
-                    ${currentPlan.packingChecklist.map(cat => `
-                        <div class="checklist-cat">
-                            <h4>${cat.categoryName}</h4>
-                            <ul>
-                                ${cat.items.map(item => `<li><input type="checkbox"> ${item}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div class="plan-section pro-tips">
-                    <h3>💡 Travel Preparation Tips</h3>
-                    <ul>
-                        ${currentPlan.travelTips.map(tip => `<li>${tip}</li>`).join('')}
-                    </ul>
+            <div class="result-container" style="animation: fadeInUp 0.5s ease;">
+                <div class="result-header" style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="font-weight: 800; color: var(--primary);">Your Travel Plan</h2>
+                    <p style="color: var(--text-light);">Customized for your family trip to ${currentPlan.context.destination || 'your destination'}</p>
+                    <button class="btn btn-primary" onclick="window.print()" style="margin-top: 10px;">Print Checklist</button>
+                    <button class="btn btn-secondary" onclick="savePlan()" style="margin-top: 10px;">Share / Save Plan</button>
                 </div>
 
                 <div class="plan-section reminders">
-                    <h3>⚠️ Don't Forget</h3>
-                    <ul>
-                        ${currentPlan.forgottenItems.map(item => `<li>${item}</li>`).join('')}
+                    <h3 style="color: #d9534f;">⚠️ Top 5 Things Parents Forget</h3>
+                    <ul style="background: #fff5f5; border: 1px solid #ffe6e6; border-radius: 12px; padding: 20px; list-style: none;">
+                        ${currentPlan.forgottenItems.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;">
+                            <span style="margin-right: 10px;">📍</span>
+                            <span>${item}</span>
+                        </li>`).join('')}
                     </ul>
                 </div>
-                    
+
+                <div class="plan-section products">
+                    <h3>🛒 Recommended Gear</h3>
+                    <div class="products-grid">
+                        ${currentPlan.recommendedProducts.map(p => `
+                            <div class="product-card">
+                                <div class="product-card-image-wrap">
+                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-card-image">
+                                </div>
+                                <div class="product-card-body">
+                                    <h5 class="product-card-title">${p.name}</h5>
+                                    <p class="product-card-why">${p.why || ''}</p>
+                                    <div class="product-card-footer">
+                                        <a href="${p.link}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="plan-section pro-tips">
+                    <h3>💡 Quick Travel Tips</h3>
+                    <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                        ${currentPlan.travelTips.map(tip => `
+                            <div style="background: var(--bg-soft); padding: 15px; border-radius: 12px; border-left: 4px solid var(--primary);">
+                                ${tip}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="plan-section checklist">
+                    <h3>✅ Full Packing Checklist</h3>
+                    <div class="accordion">
+                        ${currentPlan.packingChecklist.map((cat, i) => `
+                            <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden;">
+                                <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: var(--bg-soft); padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
+                                    <span>${cat.categoryName} (${cat.items.length} items)</span>
+                                    <span id="acc-icon-${i}">▼</span>
+                                </div>
+                                <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid var(--border);">
+                                    <ul style="list-style: none; padding: 0;">
+                                        ${cat.items.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;"><input type="checkbox" style="margin-right: 10px; margin-top: 4px;"> <span>${item}</span></li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
                 ${currentPlan.travelResources && currentPlan.travelResources.length > 0 ? `
                 <div class="plan-section resources">
                     <h3>🌍 Useful Resources</h3>
@@ -219,21 +304,23 @@
                 </div>
                 ` : ''}
 
-                <div class="plan-section products">
-                    <h3>🛒 Recommended Gear</h3>
-                    <div class="product-grid">
-                        ${currentPlan.recommendedProducts.map(p => `
-                            <div class="product-card">
-                                <img src="${p.image}" onerror="this.src='/logo.png'">
-                                <h5>${p.name}</h5>
-                                <p>${p.why || ''}</p>
-                                <a href="${p.link}" target="_blank" class="btn btn-primary btn-sm">View</a>
-                            </div>
-                        `).join('')}
-                    </div>
+                <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
+                    <button class="btn btn-secondary" onclick="renderIntroScreen()">Start New Plan</button>
                 </div>
             </div>
         `;
+    }
+
+    function toggleAccordion(i) {
+        const content = document.getElementById(`acc-content-${i}`);
+        const icon = document.getElementById(`acc-icon-${i}`);
+        if (content.style.display === "none") {
+            content.style.display = "block";
+            icon.innerText = "▲";
+        } else {
+            content.style.display = "none";
+            icon.innerText = "▼";
+        }
     }
 
     async function savePlan() {
@@ -247,281 +334,8 @@
         prompt("Copy this link to share your plan:", url);
     }
 
-    function escapeHtml(text) {
-        if (!text) return "";
-        return text
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    function renderIntroScreen() {
-        const screen = document.getElementById("screen");
-
-        screen.innerHTML = `
-        <div class="hero">
-
-            <div class="eyebrow">
-                Smart product lists
-            </div>
-
-            <h1 class="hero-title">
-                Smart lists for real mom life 💛
-            </h1>
-
-            <p class="hero-subtitle">
-                Choose a category and describe what you need
-            </p>
-
-            <div class="category-label">
-                Choose a category
-            </div>
-
-            <div class="category-grid">
-                <button type="button" class="category-btn" onclick="selectCategory('travel', this)">
-                    Travel ✈️
-                </button>
-
-                <button type="button" class="category-btn" onclick="selectCategory('play', this)">
-                    Play 🧸
-                </button>
-
-                <button type="button" class="category-btn" onclick="selectCategory('outdoor', this)">
-                    Outdoor 🌿
-                </button>
-
-                <button type="button" class="category-btn" onclick="selectCategory('feeding', this)">
-                    Feeding 🍼
-                </button>
-
-                <button type="button" class="category-btn" onclick="selectCategory('bath', this)">
-                    Bath 🛁
-                </button>
-            </div>
-
-            <input
-                id="userInput"
-                class="input"
-                type="text"
-                placeholder="Try: flight with toddler..."
-                autocomplete="off"
-            />
-
-            <button
-                id="buildBtn"
-                class="btn btn-primary btn-full"
-                onclick="startFlow()"
-            >
-                Build my list ✨
-            </button>
-
-        </div>
-    `;
-
-        const input = document.getElementById("userInput");
-
-        if (input) {
-            input.focus();
-
-            input.addEventListener("keydown", function(event) {
-                if (event.key === "Enter") {
-                    startFlow();
-                }
-            });
-        }
-    }
-
-    function setLoadingState(loading) {
-        isLoading = loading;
-
-        const button = document.getElementById("buildBtn");
-        const input = document.getElementById("userInput");
-
-        if (button) {
-            button.disabled = loading;
-            button.style.opacity = loading ? "0.7" : "1";
-            button.style.cursor = loading ? "wait" : "pointer";
-        }
-
-        if (input) {
-            input.disabled = loading;
-        }
-    }
-
-    async function startFlow() {
-        if (isLoading) return;
-
-        const inputEl = document.getElementById("userInput");
-        if (!inputEl) return;
-
-        const input = inputEl.value.trim();
-
-        if (!selectedCategory) {
-            alert("Please choose a category first 😊");
-            return;
-        }
-
-        if (!input) {
-            alert("Please tell me what you need 😊");
-            return;
-        }
-
-        userInputText = input;
-        setLoadingState(true);
-
-        const screen = document.getElementById("screen");
-
-        screen.innerHTML = `
-        <div class="loading-wrap">
-            <div class="spinner"></div>
-            <h2>Building your list… ✨</h2>
-            <p class="subtitle">Looking for the best matches in your product bank</p>
-        </div>
-    `;
-
-        try {
-            const response = await fetch("/ai-generate-list", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    input: input,
-                    category: selectedCategory
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Request failed");
-            }
-
-            const data = await response.json();
-            currentProducts = data.products || [];
-
-            renderResultsScreen(data);
-
-        } catch (error) {
-            console.error(error);
-
-            screen.innerHTML = `
-            <div class="results-header">
-                <div class="eyebrow">Something went wrong</div>
-                <h2 class="results-title">Couldn’t build the list</h2>
-                <p class="results-subtitle">
-                    Please try again in a second.
-                </p>
-            </div>
-
-            <div class="footer-actions">
-                <button class="btn btn-secondary" onclick="renderIntroScreen()">
-                    Back
-                </button>
-                <button class="btn btn-primary" onclick="renderIntroScreen()">
-                    Try again
-                </button>
-            </div>
-        `;
-        } finally {
-            setLoadingState(false);
-        }
-    }
-
-    function renderResultsScreen(data) {
-        const screen = document.getElementById("screen");
-        const safeInput = escapeHtml(userInputText);
-
-        const productsHtml = (data.products || []).map(p => `
-        <div class="product-card">
-            <div class="product-card-image-wrap">
-                <img class="product-card-image" src="${p.image}" alt="${escapeHtml(p.name)}" />
-            </div>
-
-            <div class="product-card-body">
-                <div class="product-card-title">${escapeHtml(p.name)}</div>
-
-                <div class="product-card-footer">
-                    <a href="${p.link}" target="_blank" class="product-link" rel="noopener noreferrer">
-                        See product →
-                    </a>
-                </div>
-            </div>
-        </div>
-    `).join("");
-
-        screen.innerHTML = `
-        <div class="results-header results-header-clean">
-            <h2 class="results-title">A list just for you 💛</h2>
-        </div>
-
-        <div class="products-grid">
-            ${productsHtml || `<div class="empty-state">No products found for this request yet.</div>`}
-        </div>
-
-        <div class="footer-actions">
-            <button class="btn btn-secondary" onclick="renderIntroScreen()">
-                Start over
-            </button>
-
-            <button class="btn btn-primary" onclick="shareList()" ${currentProducts.length === 0 ? 'disabled style="opacity:.65;cursor:not-allowed;"' : ''}>
-                Save / Share 💛
-            </button>
-        </div>
-    `;
-    }
-
-    async function shareList() {
-        if (!currentProducts.length) {
-            return;
-        }
-
-        try {
-            const response = await fetch("/save-list", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    input: userInputText,
-                    products: currentProducts
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Save failed");
-            }
-
-            const data = await response.json();
-            const shareUrl = `${window.location.origin}/list-view.html?id=${data.id}`;
-
-            if (navigator.share) {
-                await navigator.share({
-                    title: "My JUJE list",
-                    text: "Check out this list I built",
-                    url: shareUrl
-                });
-            } else {
-                window.prompt("Copy your link:", shareUrl);
-            }
-
-        } catch (error) {
-            console.error(error);
-            alert("Something went wrong while saving");
-        }
-    }
 
     renderIntroScreen();
-
-    function selectCategory(category, buttonEl) {
-        selectedCategory = category;
-
-        document.querySelectorAll(".category-btn").forEach(btn => {
-            btn.classList.remove("category-btn-active");
-        });
-
-        buttonEl.classList.add("category-btn-active");
-    }
 
 </script>
 

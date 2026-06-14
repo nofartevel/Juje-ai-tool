@@ -46,20 +46,25 @@ The AI prompt will be redesigned to return a structured JSON containing all four
 *   **Role**: Expert Family Travel Planner.
 *   **Input**: Structured `TripContext` (emphasizing `tripType` and `destination`).
 *   **Output**: Strict JSON format matching `TravelPlan`.
+*   **Constraints**: Limit `forgottenItems` and `travelTips` to exactly 5 high-impact items each.
 *   **Precision**: Use `ageMonths` to tailor advice (infant vs toddler vs child).
 *   **Destination**: Generate specific preparation tips if `destination` is provided.
 *   **Context**: Include the `products.json` bank for the "Recommended Products" section.
+*   **Enrichment**: AI returns only product IDs; backend enriches with full metadata.
 
 ## 4. API Endpoints
-*   `POST /api/v1/generate-travel-plan`: Main generation logic.
+*   `POST /api/v1/generate-travel-plan`: Main generation logic (now enriches product data).
 *   `POST /api/v1/save-plan`: Persist `TravelPlan` to storage (currently in-memory `SessionService`).
 *   `GET /api/v1/plan/{id}`: Retrieve saved plans for sharing.
 
 ## 5. Frontend Requirements
 *   **State Management**: Use a "Wizard" pattern to collect `TripContext`.
-*   **Age Input**: Allow parents to enter age in months.
-*   **Persistence**: Store the current checklist state (checked items) in `localStorage` to survive page refreshes.
-*   **UI Components**: Checklist with accordion categories, Tip cards, Product grid, and Print/PDF export buttons.
+*   **Age Input**: Allow parents to enter age in months/years.
+*   **Result Presentation**:
+    *   **Priority Order**: 1. Reminders, 2. Recommended Gear, 3. Quick Tips, 4. Full Packing Checklist.
+    *   **Accordion UI**: Packing checklist categories are collapsed by default.
+    *   **Mobile-First**: Reduced product card heights and grid layouts.
+*   **Export**: Print support for physical checklists.
 
 ## 6. Implementation Phases
 1.  **Phase 1**: Backend Refactoring (DTOs, Controller, Service).

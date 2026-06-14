@@ -417,6 +417,133 @@ h2 {
     }
 }
 
+/* New Value Props and Trip Cards */
+.value-props {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 24px 0;
+}
+
+.v-prop {
+    font-size: 13px;
+    background: var(--bg-soft);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    color: var(--text);
+    font-weight: 600;
+    border: 1px solid var(--border);
+}
+
+.trip-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-soft);
+}
+
+.trip-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.trip-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.trip-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* Children List and Age Input */
+.children-list {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.child-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: left;
+    box-shadow: var(--shadow-soft);
+}
+
+.child-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.child-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    opacity: 0.6;
+    transition: 0.2s;
+}
+
+.btn-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.age-input-container {
+    display: flex;
+    background: var(--bg-soft);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    border: 1px solid var(--border);
+}
+
+.age-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    width: 100%;
+    outline: none;
+}
+
+.unit-select {
+    border: none;
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    outline: none;
+}
+
 @keyframes fadeInUp {
     from {
         transform: translateY(8px);
@@ -547,7 +674,7 @@ h2 {
     box-shadow: var(--shadow-soft);
     transition: 0.2s ease;
     animation: fadeInUp 0.4s ease forwards;
-    opacity: 0;
+    opacity: 1; /* Changed from 0 to 1 as initial state since we might not handle sequential animation delay everywhere */
     display: flex;
     flex-direction: column;
     height: 100%;
