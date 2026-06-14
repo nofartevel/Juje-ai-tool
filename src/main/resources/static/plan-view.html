@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JUJE - Your Travel Plan</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+    <div class="app-card">
+
+        <div class="top-bar">
+            <div class="brand">
+                <img src="/logo.png" alt="JUJE logo"
+                     onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
+                <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
+            </div>
+        </div>
+
+        <div class="screen" id="content">
+            Loading your travel plan...
+        </div>
+
+    </div>
+</div>
+
+<script>
+    async function loadPlan() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        const content = document.getElementById("content");
+
+        if (!id) {
+            content.innerHTML = `<div class="hero"><h1 class="hero-title">Missing plan id</h1></div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/v1/plan/${id}`);
+            const currentPlan = await response.json();
+
+            if (!currentPlan) {
+                content.innerHTML = `<div class="hero"><h1 class="hero-title">Plan not found</h1></div>`;
+                return;
+            }
+
+            content.innerHTML = `
+                <div class="plan-view">
+                    <div class="plan-header">
+                        <h2>Shared Travel Plan 🎒</h2>
+                    </div>
+
+                    <div class="plan-section">
+                        <h3>✅ Packing Checklist</h3>
+                        <div class="plan-actions" style="margin-bottom: 10px;">
+                            <button class="btn btn-secondary btn-sm" onclick="window.print()">Print Checklist 🖨️</button>
+                        </div>
+                        ${currentPlan.packingChecklist.map(cat => `
+                            <div class="checklist-cat">
+                                <h4>${cat.categoryName}</h4>
+                                <ul>
+                                    ${cat.items.map(item => `<li><input type="checkbox"> ${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="plan-section pro-tips">
+                        <h3>💡 Travel Preparation Tips</h3>
+                        <ul>
+                            ${currentPlan.travelTips.map(tip => `<li>${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="plan-section reminders">
+                        <h3>⚠️ Don't Forget</h3>
+                        <ul>
+                            ${currentPlan.forgottenItems.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    ${currentPlan.travelResources && currentPlan.travelResources.length > 0 ? `
+                    <div class="plan-section resources">
+                        <h3>🌍 Useful Resources</h3>
+                        <div class="resource-list">
+                            ${currentPlan.travelResources.map(r => `
+                                <div class="resource-item" style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
+                                    <strong>${r.type}: ${r.name}</strong><br>
+                                    <small>${r.description}</small><br>
+                                    <a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: none;">Explore →</a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="plan-section products">
+                        <h3>🛒 Recommended Gear</h3>
+                        <div class="product-grid">
+                            ${currentPlan.recommendedProducts.map(p => `
+                                <div class="product-card">
+                                    <img src="${p.image}" onerror="this.src='/logo.png'">
+                                    <h5>${p.name}</h5>
+                                    <p>${p.why || ''}</p>
+                                    <a href="${p.link}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top:20px;">
+                        <a href="index.html" class="btn btn-primary">Create My Own Plan ✨</a>
+                    </div>
+                </div>
+            `;
+
+        } catch (error) {
+            console.error(error);
+            content.innerHTML = `<div class="hero"><h1 class="hero-title">Error loading plan</h1></div>`;
+        }
+    }
+
+    loadPlan();
+</script>
+
+</body>
+</html>

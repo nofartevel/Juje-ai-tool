@@ -21,6 +21,22 @@ public class HomeController {
         this.openAiSelectorService = openAiSelectorService;
     }
 
+    @PostMapping("/api/v1/generate-travel-plan")
+    public TravelPlan generateTravelPlan(@RequestBody TripContext context) {
+        return openAiSelectorService.generateTravelPlan(context);
+    }
+
+    @PostMapping("/api/v1/save-plan")
+    public ResponseEntity<?> savePlan(@RequestBody TravelPlan plan) {
+        String id = sessionService.saveTravelPlan(plan);
+        return ResponseEntity.ok(Map.of("id", id));
+    }
+
+    @GetMapping("/api/v1/plan/{id}")
+    public TravelPlan getPlan(@PathVariable String id) {
+        return sessionService.getTravelPlan(id);
+    }
+
     @PostMapping("/save-list")
     public ResponseEntity<?> saveList(@RequestBody SaveListRequest request) {
         try {
@@ -50,6 +66,17 @@ public class HomeController {
     @GetMapping("/list/{id}")
     public SearchSession getSavedList(@PathVariable String id) {
         return sessionService.getSavedList(id);
+    }
+
+    @GetMapping("/api/v1/generate-test")
+    public TravelPlan generateTest() {
+        TripContext context = new TripContext();
+        context.setTripType(TripType.FLIGHT);
+        context.setChildren(List.of(new ChildDetail(18))); // 18 months
+        context.setDurationDays(7);
+        context.setDestination("London");
+        context.setWeather(WeatherType.HOT);
+        return generateTravelPlan(context);
     }
 
     @PostMapping("/ai-generate-list")

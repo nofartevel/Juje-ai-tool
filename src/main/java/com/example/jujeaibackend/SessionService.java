@@ -11,9 +11,20 @@ import java.util.*;
 @Service
 public class SessionService {
 
-    private final Map<String, SearchSession> savedLists = new HashMap<>();
+    private final Map<String, TravelPlan> savedPlans = new HashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<Map<String, String>> learningCases = new ArrayList<>();
+
+    public String saveTravelPlan(TravelPlan plan) {
+        String id = UUID.randomUUID().toString().substring(0, 8);
+        plan.setId(id);
+        savedPlans.put(id, plan);
+        return id;
+    }
+
+    public TravelPlan getTravelPlan(String id) {
+        return savedPlans.get(id);
+    }
 
     public SearchSession createSession(String input, List<Product> products) {
 
@@ -41,16 +52,11 @@ public class SessionService {
     }
 
     public String saveList(SearchSession session) {
-        if (session == null) {
-            throw new IllegalArgumentException("Session cannot be null");
-        }
-
-        savedLists.put(session.getId(), session);
         return session.getId();
     }
 
     public SearchSession getSavedList(String id) {
-        return savedLists.get(id);
+        return null;
     }
 
     public void logLearningCase(String input, String status) {
