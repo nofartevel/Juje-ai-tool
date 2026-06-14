@@ -417,23 +417,25 @@ h2 {
     }
 }
 
-/* New Value Props and Trip Cards */
-.value-props {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 24px 0;
+/* Value Props List */
+.value-props-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px 0 24px;
+    background: var(--bg-soft);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
 }
 
-.v-prop {
-    font-size: 13px;
-    background: var(--bg-soft);
-    padding: 10px;
-    border-radius: var(--radius-sm);
-    text-align: center;
+.v-prop-row {
+    font-size: 14px;
     color: var(--text);
     font-weight: 600;
-    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    text-align: left;
 }
 
 .trip-card {
@@ -553,6 +555,11 @@ h2 {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+@keyframes travelAnimation {
+    0%, 100% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
 }
 
 @media (min-width: 640px) {

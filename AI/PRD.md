@@ -8,11 +8,11 @@ Parents traveling with children (infants, toddlers, and young kids).
 
 ## 3. User Flow (The Wizard)
 The app features a high-impact landing page that immediately communicates value, followed by a 4-step wizard:
-1.  **High-Impact Landing**: Headline "Traveling with kids? We've got you covered ✈️" and subtitle explaining the four pillars of the output (Checklist, Tips, Reminders, Gear).
+1.  **High-Impact Landing**: Headline "Traveling with kids? We've got you covered ✈️" and a non-interactive value list (Checklists, Tips, Reminders, Gear).
 2.  **Trip Type Selection**: Visual cards for Flight, Road Trip, Beach Vacation, Cruise, Camping, General Travel.
-3.  **Family Details**: Input the age of each child in **months or years**.
+3.  **Family Details**: User-friendly age entry (Months/Years) optimized for mobile (numeric keyboard, placeholder-based).
 4.  **Trip Details**: Duration, Destination (optional), and Weather.
-5.  **Plan Generation**: The AI generates the complete plan in a mobile-optimized layout.
+5.  **Plan Generation**: Engaging loading screen with travel-themed animations and concise mobile-optimized results.
 6.  **Export/Print**: User can print the checklist.
 
 ## 4. Functional Requirements

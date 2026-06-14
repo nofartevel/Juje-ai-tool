@@ -63,11 +63,11 @@
                 <h1 class="hero-title">Traveling with kids? We've got you covered ✈️</h1>
                 <p class="hero-subtitle">Get a personalized packing list, travel tips, reminders and product recommendations in minutes.</p>
                 
-                <div class="value-props">
-                    <div class="v-prop">✅ Packing Checklist</div>
-                    <div class="v-prop">💡 Travel Tips</div>
-                    <div class="v-prop">⚠️ Things You'll Forget</div>
-                    <div class="v-prop">🛒 Gear Recommendations</div>
+                <div class="value-props-list">
+                    <div class="v-prop-row">✅ Personalized packing checklist</div>
+                    <div class="v-prop-row">✅ Travel tips by child age</div>
+                    <div class="v-prop-row">✅ Things parents often forget</div>
+                    <div class="v-prop-row">✅ Gear recommendations</div>
                 </div>
 
                 <div class="category-grid">
@@ -121,16 +121,17 @@
     }
 
     function addChild() {
-        // Default new child to 0 months or 1 year? Let's go with empty/0.
-        tripContext.children.push({ ageMonths: 0 });
+        // Default new child with no age set (undefined or null)
+        tripContext.children.push({ ageMonths: undefined });
         updateChildrenList();
     }
 
     function updateChildrenList() {
         const list = document.getElementById("childrenList");
         list.innerHTML = tripContext.children.map((c, i) => {
-            const isYears = c.ageMonths >= 12 && c.ageMonths % 12 === 0;
-            const displayValue = isYears ? c.ageMonths / 12 : c.ageMonths;
+            const hasAge = c.ageMonths !== undefined && c.ageMonths !== null;
+            const isYears = hasAge && c.ageMonths >= 12 && c.ageMonths % 12 === 0;
+            const displayValue = hasAge ? (isYears ? c.ageMonths / 12 : c.ageMonths) : "";
             const unit = isYears ? 'years' : 'months';
 
             return `
@@ -141,10 +142,12 @@
                     </div>
                     <div class="age-input-container">
                         <input type="number" 
+                               inputmode="numeric"
+                               pattern="[0-9]*"
                                class="age-input" 
-                               value="${displayValue}" 
+                               value="${displayValue || ''}" 
                                oninput="updateChildAge(${i}, this.value, document.getElementById('unit-${i}').value)"
-                               placeholder="0">
+                               placeholder="Age">
                         <select id="unit-${i}" 
                                 class="unit-select" 
                                 onchange="updateChildAge(${i}, document.querySelector('#unit-${i}').previousElementSibling.value, this.value)">
@@ -210,12 +213,41 @@
     }
 
     function renderLoadingScreen() {
+        const iconMap = {
+            'FLIGHT': '✈️',
+            'ROAD_TRIP': '🚗',
+            'BEACH': '🏖️',
+            'CRUISE': '🚢',
+            'CAMPING': '⛺',
+            'GENERAL': '🌍'
+        };
+        const icon = iconMap[tripContext.tripType] || '✨';
+        const loadingMessages = [
+            "Building your personalized family travel plan...",
+            "Creating your packing checklist...",
+            "Finding the best tips and gear..."
+        ];
+        let msgIndex = 0;
+
         document.getElementById("screen").innerHTML = `
-            <div class="loading-state">
-                <div class="spinner"></div>
-                <p>Preparing your personalized family travel plan...</p>
+            <div class="loading-state" style="text-align: center; padding: 60px 20px;">
+                <div class="travel-animation" style="font-size: 50px; margin-bottom: 30px; animation: travelAnimation 2s ease-in-out infinite;">
+                    ${icon}
+                </div>
+                <h3 id="loading-msg" style="color: var(--primary); font-weight: 700;">${loadingMessages[0]}</h3>
+                <p style="color: var(--muted); margin-top: 10px;">This may take a moment</p>
             </div>
         `;
+
+        const msgInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % loadingMessages.length;
+            const msgEl = document.getElementById("loading-msg");
+            if (msgEl) {
+                msgEl.innerText = loadingMessages[msgIndex];
+            } else {
+                clearInterval(msgInterval);
+            }
+        }, 3000);
     }
 
     function renderPlanScreen() {

@@ -59,7 +59,8 @@ The AI prompt will be redesigned to return a structured JSON containing all four
 
 ## 5. Frontend Requirements
 *   **State Management**: Use a "Wizard" pattern to collect `TripContext`.
-*   **Age Input**: Allow parents to enter age in months/years.
+*   **Age Input**: Allow parents to enter age in months/years; optimized for mobile with numeric keyboards and placeholder-based inputs.
+*   **Loading Experience**: Travel-themed animations and progress reassurances based on selected `tripType`.
 *   **Result Presentation**:
     *   **Priority Order**: 1. Reminders, 2. Recommended Gear, 3. Quick Tips, 4. Full Packing Checklist.
     *   **Accordion UI**: Packing checklist categories are collapsed by default.
