@@ -174,14 +174,14 @@
         screen.innerHTML = `
             <div class="hero">
                 <h1 class="hero-title">Trip Details 🗓️</h1>
-                <p class="hero-subtitle">A few more details for the AI</p>
-                <div class="input-group">
-                    <label>Duration (days):</label>
-                    <input type="number" value="${tripContext.durationDays}" onchange="tripContext.durationDays = parseInt(this.value)" class="input">
-                </div>
+                <p class="hero-subtitle">Let's personalize your travel plan ✨</p>
                 <div class="input-group">
                     <label>Destination (optional):</label>
                     <input type="text" placeholder="e.g. London, Thailand" onchange="tripContext.destination = this.value" class="input">
+                </div>
+                <div class="input-group">
+                    <label>Duration (days):</label>
+                    <input type="number" value="${tripContext.durationDays}" onchange="tripContext.durationDays = parseInt(this.value)" class="input">
                 </div>
                 <div class="input-group">
                     <label>Expected Weather:</label>
@@ -272,8 +272,13 @@
     }
 
     function renderPlanScreen() {
-        console.log("currentPlan", currentPlan);
-        console.log("recommendedProducts", currentPlan.recommendedProducts);
+        console.log("currentPlan received from backend:", currentPlan);
+        if (currentPlan && currentPlan.recommendedProducts) {
+            console.log("recommendedProducts array:", currentPlan.recommendedProducts);
+            console.log("recommendedProducts length:", currentPlan.recommendedProducts.length);
+        } else {
+            console.log("recommendedProducts is MISSING or NULL");
+        }
 
         const screen = document.getElementById("screen");
         const destination = (currentPlan.context && currentPlan.context.destination) || 'your destination';
@@ -292,18 +297,38 @@
                     <button class="btn btn-secondary" onclick="savePlan()" style="margin-top: 10px;">Share / Save Plan</button>
                 </div>
 
-                <div class="plan-section reminders">
-                    <h3 style="color: #d9534f;">⚠️ Top 5 Things Parents Forget</h3>
-                    <ul style="background: #fff5f5; border: 1px solid #ffe6e6; border-radius: 12px; padding: 20px; list-style: none;">
-                        ${forgottenItems.map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;">
-                            <span style="margin-right: 10px;">📍</span>
-                            <span>${item}</span>
+                <div class="plan-section reminders" style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 24px; margin-right: 10px;">⚠️</span>
+                        <h3 style="color: #d9534f; margin: 0; font-size: 1.25rem;">Top 5 Things Parents Forget</h3>
+                    </div>
+                    <ul style="background: #fff5f5; border: 1px solid #ffe6e6; border-radius: 16px; padding: 20px; list-style: none; margin: 0; box-shadow: var(--shadow-soft);">
+                        ${forgottenItems.map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; line-height: 1.5;">
+                            <span style="color: #d9534f; margin-right: 12px; font-weight: bold;">•</span>
+                            <span style="font-size: 15px;">${item}</span>
                         </li>`).join('')}
                     </ul>
                 </div>
 
-                <div class="plan-section products">
-                    <h3>🛒 Recommended Gear</h3>
+                <div class="plan-section pro-tips" style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 24px; margin-right: 10px;">💡</span>
+                        <h3 style="margin: 0; font-size: 1.25rem;">Personalized Travel Tips</h3>
+                    </div>
+                    <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                        ${tips.map(tip => `
+                            <div style="background: white; padding: 18px; border-radius: 16px; border-left: 5px solid var(--primary); box-shadow: var(--shadow-soft); line-height: 1.6; font-size: 15px;">
+                                ${tip}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="plan-section products" style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 24px; margin-right: 10px;">🛒</span>
+                        <h3 style="margin: 0; font-size: 1.25rem;">Recommended Gear</h3>
+                    </div>
                     <div class="products-grid">
                         ${products.length > 0 ? products.map(p => `
                             <div class="product-card">
@@ -326,29 +351,21 @@
                     </div>
                 </div>
 
-                <div class="plan-section pro-tips">
-                    <h3>💡 Quick Travel Tips</h3>
-                    <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                        ${tips.map(tip => `
-                            <div style="background: var(--bg-soft); padding: 15px; border-radius: 12px; border-left: 4px solid var(--primary);">
-                                ${tip}
-                            </div>
-                        `).join('')}
+                <div class="plan-section checklist" style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 24px; margin-right: 10px;">✅</span>
+                        <h3 style="margin: 0; font-size: 1.25rem;">Full Packing Checklist</h3>
                     </div>
-                </div>
-
-                <div class="plan-section checklist">
-                    <h3>✅ Full Packing Checklist</h3>
                     <div class="accordion">
                         ${checklist.map((cat, i) => `
-                            <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden;">
-                                <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: var(--bg-soft); padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
-                                    <span>${cat.categoryName} (${cat.items ? cat.items.length : 0} items)</span>
-                                    <span id="acc-icon-${i}">▼</span>
+                            <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-soft);">
+                                <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: white; padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
+                                    <span style="font-size: 15px;">${cat.categoryName} <span style="font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 5px;">(${cat.items ? cat.items.length : 0} items)</span></span>
+                                    <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
                                 </div>
-                                <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px; background: white; border-top: 1px solid var(--border);">
-                                    <ul style="list-style: none; padding: 0;">
-                                        ${(cat.items || []).map(item => `<li style="margin-bottom: 10px; display: flex; align-items: flex-start;"><input type="checkbox" style="margin-right: 10px; margin-top: 4px;"> <span>${item}</span></li>`).join('')}
+                                <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px 20px; background: white; border-top: 1px solid var(--border);">
+                                    <ul style="list-style: none; padding: 0; margin: 0;">
+                                        ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
                                     </ul>
                                 </div>
                             </div>

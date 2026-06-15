@@ -45,7 +45,7 @@ The AI strategy prioritizes **high personalization** over raw generation speed. 
 ### 3.1. Personalization Strategy
 *   **Detailed Context**: The AI receives full `TripContext` including `ageMonths`, `destination`, `weather`, and `tripType`.
 *   **Model Selection**: Uses `GPT_4O` for higher quality reasoning and better personalization compared to mini models.
-*   **Prompting**: Instructed to explicitly reference age-specific needs and destination-specific preparation advice.
+*   **Prompting**: Instructed to explicitly reference age-specific needs and destination-specific preparation advice. The AI MUST weave the destination name into the content and account for its unique characteristics (rain, humidity, terrain, etc.).
 *   **Content Focus**: AI generates "Value-Add" items, while common essentials (passports, diapers) are managed by backend templates.
 
 ### 3.2. Product Recommendation Strategy

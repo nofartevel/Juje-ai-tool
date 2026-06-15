@@ -85,14 +85,20 @@ public class OpenAiSelectorService {
                 PERSONALIZATION IS THE TOP PRIORITY:
                 1. Reference child ages (in months) throughout the tips, reminders, and checklist. An 8-month-old, 18-month-old, and 4-year-old have very different needs.
                 2. Trip Type is the PRIMARY driver. A FLIGHT, BEACH, or ROAD_TRIP requires fundamentally different items and advice.
-                3. If a destination is provided, include specific preparation guidance for that location (terrain, weather, local customs, supply availability).
+                3. If a destination is provided, the travel plan MUST be tailored to that specific location. Reference the destination by name and account for its unique characteristics (e.g., London rain, Rome cobblestones, Phuket humidity).
                 4. Account for weather conditions (HOT/COLD/MIXED).
                 
+                CONTENT GUIDELINES:
+                - Instead of "Bring snacks", use "For your [Age]-month-old, bring [Specific Tip] for the [Trip Type]".
+                - Instead of "Pack layers", use "Since you're traveling to [Destination] where it will be [Weather], pack [Specific Clothing Item] for [Child Age]-month-old".
+                - Always weave the destination name into at least 2 travel tips and 3 checklist items when provided.
+                - Focus on specialized advice that a generic search engine wouldn't provide.
+                
                 OUTPUT REQUIREMENTS:
-                - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs.
-                - forgottenItems: Exactly 5 high-value, practical reminders.
-                - travelTips: Exactly 5 personalized tips. Be specific and actionable (e.g., "For your 14-month-old...", "Since you're flying to London...").
-                - recommendedProducts: Select the MOST RELEVANT products from the Product Bank. If you find fewer than 4 relevant products, broaden your search but stay helpful.
+                - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs. Use highly descriptive item names.
+                - forgottenItems: Exactly 5 high-value, practical reminders specific to this exact trip scenario and child ages.
+                - travelTips: Exactly 5 highly personalized tips. Be specific, actionable, and reference the child's age and trip circumstances.
+                - recommendedProducts: Select at least 4-6 of the MOST RELEVANT products from the Product Bank. Explain "why" this product is good for THIS specific trip in the result.
                 
                 DO NOT include basic essentials like passports or diapers (these are added automatically).
                 Focus on the "Value-Add" items that make the trip smoother.
@@ -104,7 +110,7 @@ public class OpenAiSelectorService {
                   ],
                   "forgottenItems": ["Reminder 1", "Reminder 2", "Reminder 3", "Reminder 4", "Reminder 5"],
                   "travelTips": ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5"],
-                  "recommendedProducts": [ { "id": "product_id" } ],
+                  "recommendedProducts": [ { "id": "product_id", "why": "short explanation" } ],
                   "travelResources": []
                 }
                 """.formatted(contextJson, productsJson);
@@ -122,8 +128,15 @@ public class OpenAiSelectorService {
             System.out.println("[PERF] OpenAI API Response: " + (apiTime - promptTime) + "ms");
 
             String jsonText = extractJsonFromResponse(response);
+            System.out.println("[DEBUG] Raw AI JSON: " + jsonText);
 
             TravelPlan plan = objectMapper.readValue(jsonText, TravelPlan.class);
+            if (plan.getRecommendedProducts() != null) {
+                System.out.println("[DEBUG] AI Selected Product IDs: " + 
+                    plan.getRecommendedProducts().stream().map(Product::getId).toList());
+            } else {
+                System.out.println("[DEBUG] AI Selected ZERO products.");
+            }
             long parseTime = System.currentTimeMillis();
             System.out.println("[PERF] JSON Parsing: " + (parseTime - apiTime) + "ms");
             
@@ -138,6 +151,9 @@ public class OpenAiSelectorService {
             }
             plan.setPackingChecklist(fullChecklist);
 
+            System.out.println("[DEBUG] Catalog Total Products: " + allProducts.size());
+            System.out.println("[DEBUG] Filtered Products (TripType=" + tripTypeStr + "): " + filteredProducts.size());
+
             // Enrich recommended products and apply fallback if needed
             List<Product> recommended = new java.util.ArrayList<>();
             if (plan.getRecommendedProducts() != null) {
@@ -146,10 +162,11 @@ public class OpenAiSelectorService {
                         .filter(java.util.Objects::nonNull)
                         .toList());
             }
+            System.out.println("[DEBUG] Products selected after mapping IDs: " + recommended.size());
 
             // Fallback for products: ensure at least 4 products if relevant ones exist
             if (recommended.size() < 4) {
-                System.out.println("Applying product fallback. Current size: " + recommended.size());
+                System.out.println("[DEBUG] Applying product fallback. Current size: " + recommended.size());
                 
                 // Collect existing IDs to avoid duplicates
                 java.util.Set<String> existingIds = recommended.stream()
@@ -164,14 +181,16 @@ public class OpenAiSelectorService {
                                                  (p.getActivity_type().equalsIgnoreCase("GENERAL") || 
                                                   p.getActivity_type().equalsIgnoreCase(tripTypeStr) ||
                                                   (tripTypeStr.equals("FLIGHT") && p.getActivity_type().equalsIgnoreCase("TRAVEL")) ||
-                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("TRAVEL")));
+                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("TRAVEL")) ||
+                                                  (tripTypeStr.equals("FLIGHT") && p.getActivity_type().equalsIgnoreCase("PLAY")) ||
+                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("PLAY")));
                             
                             return matchesTrip;
                         })
-                        .limit(4 - recommended.size())
+                        .limit(6 - recommended.size())
                         .toList();
                 
-                System.out.println("Adding " + fallbackProducts.size() + " fallback products");
+                System.out.println("[DEBUG] Adding " + fallbackProducts.size() + " fallback products");
                 recommended.addAll(fallbackProducts);
             }
             plan.setRecommendedProducts(recommended);
