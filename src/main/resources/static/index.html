@@ -272,6 +272,9 @@
     }
 
     function renderPlanScreen() {
+        console.log("currentPlan", currentPlan);
+        console.log("recommendedProducts", currentPlan.recommendedProducts);
+
         const screen = document.getElementById("screen");
         const destination = (currentPlan.context && currentPlan.context.destination) || 'your destination';
         const forgottenItems = currentPlan.forgottenItems || [];
@@ -302,7 +305,7 @@
                 <div class="plan-section products">
                     <h3>🛒 Recommended Gear</h3>
                     <div class="products-grid">
-                        ${products.map(p => `
+                        ${products.length > 0 ? products.map(p => `
                             <div class="product-card">
                                 <div class="product-card-image-wrap">
                                     <img src="${p.image}" onerror="this.src='/logo.png'" class="product-card-image">
@@ -315,7 +318,11 @@
                                     </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `).join('') : `
+                            <div style="grid-column: 1/-1; text-align: center; padding: 20px; background: var(--bg-soft); border-radius: 12px; color: var(--text-light);">
+                                <p>No products returned by the AI or fallback system. (Debug: ${products.length} products)</p>
+                            </div>
+                        `}
                     </div>
                 </div>
 

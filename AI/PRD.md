@@ -45,7 +45,7 @@ The app features a high-impact landing page that immediately communicates value,
 *   CTR (Click-Through Rate) on recommended products.
 
 ## 6. Performance Requirements
-*   **Generation Time**: The application should provide a seamless experience even during AI generation.
-*   **Progressive Loading**: The UI uses a travel-themed loading state with rotating messages to manage user expectations.
-*   **Hybrid Content**: Fast backend templates combined with focused AI generation to minimize total response time.
-*   **Data Efficiency**: Minimized JSON payloads between frontend and backend.
+*   **Quality First**: Personalization and relevance are the primary goals, even if generation takes 10–15 seconds.
+*   **Progressive Loading**: The UI uses a travel-themed loading state with rotating messages to manage user expectations during the 10–15s wait.
+*   **Reliable Recommendations**: The system always provides at least 4 product recommendations through a hybrid AI + Backend fallback mechanism.
+*   **Hybrid Content**: Fast backend templates combined with focused, high-quality AI generation.

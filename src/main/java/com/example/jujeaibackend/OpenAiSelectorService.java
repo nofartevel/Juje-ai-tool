@@ -22,17 +22,14 @@ public class OpenAiSelectorService {
     private static final Map<TripType, List<ChecklistCategory>> STATIC_TEMPLATES = Map.of(
         TripType.FLIGHT, List.of(
             new ChecklistCategory("Flight Day Essentials", List.of("Passports & Documents", "Boarding Passes", "Wallet & Cash", "Phone & Chargers")),
-            new ChecklistCategory("Diapering & Hygiene", List.of("Diapers (1 for every 2 hours of travel)", "Wet Wipes", "Changing Pad", "Diaper Disposal Bags", "Hand Sanitizer")),
-            new ChecklistCategory("Health & Safety", List.of("First Aid Kit", "Children's Pain Reliever", "Prescription Medications", "Thermometer", "Antibacterial Wipes"))
+            new ChecklistCategory("Diapering & Hygiene", List.of("Diapers (1 for every 2 hours of travel)", "Wet Wipes", "Changing Pad", "Diaper Disposal Bags", "Hand Sanitizer"))
         ),
         TripType.ROAD_TRIP, List.of(
             new ChecklistCategory("Car Essentials", List.of("Car Seat", "Window Shades", "Emergency Kit", "Trash Bags", "Paper Towels")),
-            new ChecklistCategory("Diapering & Hygiene", List.of("Diapers", "Wet Wipes", "Changing Pad", "Hand Sanitizer")),
-            new ChecklistCategory("Health & Safety", List.of("First Aid Kit", "Motion Sickness Bags", "Hand Sanitizer"))
+            new ChecklistCategory("Diapering & Hygiene", List.of("Diapers", "Wet Wipes", "Changing Pad", "Hand Sanitizer"))
         ),
         TripType.BEACH, List.of(
-            new ChecklistCategory("Sun & Water Gear", List.of("Sunscreen", "Swim Diapers", "Sun Hats", "UV Protection Swimwear", "Sunglasses")),
-            new ChecklistCategory("Health & Safety", List.of("First Aid Kit", "Aloe Vera", "Bug Spray", "Hand Sanitizer"))
+            new ChecklistCategory("Sun & Water Gear", List.of("Sunscreen", "Swim Diapers", "Sun Hats", "UV Protection Swimwear", "Sunglasses"))
         )
     );
 
@@ -49,17 +46,24 @@ public class OpenAiSelectorService {
     private TravelPlan generateTravelPlanWithRetry(TripContext context, int retries) {
         long startTime = System.currentTimeMillis();
         try {
-            List<Product> products = productService.getAllProducts();
+            List<Product> allProducts = productService.getAllProducts();
 
-            // OPTIMIZATION: Send only essential product metadata to reduce prompt size
+            // OPTIMIZATION: Pre-filter products based on trip type to reduce prompt size
+            String tripTypeStr = context.getTripType().name();
+            List<Product> filteredProducts = allProducts.stream()
+                    .filter(p -> p.getActivity_type() == null || 
+                                 p.getActivity_type().equalsIgnoreCase("GENERAL") || 
+                                 p.getActivity_type().equalsIgnoreCase(tripTypeStr))
+                    .toList();
+
+            // OPTIMIZATION: Send only essential product metadata
             String productsJson = objectMapper.writeValueAsString(
-                    products.stream().map(p -> {
+                    filteredProducts.stream().map(p -> {
                         Map<String, Object> productMap = new java.util.HashMap<>();
                         productMap.put("id", p.getId());
                         productMap.put("name", p.getName());
-                        productMap.put("section", p.getSection());
                         productMap.put("keywords", p.getKeywords());
-                        productMap.put("use_cases", p.getUse_cases());
+                        productMap.put("why", p.getWhy());
                         return productMap;
                     }).toList()
             );
@@ -68,7 +72,7 @@ public class OpenAiSelectorService {
 
             String prompt = """
                 You are an Expert Family Travel Planner.
-                Your goal is to help parents prepare for a trip with their children.
+                Your goal is to help parents prepare for a trip with their children by providing a HIGHLY PERSONALIZED travel plan.
                 
                 User Trip Context:
                 %s
@@ -78,21 +82,20 @@ public class OpenAiSelectorService {
                 
                 You must generate a complete travel preparation plan in JSON format.
                 
-                CRITICAL INSTRUCTIONS:
-                1. Trip Type is the PRIMARY driver. A FLIGHT, BEACH, or ROAD_TRIP requires fundamentally different items and advice.
-                2. Use child ages (in months) to provide highly specific advice. An 8-month-old's needs are very different from a 24-month-old's.
-                3. If a destination is provided, include specific preparation tips for that location (e.g., climate, terrain, local availability of baby supplies).
+                PERSONALIZATION IS THE TOP PRIORITY:
+                1. Reference child ages (in months) throughout the tips, reminders, and checklist. An 8-month-old, 18-month-old, and 4-year-old have very different needs.
+                2. Trip Type is the PRIMARY driver. A FLIGHT, BEACH, or ROAD_TRIP requires fundamentally different items and advice.
+                3. If a destination is provided, include specific preparation guidance for that location (terrain, weather, local customs, supply availability).
+                4. Account for weather conditions (HOT/COLD/MIXED).
                 
-                The plan should include:
-                1. packingChecklist: A list of ONLY the MOST IMPORTANT DYNAMIC items tailored to the child's age and specific trip details.
-                   Keep categories to a maximum of 3. Keep items per category to a maximum of 5.
-                   DO NOT include basic essentials like passports, diapers, or sunscreen (these are added automatically).
-                   Focus on: Age-specific toys, specific clothing layers for the destination/weather, and feeding supplies.
-                   Return categories like: "Age-Specific Entertainment", "Feeding & Comfort", "Specific Gear for [Destination]".
-                2. forgottenItems: Top 5 Things Parents Forget. Limit to EXACTLY 5 high-value, practical reminders.
-                3. travelTips: Quick Travel Tips. Limit to EXACTLY 5 concise tips (1-2 short sentences each).
-                4. recommendedProducts: A selection of relevant products from the provided Product Bank. Return ONLY the ID.
-                5. travelResources: Return an empty list.
+                OUTPUT REQUIREMENTS:
+                - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs.
+                - forgottenItems: Exactly 5 high-value, practical reminders.
+                - travelTips: Exactly 5 personalized tips. Be specific and actionable (e.g., "For your 14-month-old...", "Since you're flying to London...").
+                - recommendedProducts: Select the MOST RELEVANT products from the Product Bank. If you find fewer than 4 relevant products, broaden your search but stay helpful.
+                
+                DO NOT include basic essentials like passports or diapers (these are added automatically).
+                Focus on the "Value-Add" items that make the trip smoother.
                 
                 Return ONLY valid JSON in this exact shape:
                 {
@@ -101,18 +104,16 @@ public class OpenAiSelectorService {
                   ],
                   "forgottenItems": ["Reminder 1", "Reminder 2", "Reminder 3", "Reminder 4", "Reminder 5"],
                   "travelTips": ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5"],
-                  "recommendedProducts": [ { "id": "p1" } ],
+                  "recommendedProducts": [ { "id": "product_id" } ],
                   "travelResources": []
                 }
-                
-                Be thorough in the checklist, but concise and high-impact in tips and reminders.
                 """.formatted(contextJson, productsJson);
 
             long promptTime = System.currentTimeMillis();
             System.out.println("[PERF] Prompt Building: " + (promptTime - startTime) + "ms");
 
             ResponseCreateParams params = ResponseCreateParams.builder()
-                    .model(ChatModel.GPT_4O_MINI)
+                    .model(ChatModel.GPT_4O)
                     .input(prompt)
                     .build();
 
@@ -137,16 +138,56 @@ public class OpenAiSelectorService {
             }
             plan.setPackingChecklist(fullChecklist);
 
-            // Enrich recommended products with full data from ProductService
+            // Enrich recommended products and apply fallback if needed
+            List<Product> recommended = new java.util.ArrayList<>();
             if (plan.getRecommendedProducts() != null) {
-                List<Product> enriched = plan.getRecommendedProducts().stream()
+                recommended.addAll(plan.getRecommendedProducts().stream()
                         .map(p -> productService.getProductById(p.getId()))
                         .filter(java.util.Objects::nonNull)
-                        .toList();
-                plan.setRecommendedProducts(enriched);
+                        .toList());
             }
 
+            // Fallback for products: ensure at least 4 products if relevant ones exist
+            if (recommended.size() < 4) {
+                System.out.println("Applying product fallback. Current size: " + recommended.size());
+                
+                // Collect existing IDs to avoid duplicates
+                java.util.Set<String> existingIds = recommended.stream()
+                        .map(Product::getId)
+                        .collect(java.util.stream.Collectors.toSet());
+
+                List<Product> fallbackProducts = allProducts.stream()
+                        .filter(p -> !existingIds.contains(p.getId()))
+                        .filter(p -> {
+                            // Match by trip type (activity_type)
+                            boolean matchesTrip = p.getActivity_type() != null && 
+                                                 (p.getActivity_type().equalsIgnoreCase("GENERAL") || 
+                                                  p.getActivity_type().equalsIgnoreCase(tripTypeStr) ||
+                                                  (tripTypeStr.equals("FLIGHT") && p.getActivity_type().equalsIgnoreCase("TRAVEL")) ||
+                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("TRAVEL")));
+                            
+                            return matchesTrip;
+                        })
+                        .limit(4 - recommended.size())
+                        .toList();
+                
+                System.out.println("Adding " + fallbackProducts.size() + " fallback products");
+                recommended.addAll(fallbackProducts);
+            }
+            plan.setRecommendedProducts(recommended);
+
             System.out.println("[PERF] Total Backend Time: " + (System.currentTimeMillis() - startTime) + "ms");
+            
+            // Log recommended products for debugging
+            if (plan.getRecommendedProducts() != null) {
+                System.out.println("Recommended Products Size: " + plan.getRecommendedProducts().size());
+                plan.getRecommendedProducts().forEach(p -> 
+                    System.out.println("Product: ID=" + p.getId() + ", Name=" + p.getName() + ", Image=" + p.getImage())
+                );
+            } else {
+                System.out.println("Recommended Products is NULL");
+            }
+
             return plan;
 
         } catch (com.openai.errors.RateLimitException e) {
@@ -196,6 +237,24 @@ public class OpenAiSelectorService {
             throw new RuntimeException("Could not find end of AI text in response");
         }
 
-        return raw.substring(start, end).trim();
+        String jsonText = raw.substring(start, end).trim();
+
+        // Handle cases where the AI wraps JSON in Markdown code blocks
+        if (jsonText.startsWith("```")) {
+            // Remove starting block (e.g., ```json or just ```)
+            int firstNewline = jsonText.indexOf("\n");
+            if (firstNewline != -1) {
+                jsonText = jsonText.substring(firstNewline).trim();
+            } else {
+                jsonText = jsonText.substring(3).trim();
+            }
+            
+            // Remove ending block
+            if (jsonText.endsWith("```")) {
+                jsonText = jsonText.substring(0, jsonText.length() - 3).trim();
+            }
+        }
+
+        return jsonText;
     }
 }

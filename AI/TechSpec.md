@@ -40,16 +40,23 @@ public class TravelResource {
 ```
 
 ## 3. AI Implementation (`OpenAiSelectorService` Update)
-The AI prompt is optimized for performance by reducing input size and delegating static content to the backend.
+The AI strategy prioritizes **high personalization** over raw generation speed. The target generation time is 10–15 seconds to ensure quality and relevance.
 
-### 3.1. Performance Optimization Strategy
-*   **Prompt Reduction**: Only essential product metadata (ID, name, section, keywords) is sent to OpenAI, reducing input tokens.
-*   **Hybrid Content Generation**:
-    *   **Static Content**: The backend maintains templates for common items (e.g., passports, diapers) based on `tripType`.
-    *   **Dynamic Content**: AI generates only age-specific and destination-specific items, tips, and reminders.
-*   **Output Constraint**: AI returns only product IDs; backend enriches with full metadata. AI output is strictly limited to max 5 tips, 5 reminders, and concise checklist items (max 3 categories, max 5 items each).
-*   **Model Selection**: Uses `GPT_4O_MINI` (or fastest available model) for minimal latency.
-*   **Response Shaping**: AI is instructed to omit common essentials already covered by static templates, reducing output tokens and generation time.
+### 3.1. Personalization Strategy
+*   **Detailed Context**: The AI receives full `TripContext` including `ageMonths`, `destination`, `weather`, and `tripType`.
+*   **Model Selection**: Uses `GPT_4O` for higher quality reasoning and better personalization compared to mini models.
+*   **Prompting**: Instructed to explicitly reference age-specific needs and destination-specific preparation advice.
+*   **Content Focus**: AI generates "Value-Add" items, while common essentials (passports, diapers) are managed by backend templates.
+
+### 3.2. Product Recommendation Strategy
+*   **AI-First**: AI selects relevant products from a pre-filtered list based on `tripType`.
+*   **Backend Fallback**: If AI returns fewer than 4 products, the backend supplements the list with relevant items from the catalog (matching `tripType` or `GENERAL`) to ensure at least 4 recommendations.
+*   **Data Enrichment**: AI returns only IDs; backend enriches with full metadata (images, links, etc.).
+
+### 3.3. Performance & Latency
+*   **Optimization**: Products are pre-filtered before being sent to the AI to reduce token usage.
+*   **Hybrid Generation**: Combines static templates with dynamic AI content.
+*   **Target Latency**: 10–15 seconds.
 
 ## 7. Troubleshooting & Resilience
 ### 7.1. OpenAI Rate Limits & Quota (Error 429)
@@ -63,16 +70,6 @@ The AI prompt is optimized for performance by reducing input size and delegating
 *   **Mitigation**: 
     *   Monitor and fix OpenAI billing and usage limits in the OpenAI dashboard.
 
-### 3.2. Response Shaping
-*   **Prompt Instructions**: AI is instructed to omit common essentials already covered by static templates, reducing output tokens and generation time.
-
-### 3.3. System Prompt Strategy
-*   **Role**: Expert Family Travel Planner.
-*   **Input**: Structured `TripContext` and reduced `Product Bank`.
-*   **Output**: Strict JSON format matching `TravelPlan`.
-*   **Constraints**: Limit `forgottenItems` and `travelTips` to exactly 5 high-impact items each.
-*   **Precision**: Use `ageMonths` to tailor advice.
-*   **Destination**: Generate specific preparation tips if `destination` is provided.
 
 ## 4. API Endpoints
 *   `POST /api/v1/generate-travel-plan`: Main generation logic (now enriches product data).
