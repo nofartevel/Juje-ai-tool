@@ -194,6 +194,7 @@ public class OpenAiSelectorService {
                 recommended.addAll(fallbackProducts);
             }
             plan.setRecommendedProducts(recommended);
+            plan.setContext(context);
 
             System.out.println("[PERF] Total Backend Time: " + (System.currentTimeMillis() - startTime) + "ms");
             

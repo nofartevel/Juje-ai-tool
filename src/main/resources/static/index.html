@@ -6,6 +6,8 @@
     <title>JUJE</title>
 
     <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Open Graph -->
     <meta property="og:title" content="Traveling with kids? We've got you covered ✈️">
@@ -449,6 +451,33 @@
 
         const totalItemsCount = checklist.reduce((sum, cat) => sum + (cat.items ? cat.items.length : 0), 0);
 
+        // Populate printable checklist
+        const printableChecklist = document.getElementById('printableChecklist');
+        if (printableChecklist) {
+            printableChecklist.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="/logo.png" alt="JUJE logo" style="height: 50px; margin-bottom: 10px;">
+                    <div style="font-size: 14px; color: #666; font-weight: 700;">
+                        ${tripContext.tripType.replace(/_/g, ' ')} • ${tripContext.children.length} Child${tripContext.children.length > 1 ? 'ren' : ''} • ${tripContext.durationDays} Days • ${tripContext.weather}
+                    </div>
+                </div>
+                <h1 style="text-align: center; margin-bottom: 30px;">Packing Checklist</h1>
+                ${checklist.map(cat => `
+                    <div style="margin-bottom: 25px;">
+                        <h2 style="border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-size: 18px;">${cat.categoryName}</h2>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            ${(cat.items || []).map(item => `
+                                <li style="margin-bottom: 10px; display: flex; align-items: flex-start; font-size: 14px;">
+                                    <div style="width: 18px; height: 18px; border: 1px solid #333; margin-right: 12px; flex-shrink: 0; border-radius: 3px;"></div>
+                                    <span>${item}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `).join('')}
+            `;
+        }
+
         screen.innerHTML = `
             <div class="result-container" style="animation: fadeInUp 0.5s ease;">
                 <!-- Summary Header -->
@@ -606,7 +635,7 @@
                     </div>
 
                     <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px;">
-                        <button class="btn btn-secondary" style="flex: 1; min-width: auto;" onclick="window.print()">Print</button>
+                        <button class="btn btn-secondary" style="flex: 1; min-width: auto;" onclick="generatePDF()">Print Checklist</button>
                         <button class="btn btn-primary" style="flex: 2; min-width: auto;" onclick="savePlan()">Share Plan</button>
                     </div>
                 </div>
@@ -642,6 +671,142 @@
         }
     }
 
+    async function generatePDF() {
+        if (!currentPlan || !currentPlan.packingChecklist) {
+            console.error('[DEBUG_LOG] No current plan or packing checklist data available');
+            alert('No packing checklist data found. Please generate a plan first.');
+            return;
+        }
+
+        const checklist = currentPlan.packingChecklist;
+        const context = currentPlan.context || {};
+        
+        console.log('[DEBUG_LOG] TravelPlan found: true');
+        console.log('[DEBUG_LOG] tripType:', context.tripType);
+        console.log('[DEBUG_LOG] children:', context.children ? context.children.length : 0);
+        console.log('[DEBUG_LOG] durationDays:', context.durationDays);
+        console.log('[DEBUG_LOG] weather:', context.weather);
+        console.log('[DEBUG_LOG] packingChecklist size:', checklist.length);
+        
+        checklist.forEach(cat => {
+            console.log(`[DEBUG_LOG] ${cat.categoryName}: ${cat.items ? cat.items.length : 0} items`);
+        });
+
+        if (checklist.length === 0 || checklist.every(cat => !cat.items || cat.items.length === 0)) {
+            alert('The checklist is empty. Nothing to print.');
+            return;
+        }
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+
+            // 1. JUJE Logo (Placeholder text for now, but in a real app we'd use an image)
+            doc.setFontSize(24);
+            doc.setTextColor(255, 107, 107); // JUJE color
+            doc.setFont("helvetica", "bold");
+            doc.text("JUJE", pageWidth / 2, 20, { align: "center" });
+
+            // 2. Trip Summary
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.setFont("helvetica", "normal");
+            
+            const context = currentPlan.context || {};
+            
+            const tripTypeMap = {
+                'FLIGHT': 'Flight',
+                'ROAD_TRIP': 'Road Trip',
+                'BEACH': 'Beach Trip',
+                'CRUISE': 'Cruise',
+                'CAMPING': 'Camping',
+                'GENERAL': 'Travel Plan'
+            };
+            
+            const tripType = tripTypeMap[context.tripType] || context.tripType || "Travel Plan";
+            const childrenCount = context.children ? context.children.length : 0;
+            const duration = context.durationDays || 0;
+            const weather = context.weather ? (context.weather.charAt(0).toUpperCase() + context.weather.slice(1).toLowerCase()) : "Family Trip";
+            
+            const summaryText = `${tripType} • ${childrenCount} ${childrenCount === 1 ? 'child' : 'children'} • ${duration} days • ${weather}`;
+            doc.text(summaryText, pageWidth / 2, 30, { align: "center" });
+
+            // 2b. Generation Date
+            doc.setFontSize(9);
+            doc.setTextColor(150, 150, 150);
+            const today = new Date();
+            const dateString = `Generated on ${today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+            doc.text(dateString, pageWidth / 2, 35, { align: "center" });
+
+            // 3. Packing Checklist Title
+            doc.setFontSize(18);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("helvetica", "bold");
+            doc.text("Packing Checklist", pageWidth / 2, 48, { align: "center" });
+
+            let startY = 60;
+
+            // 4. Checklist Categories & Items
+            checklist.forEach((category, index) => {
+                if (!category.items || category.items.length === 0) return;
+
+                // Check for page overflow
+                if (startY > 250) {
+                    doc.addPage();
+                    startY = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.setTextColor(255, 107, 107);
+                doc.setFont("helvetica", "bold");
+                doc.text(`${index + 1}. ${category.categoryName}`, 14, startY);
+                startY += 8;
+
+                const tableData = category.items.map(item => ["", item]);
+                
+                doc.autoTable({
+                    startY: startY,
+                    body: tableData,
+                    columns: [
+                        { header: "", dataKey: 0 },
+                        { header: "Item", dataKey: 1 }
+                    ],
+                    theme: 'plain',
+                    styles: { 
+                        fontSize: 11, 
+                        cellPadding: { top: 3, right: 2, bottom: 3, left: 2 },
+                        textColor: [50, 50, 50]
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 12, halign: 'center' }, // For the empty checkbox
+                        1: { cellWidth: 'auto' }
+                    },
+                    didDrawCell: (data) => {
+                        if (data.column.index === 0 && data.cell.section === 'body') {
+                            // Draw an empty checkbox
+                            const x = data.cell.x + 4;
+                            const y = data.cell.y + (data.cell.height / 2) - 2;
+                            doc.setDrawColor(180, 180, 180);
+                            doc.setLineWidth(0.5);
+                            doc.rect(x, y, 4, 4);
+                        }
+                    },
+                    margin: { left: 14, right: 14 },
+                    showHead: false
+                });
+
+                startY = doc.lastAutoTable.finalY + 15;
+            });
+
+            doc.save('JUJE-Packing-Checklist.pdf');
+
+        } catch (error) {
+            console.error('[DEBUG_LOG] PDF generation failed:', error);
+            alert('Failed to generate PDF. Please try again.');
+        }
+    }
+
     async function savePlan() {
         try {
             const res = await fetch('/api/v1/save-plan', {
@@ -664,7 +829,13 @@
                     url: shareUrl
                 });
             } else {
-                window.prompt("Copy this link to share your plan:", shareUrl);
+                const dummy = document.createElement("input");
+                document.body.appendChild(dummy);
+                dummy.value = shareUrl;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+                alert("Share link copied to clipboard! 📋\n\n" + shareUrl);
             }
 
         } catch (error) {

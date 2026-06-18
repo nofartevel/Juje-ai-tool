@@ -40,13 +40,59 @@ public class HomeController {
 
     @PostMapping("/api/v1/save-plan")
     public ResponseEntity<?> savePlan(@RequestBody TravelPlan plan) {
+        if (plan != null) {
+            System.out.println("TravelPlan found: true");
+            TripContext context = plan.getContext();
+            if (context != null) {
+                System.out.println("tripType: " + context.getTripType());
+                System.out.println("children: " + (context.getChildren() != null ? context.getChildren().size() : 0));
+                System.out.println("durationDays: " + context.getDurationDays());
+                System.out.println("weather: " + context.getWeather());
+            }
+            List<ChecklistCategory> checklist = plan.getPackingChecklist();
+            if (checklist != null) {
+                System.out.println("packingChecklist size: " + checklist.size());
+                System.out.println("");
+                for (ChecklistCategory cat : checklist) {
+                    int itemCount = cat.getItems() != null ? cat.getItems().size() : 0;
+                    System.out.println(cat.getCategoryName() + ": " + itemCount + " items");
+                }
+            } else {
+                System.out.println("Categories: 0");
+            }
+        } else {
+            System.out.println("TravelPlan found: false");
+        }
+
         String id = sessionService.saveTravelPlan(plan);
         return ResponseEntity.ok(Map.of("id", id));
     }
 
     @GetMapping("/api/v1/plan/{id}")
     public TravelPlan getPlan(@PathVariable String id) {
-        return sessionService.getTravelPlan(id);
+        TravelPlan plan = sessionService.getTravelPlan(id);
+        if (plan != null) {
+            System.out.println("TravelPlan (Shared) found: true");
+            TripContext context = plan.getContext();
+            if (context != null) {
+                System.out.println("tripType: " + context.getTripType());
+                System.out.println("children: " + (context.getChildren() != null ? context.getChildren().size() : 0));
+                System.out.println("durationDays: " + context.getDurationDays());
+                System.out.println("weather: " + context.getWeather());
+            }
+            List<ChecklistCategory> checklist = plan.getPackingChecklist();
+            if (checklist != null) {
+                System.out.println("packingChecklist size: " + checklist.size());
+                System.out.println("");
+                for (ChecklistCategory cat : checklist) {
+                    int itemCount = cat.getItems() != null ? cat.getItems().size() : 0;
+                    System.out.println(cat.getCategoryName() + ": " + itemCount + " items");
+                }
+            } else {
+                System.out.println("Categories: 0");
+            }
+        }
+        return plan;
     }
 
 
