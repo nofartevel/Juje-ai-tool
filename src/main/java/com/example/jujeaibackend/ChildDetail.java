@@ -1,14 +1,14 @@
 package com.example.jujeaibackend;
 
 public class ChildDetail {
-    private int ageMonths;
+    private Integer ageMonths;
 
     public ChildDetail() {}
 
-    public ChildDetail(int ageMonths) {
+    public ChildDetail(Integer ageMonths) {
         this.ageMonths = ageMonths;
     }
 
-    public int getAgeMonths() { return ageMonths; }
-    public void setAgeMonths(int ageMonths) { this.ageMonths = ageMonths; }
+    public Integer getAgeMonths() { return ageMonths; }
+    public void setAgeMonths(Integer ageMonths) { this.ageMonths = ageMonths; }
 }

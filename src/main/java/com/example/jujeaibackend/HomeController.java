@@ -56,7 +56,6 @@ public class HomeController {
         context.setTripType(TripType.FLIGHT);
         context.setChildren(List.of(new ChildDetail(18))); // 18 months
         context.setDurationDays(7);
-        context.setDestination("London");
         context.setWeather(WeatherType.HOT);
         return generateTravelPlan(context);
     }

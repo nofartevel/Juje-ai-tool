@@ -31,6 +31,12 @@
                      onerror="this.style.display='none'; document.getElementById('fallbackBrand').style.display='block';" />
                 <div id="fallbackBrand" class="brand-text" style="display:none;">JUJE</div>
             </div>
+            <div id="stepIndicator" class="step-indicator"></div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+            </div>
         </div>
 
         <div class="screen" id="screen"></div>
@@ -43,12 +49,26 @@
         tripType: null,
         children: [],
         durationDays: 7,
-        destination: "",
         weather: "HOT"
     };
     let currentPlan = null;
 
+    let childUnits = []; // Track unit per child: 'months' or 'years'
+
+    function updateHeader(step, total, label) {
+        const indicator = document.getElementById("stepIndicator");
+        const fill = document.getElementById("progressFill");
+        if (step === 0) {
+            indicator.innerText = "";
+            fill.style.width = "0%";
+        } else {
+            indicator.innerText = `${label} • Step ${step} of ${total}`;
+            fill.style.width = `${(step / total) * 100}%`;
+        }
+    }
+
     function renderIntroScreen() {
+        updateHeader(0, 3, "");
         if (typeof renderTripTypeStep === 'function') {
             renderTripTypeStep();
         } else {
@@ -57,6 +77,7 @@
     }
 
     function renderTripTypeStep() {
+        updateHeader(1, 3, "Trip Type");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
             <div class="hero">
@@ -106,8 +127,12 @@
     }
 
     function renderFamilyStep() {
+        updateHeader(2, 3, "Family");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
+            <div class="nav-controls">
+                <button class="btn-back" onclick="renderTripTypeStep()">← Back</button>
+            </div>
             <div class="hero">
                 <h1 class="hero-title">Family Details 👨‍👩‍👧‍👦</h1>
                 <p class="hero-subtitle">Add your children and their ages</p>
@@ -121,8 +146,9 @@
     }
 
     function addChild() {
-        // Default new child with no age set (undefined or null)
+        // Default new child with no age set (undefined or null) and 'years' unit
         tripContext.children.push({ ageMonths: undefined });
+        childUnits.push('years');
         updateChildrenList();
     }
 
@@ -130,15 +156,19 @@
         const list = document.getElementById("childrenList");
         list.innerHTML = tripContext.children.map((c, i) => {
             const hasAge = c.ageMonths !== undefined && c.ageMonths !== null;
-            const isYears = hasAge && c.ageMonths >= 12 && c.ageMonths % 12 === 0;
-            const displayValue = hasAge ? (isYears ? c.ageMonths / 12 : c.ageMonths) : "";
-            const unit = isYears ? 'years' : 'months';
+            const unit = childUnits[i] || 'years';
+            
+            // For display, if unit is years, we show ageMonths/12, otherwise ageMonths
+            let displayValue = "";
+            if (hasAge) {
+                displayValue = (unit === 'years') ? Math.floor(c.ageMonths / 12) : c.ageMonths;
+            }
 
             return `
                 <div class="child-card">
                     <div class="child-card-header">
                         <span class="child-label">Child ${i+1}</span>
-                        <button class="btn-icon" onclick="removeChild(${i})">🗑️</button>
+                        <button class="btn-icon" onclick="removeChildAtIndex(${i})">🗑️</button>
                     </div>
                     <div class="age-input-container">
                         <input type="number" 
@@ -146,57 +176,115 @@
                                pattern="[0-9]*"
                                class="age-input" 
                                value="${displayValue || ''}" 
-                               oninput="updateChildAge(${i}, this.value, document.getElementById('unit-${i}').value)"
+                               oninput="updateChildAge(${i}, this.value)"
                                placeholder="Age">
-                        <select id="unit-${i}" 
-                                class="unit-select" 
-                                onchange="updateChildAge(${i}, document.querySelector('#unit-${i}').previousElementSibling.value, this.value)">
-                            <option value="months" ${unit === 'months' ? 'selected' : ''}>Months</option>
-                            <option value="years" ${unit === 'years' ? 'selected' : ''}>Years</option>
-                        </select>
+                    </div>
+                    <div class="segmented-control">
+                        <div class="segmented-option ${unit === 'months' ? 'active' : ''}" onclick="setChildUnit(${i}, 'months')">Months</div>
+                        <div class="segmented-option ${unit === 'years' ? 'active' : ''}" onclick="setChildUnit(${i}, 'years')">Years</div>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    function updateChildAge(i, val, unit) {
-        let ageMonths = parseInt(val) || 0;
+    function setChildUnit(i, unit) {
+        const currentVal = tripContext.children[i].ageMonths;
+        const currentUnit = childUnits[i];
+        
+        if (currentUnit === unit) return;
+        
+        childUnits[i] = unit;
+        
+        // If there was a value, we might want to preserve it or just re-render
+        // The instructions say "Tapping Months switches the unit". 
+        // We need to make sure the value in the input is re-interpreted correctly.
+        // Actually, updateChildrenList will re-render with the correct displayValue.
+        updateChildrenList();
+    }
+
+    function updateChildAge(i, val) {
+        let valInt = parseInt(val);
+        if (isNaN(valInt)) {
+            tripContext.children[i].ageMonths = undefined;
+            return;
+        }
+        const unit = childUnits[i];
+        let ageMonths = valInt;
         if (unit === 'years') {
-            ageMonths = ageMonths * 12;
+            ageMonths = valInt * 12;
         }
         tripContext.children[i].ageMonths = ageMonths;
     }
-    function removeChild(i) { tripContext.children.splice(i, 1); updateChildrenList(); }
+    function removeChildAtIndex(i) { 
+        tripContext.children.splice(i, 1); 
+        childUnits.splice(i, 1);
+        updateChildrenList(); 
+    }
 
     function renderLogisticsStep() {
+        updateHeader(3, 3, "Details");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
+            <div class="nav-controls">
+                <button class="btn-back" onclick="renderFamilyStep()">← Back</button>
+            </div>
             <div class="hero">
                 <h1 class="hero-title">Trip Details 🗓️</h1>
                 <p class="hero-subtitle">Let's personalize your travel plan ✨</p>
                 <div class="input-group">
-                    <label>Destination (optional):</label>
-                    <input type="text" placeholder="e.g. London, Thailand" onchange="tripContext.destination = this.value" class="input">
-                </div>
-                <div class="input-group">
                     <label>Duration (days):</label>
-                    <input type="number" value="${tripContext.durationDays}" onchange="tripContext.durationDays = parseInt(this.value)" class="input">
+                    <div class="duration-input-wrapper">
+                        <input type="number" 
+                               value="${tripContext.durationDays}" 
+                               onchange="tripContext.durationDays = parseInt(this.value)" 
+                               class="duration-field" 
+                               inputmode="numeric" 
+                               pattern="[0-9]*">
+                        <span class="duration-unit">Days</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>Expected Weather:</label>
-                    <select onchange="tripContext.weather = this.value" class="input">
-                        <option value="HOT">Hot ☀️</option>
-                        <option value="COLD">Cold ❄️</option>
-                        <option value="MIXED">Mixed ☁️</option>
-                    </select>
+                    <div class="weather-grid">
+                        <div class="weather-card ${tripContext.weather === 'HOT' ? 'active' : ''}" onclick="setWeather('HOT')">
+                            <span class="weather-icon">☀️</span>
+                            <span class="weather-label">Hot</span>
+                        </div>
+                        <div class="weather-card ${tripContext.weather === 'MIXED' ? 'active' : ''}" onclick="setWeather('MIXED')">
+                            <span class="weather-icon">🌤️</span>
+                            <span class="weather-label">Mixed</span>
+                        </div>
+                        <div class="weather-card ${tripContext.weather === 'COLD' ? 'active' : ''}" onclick="setWeather('COLD')">
+                            <span class="weather-icon">❄️</span>
+                            <span class="weather-label">Cold</span>
+                        </div>
+                    </div>
                 </div>
                 <button class="btn btn-primary btn-full" onclick="generatePlan()">Generate Plan ✨</button>
             </div>
         `;
     }
 
+    function setWeather(weather) {
+        tripContext.weather = weather;
+        renderLogisticsStep();
+    }
+
     async function generatePlan() {
+        // Validation
+        if (tripContext.children.length === 0) {
+            alert("Please add at least one child.");
+            renderFamilyStep();
+            return;
+        }
+        const invalidChild = tripContext.children.some(c => c.ageMonths === undefined || c.ageMonths === null);
+        if (invalidChild) {
+            alert("Please enter the age for all children.");
+            renderFamilyStep();
+            return;
+        }
+
         const startTime = performance.now();
         renderLoadingScreen();
         try {
@@ -272,127 +360,192 @@
     }
 
     function renderPlanScreen() {
+        updateHeader(0, 3, ""); // Reset header for results
         console.log("currentPlan received from backend:", currentPlan);
-        if (currentPlan && currentPlan.recommendedProducts) {
-            console.log("recommendedProducts array:", currentPlan.recommendedProducts);
-            console.log("recommendedProducts length:", currentPlan.recommendedProducts.length);
-        } else {
-            console.log("recommendedProducts is MISSING or NULL");
-        }
-
+        
         const screen = document.getElementById("screen");
-        const destination = (currentPlan.context && currentPlan.context.destination) || 'your destination';
         const forgottenItems = currentPlan.forgottenItems || [];
         const products = currentPlan.recommendedProducts || [];
         const tips = currentPlan.travelTips || [];
         const checklist = currentPlan.packingChecklist || [];
         const resources = currentPlan.travelResources || [];
 
+        // Group products by category
+        const categorizedProducts = {};
+        products.forEach(p => {
+            const cat = p.activity_type || 'GENERAL';
+            if (!categorizedProducts[cat]) categorizedProducts[cat] = [];
+            categorizedProducts[cat].push(p);
+        });
+
+        const categoryIcons = {
+            'TRAVEL': '✈️',
+            'OUTDOOR': '☀️',
+            'FEEDING': '🍽️',
+            'PLAY': '🎨',
+            'DIAPERING': '🧼',
+            'BATH': '🛁',
+            'GENERAL': '⭐'
+        };
+
+        const categoryNames = {
+            'TRAVEL': 'Travel Essentials',
+            'OUTDOOR': 'Outdoor & Beach',
+            'FEEDING': 'Feeding',
+            'PLAY': 'Entertainment',
+            'DIAPERING': 'Diapering & Care',
+            'BATH': 'Bath Time',
+            'GENERAL': 'Top Recommendations'
+        };
+
         screen.innerHTML = `
             <div class="result-container" style="animation: fadeInUp 0.5s ease;">
                 <div class="result-header" style="text-align: center; margin-bottom: 30px;">
                     <h2 style="font-weight: 800; color: var(--primary);">Your Travel Plan</h2>
-                    <p style="color: var(--text-light);">Customized for your family trip to ${destination}</p>
-                    <button class="btn btn-primary" onclick="window.print()" style="margin-top: 10px;">Print Checklist</button>
-                    <button class="btn btn-secondary" onclick="savePlan()" style="margin-top: 10px;">Share / Save Plan</button>
+                    <p style="color: var(--text-light);">Customized for your family trip</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="window.print()">Print Checklist</button>
+                        <button class="btn btn-secondary" onclick="savePlan()">Share Plan</button>
+                    </div>
                 </div>
 
-                <div class="plan-section reminders" style="margin-bottom: 30px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 24px; margin-right: 10px;">⚠️</span>
-                        <h3 style="color: #d9534f; margin: 0; font-size: 1.25rem;">Top 5 Things Parents Forget</h3>
-                    </div>
-                    <ul style="background: #fff5f5; border: 1px solid #ffe6e6; border-radius: 16px; padding: 20px; list-style: none; margin: 0; box-shadow: var(--shadow-soft);">
-                        ${forgottenItems.map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; line-height: 1.5;">
-                            <span style="color: #d9534f; margin-right: 12px; font-weight: bold;">•</span>
-                            <span style="font-size: 15px;">${item}</span>
-                        </li>`).join('')}
-                    </ul>
-                </div>
-
-                <div class="plan-section pro-tips" style="margin-bottom: 30px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 24px; margin-right: 10px;">💡</span>
-                        <h3 style="margin: 0; font-size: 1.25rem;">Personalized Travel Tips</h3>
-                    </div>
-                    <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                        ${tips.map(tip => `
-                            <div style="background: white; padding: 18px; border-radius: 16px; border-left: 5px solid var(--primary); box-shadow: var(--shadow-soft); line-height: 1.6; font-size: 15px;">
-                                ${tip}
+                <div class="result-dashboard">
+                    <!-- 1. Packing Checklist (Collapsed by default) -->
+                    <div class="section-collapsible">
+                        <div class="section-header" onclick="toggleSection('checklist-content', 'checklist-icon')">
+                            <h3><span>📦</span> Packing Checklist</h3>
+                            <span id="checklist-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                        </div>
+                        <div id="checklist-content" class="section-content" style="display: none;">
+                            <div class="accordion">
+                                ${checklist.map((cat, i) => `
+                                    <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden;">
+                                        <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: white; padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
+                                            <span style="font-size: 15px;">${cat.categoryName} <span style="font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 5px;">(${cat.items ? cat.items.length : 0} items)</span></span>
+                                            <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
+                                        </div>
+                                        <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px 20px; background: white; border-top: 1px solid var(--border);">
+                                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                                ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                `).join('')}
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
-                </div>
 
-                <div class="plan-section products" style="margin-bottom: 30px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 24px; margin-right: 10px;">🛒</span>
-                        <h3 style="margin: 0; font-size: 1.25rem;">Recommended Gear</h3>
-                    </div>
-                    <div class="products-grid">
-                        ${products.length > 0 ? products.map(p => `
-                            <div class="product-card">
-                                <div class="product-card-image-wrap">
-                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-card-image">
-                                </div>
-                                <div class="product-card-body">
-                                    <h5 class="product-card-title">${p.name}</h5>
-                                    <p class="product-card-why">${p.why || ''}</p>
-                                    <div class="product-card-footer">
-                                        <a href="${p.link}" target="_blank" class="btn btn-primary btn-sm">View</a>
+                    <!-- 2. Products / Gear (Collapsed by default, grouped by categories) -->
+                    <div class="section-collapsible">
+                        <div class="section-header" onclick="toggleSection('gear-content', 'gear-icon')">
+                            <h3><span>🛒</span> Recommended Gear</h3>
+                            <span id="gear-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                        </div>
+                        <div id="gear-content" class="section-content" style="display: none;">
+                            ${Object.keys(categorizedProducts).length > 0 ? Object.keys(categorizedProducts).map((catKey, idx) => `
+                                <div class="category-collapsible">
+                                    <div class="category-header" onclick="toggleSection('prod-cat-${idx}', 'prod-cat-icon-${idx}')">
+                                        <span>${categoryIcons[catKey.toUpperCase()] || '⭐'} ${categoryNames[catKey.toUpperCase()] || catKey} (${categorizedProducts[catKey].length})</span>
+                                        <span id="prod-cat-icon-${idx}" style="font-size: 10px;">▼</span>
+                                    </div>
+                                    <div id="prod-cat-${idx}" class="category-content" style="display: none;">
+                                        ${categorizedProducts[catKey].map(p => {
+                                            const tags = [];
+                                            if (p.activity_type) tags.push(p.activity_type.replace(/_/g, ' '));
+                                            if (p.age_groups) tags.push(p.age_groups);
+                                            
+                                            return `
+                                                <a href="${p.link}" target="_blank" class="product-row">
+                                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-row-thumb">
+                                                    <div class="product-row-info">
+                                                        <h5 class="product-row-name">${p.name}</h5>
+                                                        <p class="product-row-desc">${p.why || ''}</p>
+                                                        <div class="product-metadata">
+                                                            ${tags.map(t => `<span class="tag-mini">${t}</span>`).join('')}
+                                                        </div>
+                                                        <div class="product-row-cta">
+                                                            See Product →
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            `;
+                                        }).join('')}
                                     </div>
                                 </div>
-                            </div>
-                        `).join('') : `
-                            <div style="grid-column: 1/-1; text-align: center; padding: 20px; background: var(--bg-soft); border-radius: 12px; color: var(--text-light);">
-                                <p>No products returned by the AI or fallback system. (Debug: ${products.length} products)</p>
-                            </div>
-                        `}
-                    </div>
-                </div>
-
-                <div class="plan-section checklist" style="margin-bottom: 30px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 24px; margin-right: 10px;">✅</span>
-                        <h3 style="margin: 0; font-size: 1.25rem;">Full Packing Checklist</h3>
-                    </div>
-                    <div class="accordion">
-                        ${checklist.map((cat, i) => `
-                            <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-soft);">
-                                <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: white; padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
-                                    <span style="font-size: 15px;">${cat.categoryName} <span style="font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 5px;">(${cat.items ? cat.items.length : 0} items)</span></span>
-                                    <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
+                            `).join('') : `
+                                <div style="text-align: center; padding: 40px 20px; color: var(--muted);">
+                                    <p>No products returned for this trip context.</p>
                                 </div>
-                                <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px 20px; background: white; border-top: 1px solid var(--border);">
-                                    <ul style="list-style: none; padding: 0; margin: 0;">
-                                        ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
-                                    </ul>
-                                </div>
-                            </div>
-                        `).join('')}
+                            `}
+                        </div>
                     </div>
-                </div>
 
-                ${resources && resources.length > 0 ? `
-                <div class="plan-section resources">
-                    <h3>🌍 Useful Resources</h3>
-                    <div class="resource-list">
-                        ${resources.map(r => `
-                            <div class="resource-item" style="margin-bottom: 10px; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
-                                <strong>${r.type}: ${r.name}</strong><br>
-                                <small>${r.description}</small><br>
-                                <a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: none;">Explore →</a>
+                    <!-- 3. Travel Tips (Collapsed by default) -->
+                    <div class="section-collapsible">
+                        <div class="section-header" onclick="toggleSection('tips-content', 'tips-icon')">
+                            <h3><span>💡</span> Travel Tips</h3>
+                            <span id="tips-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                        </div>
+                        <div id="tips-content" class="section-content" style="display: none;">
+                            <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                                ${tips.map(tip => `
+                                    <div style="background: var(--bg-soft); padding: 18px; border-radius: 16px; border-left: 5px solid var(--primary); line-height: 1.6; font-size: 15px;">
+                                        ${tip}
+                                    </div>
+                                `).join('')}
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
+
+                    <!-- 4. Things Parents Forget (Collapsed by default) -->
+                    <div class="section-collapsible">
+                        <div class="section-header" onclick="toggleSection('reminders-content', 'reminders-icon')">
+                            <h3><span>⚠️</span> Things Parents Forget</h3>
+                            <span id="reminders-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                        </div>
+                        <div id="reminders-content" class="section-content" style="display: none;">
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                ${forgottenItems.map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; line-height: 1.5;">
+                                    <span style="color: #d9534f; margin-right: 12px; font-weight: bold;">•</span>
+                                    <span style="font-size: 15px;">${item}</span>
+                                </li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+
+                    ${resources && resources.length > 0 ? `
+                    <div class="dashboard-card resources">
+                        <h3><span>🌍</span> Useful Resources</h3>
+                        <div class="resource-list">
+                            ${resources.map(r => `
+                                <div class="resource-item" style="margin-bottom: 10px; padding: 15px; background: var(--bg-soft); border-radius: 12px;">
+                                    <strong>${r.type}: ${r.name}</strong><br>
+                                    <small>${r.description}</small><br>
+                                    <a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 8px;">Explore →</a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
-                ` : ''}
 
                 <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
                     <button class="btn btn-secondary" onclick="renderIntroScreen()">Start New Plan</button>
                 </div>
             </div>
         `;
+    }
+
+    function toggleSection(contentId, iconId) {
+        const content = document.getElementById(contentId);
+        const icon = document.getElementById(iconId);
+        if (content.style.display === "none") {
+            content.style.display = "block";
+            icon.innerText = "▲";
+        } else {
+            content.style.display = "none";
+            icon.innerText = "▼";
+        }
     }
 
     function toggleAccordion(i) {

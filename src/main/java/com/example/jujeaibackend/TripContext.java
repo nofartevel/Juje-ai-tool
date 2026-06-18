@@ -6,7 +6,6 @@ public class TripContext {
     private TripType tripType;
     private List<ChildDetail> children;
     private int durationDays;
-    private String destination;
     private WeatherType weather;
 
     public TripContext() {}
@@ -17,8 +16,6 @@ public class TripContext {
     public void setChildren(List<ChildDetail> children) { this.children = children; }
     public int getDurationDays() { return durationDays; }
     public void setDurationDays(int durationDays) { this.durationDays = durationDays; }
-    public String getDestination() { return destination; }
-    public void setDestination(String destination) { this.destination = destination; }
     public WeatherType getWeather() { return weather; }
     public void setWeather(WeatherType weather) { this.weather = weather; }
 }

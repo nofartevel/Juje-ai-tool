@@ -64,6 +64,8 @@ public class OpenAiSelectorService {
                         productMap.put("name", p.getName());
                         productMap.put("keywords", p.getKeywords());
                         productMap.put("why", p.getWhy());
+                        productMap.put("age_groups", p.getAge_groups());
+                        productMap.put("activity_type", p.getActivity_type());
                         return productMap;
                     }).toList()
             );
@@ -85,20 +87,18 @@ public class OpenAiSelectorService {
                 PERSONALIZATION IS THE TOP PRIORITY:
                 1. Reference child ages (in months) throughout the tips, reminders, and checklist. An 8-month-old, 18-month-old, and 4-year-old have very different needs.
                 2. Trip Type is the PRIMARY driver. A FLIGHT, BEACH, or ROAD_TRIP requires fundamentally different items and advice.
-                3. If a destination is provided, the travel plan MUST be tailored to that specific location. Reference the destination by name and account for its unique characteristics (e.g., London rain, Rome cobblestones, Phuket humidity).
-                4. Account for weather conditions (HOT/COLD/MIXED).
+                3. Account for weather conditions (HOT/COLD/MIXED).
                 
                 CONTENT GUIDELINES:
                 - Instead of "Bring snacks", use "For your [Age]-month-old, bring [Specific Tip] for the [Trip Type]".
-                - Instead of "Pack layers", use "Since you're traveling to [Destination] where it will be [Weather], pack [Specific Clothing Item] for [Child Age]-month-old".
-                - Always weave the destination name into at least 2 travel tips and 3 checklist items when provided.
+                - Instead of "Pack layers", use "Since it's a [Weather] trip, pack [Specific Clothing Item] for [Child Age]-month-old".
                 - Focus on specialized advice that a generic search engine wouldn't provide.
                 
                 OUTPUT REQUIREMENTS:
                 - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs. Use highly descriptive item names.
                 - forgottenItems: Exactly 5 high-value, practical reminders specific to this exact trip scenario and child ages.
                 - travelTips: Exactly 5 highly personalized tips. Be specific, actionable, and reference the child's age and trip circumstances.
-                - recommendedProducts: Select at least 4-6 of the MOST RELEVANT products from the Product Bank. Explain "why" this product is good for THIS specific trip in the result.
+                - recommendedProducts: Select at least 6-10 of the MOST RELEVANT products from the Product Bank (if available).
                 
                 DO NOT include basic essentials like passports or diapers (these are added automatically).
                 Focus on the "Value-Add" items that make the trip smoother.
@@ -164,8 +164,8 @@ public class OpenAiSelectorService {
             }
             System.out.println("[DEBUG] Products selected after mapping IDs: " + recommended.size());
 
-            // Fallback for products: ensure at least 4 products if relevant ones exist
-            if (recommended.size() < 4) {
+            // Fallback for products: ensure at least 6 products if relevant ones exist
+            if (recommended.size() < 6) {
                 System.out.println("[DEBUG] Applying product fallback. Current size: " + recommended.size());
                 
                 // Collect existing IDs to avoid duplicates
@@ -187,7 +187,7 @@ public class OpenAiSelectorService {
                             
                             return matchesTrip;
                         })
-                        .limit(6 - recommended.size())
+                        .limit(8 - recommended.size())
                         .toList();
                 
                 System.out.println("[DEBUG] Adding " + fallbackProducts.size() + " fallback products");

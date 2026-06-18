@@ -11,7 +11,6 @@ public class TripContext {
     private TripType tripType;
     private List<ChildDetail> children;
     private int durationDays;
-    private String destination;
     private WeatherType weather;
 }
 
@@ -43,14 +42,15 @@ public class TravelResource {
 The AI strategy prioritizes **high personalization** over raw generation speed. The target generation time is 10–15 seconds to ensure quality and relevance.
 
 ### 3.1. Personalization Strategy
-*   **Detailed Context**: The AI receives full `TripContext` including `ageMonths`, `destination`, `weather`, and `tripType`.
+*   **Detailed Context**: The AI receives full `TripContext` including `ageMonths`, `weather`, and `tripType`.
 *   **Model Selection**: Uses `GPT_4O` for higher quality reasoning and better personalization compared to mini models.
-*   **Prompting**: Instructed to explicitly reference age-specific needs and destination-specific preparation advice. The AI MUST weave the destination name into the content and account for its unique characteristics (rain, humidity, terrain, etc.).
+*   **Prompting**: Instructed to explicitly reference age-specific needs and weather-appropriate preparation advice.
 *   **Content Focus**: AI generates "Value-Add" items, while common essentials (passports, diapers) are managed by backend templates.
 
 ### 3.2. Product Recommendation Strategy
 *   **AI-First**: AI selects relevant products from a pre-filtered list based on `tripType`.
-*   **Backend Fallback**: If AI returns fewer than 4 products, the backend supplements the list with relevant items from the catalog (matching `tripType` or `GENERAL`) to ensure at least 4 recommendations.
+*   **Categorization**: Products are grouped by their `activity_type` in the UI to provide a structured shopping experience.
+*   **Backend Fallback**: If AI returns fewer than 6 products, the backend supplements the list with relevant items from the catalog (matching `tripType` or `GENERAL`) to ensure a rich selection of at least 8 items.
 *   **Data Enrichment**: AI returns only IDs; backend enriches with full metadata (images, links, etc.).
 
 ### 3.3. Performance & Latency
@@ -77,13 +77,21 @@ The AI strategy prioritizes **high personalization** over raw generation speed. 
 *   `GET /api/v1/plan/{id}`: Retrieve saved plans for sharing.
 
 ## 5. Frontend Requirements
+*   **Persistent Navigation**: Sticky header with JUJE branding and current step indicator.
+*   **Progress Tracking**: Visual progress bar synchronized with wizard steps.
+*   **Non-destructive Navigation**: Back buttons enabled on all wizard steps to preserve user input.
 *   **State Management**: Use a "Wizard" pattern to collect `TripContext`.
 *   **Age Input**: Allow parents to enter age in months/years; optimized for mobile with numeric keyboards and placeholder-based inputs.
+*   **Visual Inputs**: Weather selection via visual cards (icons + labels) and duration via numeric-optimized fields.
 *   **Loading Experience**: Travel-themed animations and progress reassurances based on selected `tripType`.
-*   **Result Presentation**:
-    *   **Priority Order**: 1. Reminders, 2. Recommended Gear, 3. Quick Tips, 4. Full Packing Checklist.
-    *   **Accordion UI**: Packing checklist categories are collapsed by default.
-    *   **Mobile-First**: Reduced product card heights and grid layouts.
+*   **Result Dashboard**:
+    *   **Premium Layout**: Sections presented as distinct cards with a dashboard feel and clear hierarchy.
+    *   **Section State**: All top-level sections (Checklist, Gear, Tips, Reminders) are collapsed by default to maximize scanability.
+    *   **Scalability**:
+        - Products grouped by `activity_type`.
+        - **Premium Product Rows**: Horizontal, fully-clickable `.product-row` containers with metadata tags and "See Product →" CTAs.
+        - **Clean Design**: Borderless section headers and lightweight containers for a "Booking.com" or "Airbnb" style mobile experience.
+    *   **Mobile-First**: Segmented controls for age units, visual cards for weather, and numeric-optimized keyboards.
 *   **Export/Share**: 
     *   Print support for physical checklists.
     *   Native mobile sharing via Web Share API with a desktop fallback (prompt).
