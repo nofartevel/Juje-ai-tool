@@ -34,12 +34,13 @@ The app features a high-impact landing page that immediately communicates value,
 
 ### 4.3. Results Dashboard
 *   **Dashboard Layout**: Content is organized into distinct, polished sections in a dashboard hierarchy.
-*   **Collapsed Sections**: All primary sections (Checklist, Gear, Tips, Reminders) are collapsed by default to maximize scanability and provide a "dashboard" feel.
+*   **Trip Summary Header**: A compact header at the top displaying trip type, family composition, duration, and weather, alongside key metrics (total items, tips, reminders, gear).
+*   **Collapsed Sections**: Most primary sections (Gear, Tips, Reminders) are collapsed by default to maximize scanability and provide a "dashboard" feel. The Packing Checklist is expanded by default for immediate action.
 *   **Priority Hierarchy**:
-    1.  **Full Packing Checklist**: Interactive list with categories (Collapsed by default).
+    1.  **Packing Checklist**: Interactive list with categories (Expanded by default).
     2.  **Categorized Gear**: Comprehensive product guide grouped by utility (Collapsed by default).
-    3.  **Personalized Tips**: Actionable, age-specific advice (Collapsed by default).
-    4.  **Things You'll Forget**: High-impact reminders (Collapsed by default).
+    3.  **Parent Tips**: Actionable, age-specific advice (Collapsed by default).
+    4.  **Don't Forget These**: High-impact reminders (Collapsed by default).
 *   **Modern Gear Section**:
     - Products are grouped into logical categories (e.g., Travel Essentials, Entertainment).
     - **Premium Rows**: Horizontal, fully-clickable list rows with high-quality thumbnails and lightweight metadata tags (e.g., "Best for toddlers", "Flight essential").

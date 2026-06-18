@@ -58,63 +58,98 @@
     function updateHeader(step, total, label) {
         const indicator = document.getElementById("stepIndicator");
         const fill = document.getElementById("progressFill");
+        const progressContainer = document.querySelector(".progress-container");
+        const topBar = document.querySelector(".top-bar");
+        
         if (step === 0) {
             indicator.innerText = "";
             fill.style.width = "0%";
+            progressContainer.style.display = "none";
+            topBar.style.display = "none";
         } else {
             indicator.innerText = `${label} • Step ${step} of ${total}`;
             fill.style.width = `${(step / total) * 100}%`;
+            progressContainer.style.display = "block";
+            topBar.style.display = "flex";
         }
     }
 
     function renderIntroScreen() {
         updateHeader(0, 3, "");
-        if (typeof renderTripTypeStep === 'function') {
-            renderTripTypeStep();
-        } else {
-            console.error("renderTripTypeStep not found");
-        }
-    }
-
-    function renderTripTypeStep() {
-        updateHeader(1, 3, "Trip Type");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
             <div class="hero">
+                <div class="trust-signals" style="margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span class="trust-badge" style="background: var(--secondary); color: var(--text); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;">✨ Built for families on the move</span>
+                    <div style="display: flex; gap: 12px; font-size: 12px; color: var(--muted); font-weight: 600;">
+                        <span>✓ Takes ~60s</span>
+                        <span>✓ No signup</span>
+                        <span>✓ Free</span>
+                    </div>
+                </div>
+
                 <h1 class="hero-title">Traveling with kids? We've got you covered ✈️</h1>
                 <p class="hero-subtitle">Get a personalized packing list, travel tips, reminders and product recommendations in minutes.</p>
                 
-                <div class="value-props-list">
+                <div class="value-props-list" style="margin: 32px 0;">
                     <div class="v-prop-row">✅ Personalized packing checklist</div>
                     <div class="v-prop-row">✅ Travel tips by child age</div>
                     <div class="v-prop-row">✅ Things parents often forget</div>
                     <div class="v-prop-row">✅ Gear recommendations</div>
                 </div>
 
+                <button class="btn btn-primary btn-full" onclick="renderTripTypeStep()">Start Planning →</button>
+            </div>
+        `;
+    }
+
+    function renderTripTypeStep() {
+        updateHeader(1, 3, "Trip");
+        const screen = document.getElementById("screen");
+        screen.innerHTML = `
+            <div class="nav-controls">
+                <button class="btn-back" onclick="renderIntroScreen()">← Back</button>
+            </div>
+            <div class="hero">
+                <h1 class="hero-title">Where are you headed?</h1>
+                <p class="hero-subtitle">Choose your trip type to get started</p>
+                
                 <div class="category-grid">
                     <div class="trip-card" onclick="setTripType('FLIGHT')">
                         <span class="trip-icon">✈️</span>
-                        <span class="trip-label">Flight</span>
+                        <div class="trip-info">
+                            <span class="trip-label">Flight</span>
+                        </div>
                     </div>
                     <div class="trip-card" onclick="setTripType('ROAD_TRIP')">
                         <span class="trip-icon">🚗</span>
-                        <span class="trip-label">Road Trip</span>
+                        <div class="trip-info">
+                            <span class="trip-label">Road Trip</span>
+                        </div>
                     </div>
                     <div class="trip-card" onclick="setTripType('BEACH')">
                         <span class="trip-icon">🏖️</span>
-                        <span class="trip-label">Beach</span>
+                        <div class="trip-info">
+                            <span class="trip-label">Beach</span>
+                        </div>
                     </div>
                     <div class="trip-card" onclick="setTripType('CRUISE')">
                         <span class="trip-icon">🚢</span>
-                        <span class="trip-label">Cruise</span>
+                        <div class="trip-info">
+                            <span class="trip-label">Cruise</span>
+                        </div>
                     </div>
                     <div class="trip-card" onclick="setTripType('CAMPING')">
                         <span class="trip-icon">🏕️</span>
-                        <span class="trip-label">Camping</span>
+                        <div class="trip-info">
+                            <span class="trip-label">Camping</span>
+                        </div>
                     </div>
                     <div class="trip-card" onclick="setTripType('GENERAL')">
                         <span class="trip-icon">🌍</span>
-                        <span class="trip-label">General</span>
+                        <div class="trip-info">
+                            <span class="trip-label">General</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,8 +169,8 @@
                 <button class="btn-back" onclick="renderTripTypeStep()">← Back</button>
             </div>
             <div class="hero">
-                <h1 class="hero-title">Family Details 👨‍👩‍👧‍👦</h1>
-                <p class="hero-subtitle">Add your children and their ages</p>
+                <h1 class="hero-title">Who's coming along? 👨‍👩‍👧‍👦</h1>
+                <p class="hero-subtitle">Age helps us personalize your checklist and tips</p>
                 <div id="childrenList" class="children-list"></div>
                 <button class="btn btn-secondary" onclick="addChild()">+ Add Child</button>
                 <br><br>
@@ -230,22 +265,25 @@
                 <button class="btn-back" onclick="renderFamilyStep()">← Back</button>
             </div>
             <div class="hero">
-                <h1 class="hero-title">Trip Details 🗓️</h1>
-                <p class="hero-subtitle">Let's personalize your travel plan ✨</p>
+                <h1 class="hero-title">Let's personalize your plan ✨</h1>
+                <p class="hero-subtitle">Almost there! Just a few more details</p>
+                
                 <div class="input-group">
-                    <label>Duration (days):</label>
+                    <label>How long is your trip?</label>
                     <div class="duration-input-wrapper">
                         <input type="number" 
                                value="${tripContext.durationDays}" 
                                onchange="tripContext.durationDays = parseInt(this.value)" 
                                class="duration-field" 
                                inputmode="numeric" 
-                               pattern="[0-9]*">
+                               pattern="[0-9]*"
+                               placeholder="e.g. 7">
                         <span class="duration-unit">Days</span>
                     </div>
                 </div>
+
                 <div class="input-group">
-                    <label>Expected Weather:</label>
+                    <label>What weather do you expect?</label>
                     <div class="weather-grid">
                         <div class="weather-card ${tripContext.weather === 'HOT' ? 'active' : ''}" onclick="setWeather('HOT')">
                             <span class="weather-icon">☀️</span>
@@ -338,6 +376,8 @@
         ];
         let msgIndex = 0;
 
+        updateHeader(0, 3, ""); // Hide header during loading
+
         document.getElementById("screen").innerHTML = `
             <div class="loading-state" style="text-align: center; padding: 60px 20px;">
                 <div class="travel-animation" style="font-size: 50px; margin-bottom: 30px; animation: travelAnimation 2s ease-in-out infinite;">
@@ -398,33 +438,73 @@
             'GENERAL': 'Top Recommendations'
         };
 
+        const tripIconMap = {
+            'FLIGHT': '✈️',
+            'ROAD_TRIP': '🚗',
+            'BEACH': '🏖️',
+            'CRUISE': '🚢',
+            'CAMPING': '⛺',
+            'GENERAL': '🌍'
+        };
+
+        const totalItemsCount = checklist.reduce((sum, cat) => sum + (cat.items ? cat.items.length : 0), 0);
+
         screen.innerHTML = `
             <div class="result-container" style="animation: fadeInUp 0.5s ease;">
-                <div class="result-header" style="text-align: center; margin-bottom: 30px;">
-                    <h2 style="font-weight: 800; color: var(--primary);">Your Travel Plan</h2>
-                    <p style="color: var(--text-light);">Customized for your family trip</p>
-                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                        <button class="btn btn-primary" onclick="window.print()">Print Checklist</button>
-                        <button class="btn btn-secondary" onclick="savePlan()">Share Plan</button>
+                <!-- Summary Header -->
+                <div class="summary-header">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                        <div style="font-size: 40px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">${tripIconMap[tripContext.tripType] || '✨'}</div>
+                        <div>
+                            <h3>${tripContext.tripType.replace(/_/g, ' ')}</h3>
+                            <div style="font-size: 14px; color: var(--muted); font-weight: 700;">
+                                ${tripContext.children.length} Children • ${tripContext.durationDays} Days • ${tripContext.weather}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-metrics" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                        <div class="metric-item">
+                            <div class="metric-value">${totalItemsCount}</div>
+                            <div class="metric-label">Items</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">${tips.length}</div>
+                            <div class="metric-label">Tips</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">${forgottenItems.length}</div>
+                            <div class="metric-label">Forget</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">${products.length}</div>
+                            <div class="metric-label">Gear</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="result-dashboard">
-                    <!-- 1. Packing Checklist (Collapsed by default) -->
+                    <!-- 1. Packing Checklist (Open by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('checklist-content', 'checklist-icon')">
-                            <h3><span>📦</span> Packing Checklist</h3>
-                            <span id="checklist-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                            <div>
+                                <h3><span>📦</span> What To Pack</h3>
+                                <div class="section-header-desc">Essential items for your family trip</div>
+                            </div>
+                            <span id="checklist-icon" style="color: var(--primary); font-size: 12px;">▲</span>
                         </div>
-                        <div id="checklist-content" class="section-content" style="display: none;">
+                        <div id="checklist-content" class="section-content" style="display: block;">
                             <div class="accordion">
                                 ${checklist.map((cat, i) => `
-                                    <div class="accordion-item" style="border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden;">
-                                        <div class="accordion-header" onclick="toggleAccordion(${i})" style="background: white; padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700;">
-                                            <span style="font-size: 15px;">${cat.categoryName} <span style="font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 5px;">(${cat.items ? cat.items.length : 0} items)</span></span>
+                                    <div class="category-collapsible">
+                                        <div class="category-header" onclick="toggleAccordion(${i})">
+                                            <div class="category-header-info">
+                                                <div class="category-header-title">${cat.categoryName}</div>
+                                                <div class="category-preview">${(cat.items || []).slice(0, 3).join(', ')}...</div>
+                                            </div>
                                             <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
                                         </div>
-                                        <div id="acc-content-${i}" class="accordion-content" style="display: none; padding: 15px 20px; background: white; border-top: 1px solid var(--border);">
+                                        <div id="acc-content-${i}" class="category-content" style="display: none; padding: 20px 24px;">
                                             <ul style="list-style: none; padding: 0; margin: 0;">
                                                 ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
                                             </ul>
@@ -435,17 +515,23 @@
                         </div>
                     </div>
 
-                    <!-- 2. Products / Gear (Collapsed by default, grouped by categories) -->
+                    <!-- 2. Products / Gear (Collapsed by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('gear-content', 'gear-icon')">
-                            <h3><span>🛒</span> Recommended Gear</h3>
+                            <div>
+                                <h3><span>🛒</span> Recommended Gear</h3>
+                                <div class="section-header-desc">Curated gear for your specific needs</div>
+                            </div>
                             <span id="gear-icon" style="color: var(--primary); font-size: 12px;">▼</span>
                         </div>
                         <div id="gear-content" class="section-content" style="display: none;">
                             ${Object.keys(categorizedProducts).length > 0 ? Object.keys(categorizedProducts).map((catKey, idx) => `
                                 <div class="category-collapsible">
                                     <div class="category-header" onclick="toggleSection('prod-cat-${idx}', 'prod-cat-icon-${idx}')">
-                                        <span>${categoryIcons[catKey.toUpperCase()] || '⭐'} ${categoryNames[catKey.toUpperCase()] || catKey} (${categorizedProducts[catKey].length})</span>
+                                        <div class="category-header-info">
+                                            <div class="category-header-title">${categoryIcons[catKey.toUpperCase()] || '⭐'} ${categoryNames[catKey.toUpperCase()] || catKey}</div>
+                                            <div class="category-preview">${categorizedProducts[catKey].slice(0, 2).map(p => p.name).join(', ')}...</div>
+                                        </div>
                                         <span id="prod-cat-icon-${idx}" style="font-size: 10px;">▼</span>
                                     </div>
                                     <div id="prod-cat-${idx}" class="category-content" style="display: none;">
@@ -483,13 +569,16 @@
                     <!-- 3. Travel Tips (Collapsed by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('tips-content', 'tips-icon')">
-                            <h3><span>💡</span> Travel Tips</h3>
+                            <div>
+                                <h3><span>💡</span> Parent Tips</h3>
+                                <div class="section-header-desc">Age-appropriate travel wisdom</div>
+                            </div>
                             <span id="tips-icon" style="color: var(--primary); font-size: 12px;">▼</span>
                         </div>
                         <div id="tips-content" class="section-content" style="display: none;">
-                            <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                            <div class="tips-grid" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                                 ${tips.map(tip => `
-                                    <div style="background: var(--bg-soft); padding: 18px; border-radius: 16px; border-left: 5px solid var(--primary); line-height: 1.6; font-size: 15px;">
+                                    <div style="background: var(--white); padding: 20px; border-radius: var(--radius-md); border-left: 6px solid var(--primary); box-shadow: var(--shadow-soft); line-height: 1.6; font-size: 15px; color: var(--text);">
                                         ${tip}
                                     </div>
                                 `).join('')}
@@ -500,37 +589,30 @@
                     <!-- 4. Things Parents Forget (Collapsed by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('reminders-content', 'reminders-icon')">
-                            <h3><span>⚠️</span> Things Parents Forget</h3>
+                            <div>
+                                <h3><span>⚠️</span> Don't Forget These</h3>
+                                <div class="section-header-desc">Critical reminders for a smooth trip</div>
+                            </div>
                             <span id="reminders-icon" style="color: var(--primary); font-size: 12px;">▼</span>
                         </div>
                         <div id="reminders-content" class="section-content" style="display: none;">
                             <ul style="list-style: none; padding: 0; margin: 0;">
-                                ${forgottenItems.map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; line-height: 1.5;">
-                                    <span style="color: #d9534f; margin-right: 12px; font-weight: bold;">•</span>
-                                    <span style="font-size: 15px;">${item}</span>
+                                ${forgottenItems.map(item => `<li style="margin-bottom: 16px; display: flex; align-items: flex-start; line-height: 1.5; background: var(--white); padding: 14px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow-soft); color: var(--text);">
+                                    <span style="color: #d9534f; margin-right: 12px; font-size: 18px; line-height: 1;">⚠️</span>
+                                    <span style="font-size: 15px; font-weight: 600;">${item}</span>
                                 </li>`).join('')}
                             </ul>
                         </div>
                     </div>
 
-                    ${resources && resources.length > 0 ? `
-                    <div class="dashboard-card resources">
-                        <h3><span>🌍</span> Useful Resources</h3>
-                        <div class="resource-list">
-                            ${resources.map(r => `
-                                <div class="resource-item" style="margin-bottom: 10px; padding: 15px; background: var(--bg-soft); border-radius: 12px;">
-                                    <strong>${r.type}: ${r.name}</strong><br>
-                                    <small>${r.description}</small><br>
-                                    <a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700; display: inline-block; margin-top: 8px;">Explore →</a>
-                                </div>
-                            `).join('')}
-                        </div>
+                    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px;">
+                        <button class="btn btn-secondary" style="flex: 1; min-width: auto;" onclick="window.print()">Print</button>
+                        <button class="btn btn-primary" style="flex: 2; min-width: auto;" onclick="savePlan()">Share Plan</button>
                     </div>
-                    ` : ''}
                 </div>
 
                 <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
-                    <button class="btn btn-secondary" onclick="renderIntroScreen()">Start New Plan</button>
+                    <button class="btn-text" style="color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: none;" onclick="renderIntroScreen()">Start New Plan</button>
                 </div>
             </div>
         `;

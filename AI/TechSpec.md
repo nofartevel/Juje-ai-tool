@@ -86,11 +86,13 @@ The AI strategy prioritizes **high personalization** over raw generation speed. 
 *   **Loading Experience**: Travel-themed animations and progress reassurances based on selected `tripType`.
 *   **Result Dashboard**:
     *   **Premium Layout**: Sections presented as distinct cards with a dashboard feel and clear hierarchy.
-    *   **Section State**: All top-level sections (Checklist, Gear, Tips, Reminders) are collapsed by default to maximize scanability.
+    *   **Dashboard Layout**:
+        - **Trip Summary**: Compact summary header with metrics (Items, Tips, Reminders, Gear).
+        - **Section State**: Packing Checklist expanded by default; other sections collapsed.
     *   **Scalability**:
         - Products grouped by `activity_type`.
         - **Premium Product Rows**: Horizontal, fully-clickable `.product-row` containers with metadata tags and "See Product →" CTAs.
-        - **Clean Design**: Borderless section headers and lightweight containers for a "Booking.com" or "Airbnb" style mobile experience.
+        - **Clean Design**: Borderless section headers and lightweight containers for a "Booking.com" style experience.
     *   **Mobile-First**: Segmented controls for age units, visual cards for weather, and numeric-optimized keyboards.
 *   **Export/Share**: 
     *   Print support for physical checklists.
