@@ -172,7 +172,7 @@
     "activity_type": "outdoor",
     "trip_types": ["beach"],
     "weather": ["hot", "mixed"],
-    "age_groups": ["6m-12m, 1y-2y", "2y-4y", "4y-7y"],
+    "age_groups": ["6m-12m", "1y-2y", "2y-4y", "4y-7y"],
     "is_essential": false
   },
   {
@@ -268,7 +268,7 @@
     "activity_type": "play",
     "trip_types": ["flight", "road_trip", "cruise", "general"],
     "weather": [],
-    "age_groups": ["0m-6m", "6m-12m", "1y-2y"],
+    "age_groups": ["6m-12m", "1y-2y","2y-4y","4y-7y"],
     "is_essential": false
   },
   {
@@ -330,7 +330,7 @@
     "use_cases": ["beach day", "pool day", "water play", "outdoor day", "travel"],
     "needs": ["outdoor_setup", "comfort", "safety"],
     "activity_type": "outdoor",
-    "trip_types": ["beach", "cruise", "general"],
+    "trip_types": ["flight","beach", "cruise", "general"],
     "weather": ["hot"],
     "age_groups": ["0m-6m", "6m-12m", "1y-2y"],
     "is_essential": false
@@ -524,6 +524,22 @@
     "trip_types":["flight","road_trip","cruise","camping","general"],
     "weather":[],
     "age_groups":["0m-6m","6m-12m"],
+    "is_essential":true
+  },
+  {
+    "id":"snack_spinner_1",
+    "name":"GoBe Kids Snack Spinner",
+    "link":"https://amzn.to/4agLtdf",
+    "image":"https://m.media-amazon.com/images/I/61RE8Sv-hAL._SL1500_.jpg",
+    "section":"feeding",
+    "why":"Keeps snacks organized, reduces mess, and turns snack time into an engaging activity during travel and outings",
+    "keywords":["snack spinner","snack container","toddler snacks","travel snacks","no spill snacks","kids snacks","gobe"],
+    "use_cases":["flight","road trip","restaurant","hotel stay","family vacation","day trips"],
+    "needs":["feeding","entertainment","organization"],
+    "activity_type":"feeding",
+    "trip_types":["flight","road_trip","cruise","general"],
+    "weather":[],
+    "age_groups":["1y-2y","2y-4y","4y-7y"],
     "is_essential":true
   }
 ]
