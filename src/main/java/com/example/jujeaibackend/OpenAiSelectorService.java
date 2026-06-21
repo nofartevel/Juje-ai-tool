@@ -64,8 +64,11 @@ public class OpenAiSelectorService {
                         productMap.put("name", p.getName());
                         productMap.put("keywords", p.getKeywords());
                         productMap.put("why", p.getWhy());
-                        productMap.put("age_groups", p.getAge_groups());
+                        productMap.put("age_groups", p.getAge_groups() == null ? List.of() : p.getAge_groups());
                         productMap.put("activity_type", p.getActivity_type());
+                        productMap.put("trip_types", p.getTrip_types() == null ? List.of() : p.getTrip_types());
+                        productMap.put("weather", p.getWeather() == null ? List.of() : p.getWeather());
+                        productMap.put("is_essential", p.is_essential());
                         return productMap;
                     }).toList()
             );

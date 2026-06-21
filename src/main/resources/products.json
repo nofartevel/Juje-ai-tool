@@ -9,7 +9,11 @@
     "keywords": ["airplane bed", "sleep", "flight", "leg rest"],
     "use_cases": ["flight", "sleep"],
     "needs": ["sleep", "comfort", "travel"],
-    "activity_type": "travel"
+    "activity_type": "travel",
+    "trip_types": ["flight"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": false
   },
   {
     "id": "changing_pad",
@@ -21,7 +25,11 @@
     "keywords": ["diaper", "changing", "portable", "baby"],
     "use_cases": ["travel", "on the go"],
     "needs": ["diapering", "hygiene", "travel"],
-    "activity_type": "diapering"
+    "activity_type": "diapering",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "camping", "general"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": true
   },
   {
     "id": "wet_dry_bag",
@@ -33,7 +41,11 @@
     "keywords": ["wet bag", "storage", "waterproof", "diapers"],
     "use_cases": ["beach day", "travel"],
     "needs": ["organization", "hygiene", "travel"],
-    "activity_type": "travel"
+    "activity_type": "travel",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "camping", "general"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": true
   },
   {
     "id": "travel_tray",
@@ -45,7 +57,11 @@
     "keywords": ["travel tray", "snacks", "organizer", "car"],
     "use_cases": ["car ride", "flight"],
     "needs": ["organization", "feeding", "travel"],
-    "activity_type": "travel"
+    "activity_type": "travel",
+    "trip_types": ["road_trip", "flight"],
+    "weather": [],
+    "age_groups": ["1y-2y", "2y-4y", "4y-7y"],
+    "is_essential": false
   },
   {
     "id": "busy_board",
@@ -57,7 +73,11 @@
     "keywords": ["activity toy", "quiet play", "learning", "toddler"],
     "use_cases": ["flight", "quiet play"],
     "needs": ["entertainment", "learning"],
-    "activity_type": "play"
+    "activity_type": "play",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["1y-2y", "2y-4y"],
+    "is_essential": false
   },
   {
     "id": "silicone_bib",
@@ -69,7 +89,11 @@
     "keywords": ["bib", "feeding", "mess", "easy clean"],
     "use_cases": ["feeding", "travel"],
     "needs": ["feeding", "hygiene"],
-    "activity_type": "feeding"
+    "activity_type": "feeding",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "camping", "general"],
+    "weather": [],
+    "age_groups": ["6m-12m", "1y-2y"],
+    "is_essential": true
   },
   {
     "id": "nursing_cover",
@@ -81,7 +105,11 @@
     "keywords": ["nursing cover", "feeding", "privacy", "baby"],
     "use_cases": ["feeding", "outdoor day"],
     "needs": ["feeding", "comfort"],
-    "activity_type": "feeding"
+    "activity_type": "feeding",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "camping", "general"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y"],
+    "is_essential": false
   },
   {
     "id": "feeding_pillow",
@@ -93,7 +121,11 @@
     "keywords": ["feeding pillow", "support", "comfort", "baby"],
     "use_cases": ["feeding", "travel"],
     "needs": ["feeding", "comfort"],
-    "activity_type": "feeding"
+    "activity_type": "feeding",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y"],
+    "is_essential": false
   },
   {
     "id": "water_coloring",
@@ -105,7 +137,11 @@
     "keywords": ["coloring", "no mess", "activity", "kids"],
     "use_cases": ["flight", "quiet play"],
     "needs": ["entertainment"],
-    "activity_type": "play"
+    "activity_type": "play",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["1y-2y", "2y-4y", "4y-7y"],
+    "is_essential": false
   },
   {
     "id": "bento_box",
@@ -117,7 +153,11 @@
     "keywords": ["bento box", "snacks", "container", "meal prep"],
     "use_cases": ["travel", "snacks"],
     "needs": ["feeding", "organization"],
-    "activity_type": "feeding"
+    "activity_type": "feeding",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "camping", "general"],
+    "weather": [],
+    "age_groups": ["1y-2y", "2y-4y", "4y-7y", "7y+"],
+    "is_essential": true
   },
   {
     "id": "beach_toy_set_1",
@@ -129,7 +169,11 @@
     "keywords": ["beach toys", "sand toys", "toddler"],
     "use_cases": ["beach day"],
     "needs": ["entertainment", "outdoor_setup"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["beach"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["6m-12m, 1y-2y", "2y-4y", "4y-7y"],
+    "is_essential": false
   },
   {
     "id": "baby_beach_tent_1",
@@ -141,7 +185,11 @@
     "keywords": ["beach tent", "uv protection", "baby shade"],
     "use_cases": ["beach day", "outdoor day"],
     "needs": ["outdoor_setup", "sun_protection", "comfort"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["beach", "camping"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": true
   },
   {
     "id": "swim_diaper_1",
@@ -153,7 +201,11 @@
     "keywords": ["swim diaper", "baby", "water", "pool"],
     "use_cases": ["beach day", "pool day"],
     "needs": ["diapering", "hygiene"],
-    "activity_type": "diapering"
+    "activity_type": "diapering",
+    "trip_types": ["beach", "cruise", "general"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": true
   },
   {
     "id": "baby_sunscreen_1",
@@ -165,7 +217,11 @@
     "keywords": ["baby sunscreen", "spf 50", "sun protection", "mineral"],
     "use_cases": ["beach day", "outdoor day", "travel", "road trip", "outdoor"],
     "needs": ["sun_protection", "comfort"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["beach", "cruise", "camping", "general"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["6m-12m", "1y-2y", "2y-4y", "4y-7y"],
+    "is_essential": true
   },
   {
     "id": "beach_mat_1",
@@ -177,7 +233,11 @@
     "keywords": ["beach mat", "beach blanket", "sandproof"],
     "use_cases": ["beach day", "picnic"],
     "needs": ["outdoor_setup", "comfort"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["beach", "camping", "road_trip", "general"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y", "4y-7y", "7y+"],
+    "is_essential": false
   },
   {
     "id": "baby_sun_hat_1",
@@ -187,9 +247,13 @@
     "section": "clothing",
     "why": "Protects baby's head and face from the sun",
     "keywords": ["baby sun hat", "uv protection", "summer"],
-    "use_cases": ["beach day", "outdoor day","travel", "road trip", "outdoor"],
+    "use_cases": ["beach day", "outdoor day", "travel", "road trip", "outdoor"],
     "needs": ["sun_protection", "comfort"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["flight", "beach", "cruise", "camping", "road_trip", "general"],
+    "weather": ["hot", "mixed"],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y", "4y-7y"],
+    "is_essential": true
   },
   {
     "id": "pop_fidget_toy_1",
@@ -201,7 +265,11 @@
     "keywords": ["fidget toy", "sensory toy", "quiet play", "toddler"],
     "use_cases": ["flight", "quiet play"],
     "needs": ["entertainment", "sensory"],
-    "activity_type": "play"
+    "activity_type": "play",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y"],
+    "is_essential": false
   },
   {
     "id": "sticker_activity_book_1",
@@ -213,7 +281,11 @@
     "keywords": ["sticker book", "activity book", "toddler"],
     "use_cases": ["flight", "quiet play"],
     "needs": ["entertainment"],
-    "activity_type": "play"
+    "activity_type": "play",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["1y-2y","2y-4y", "4y-7y"],
+    "is_essential": false
   },
   {
     "id": "stroller_fan_1",
@@ -225,7 +297,11 @@
     "keywords": ["stroller fan", "portable fan", "cooling"],
     "use_cases": ["outdoor day", "travel"],
     "needs": ["cooling", "comfort"],
-    "activity_type": "outdoor"
+    "activity_type": "outdoor",
+    "trip_types": ["flight", "road_trip", "beach", "cruise", "general"],
+    "weather": ["hot","mixed"],
+    "age_groups": ["0m-6m", "6m-12m", "1y-2y", "2y-4y"],
+    "is_essential": true
   },
   {
     "id": "cloth_baby_book_1",
@@ -236,21 +312,11 @@
     "why": "Encourages sensory play and keeps babies engaged during tummy time or on the go",
     "keywords": ["cloth book", "baby book", "sensory toy", "crinkle toy", "tummy time"],
     "use_cases": ["tummy time", "travel"],
-    "age_groups": ["0-6 months", "6-12 months"],
     "needs": ["sensory", "entertainment"],
-    "activity_type": "play"
-  },
-  {
-    "id": "vet_play_set_1",
-    "name": "Pretend Play Vet Doctor Kit",
-    "link": "https://amzn.to/4mvucli",
-    "image": "https://m.media-amazon.com/images/I/714NIH2CVFL._AC_SL1500_.jpg",
-    "section": "play",
-    "why": "Encourages imaginative play and helps kids develop empathy and social skills",
-    "keywords": ["pretend play", "role play", "doctor kit", "imaginative play", "preschool toy"],
-    "use_cases": ["indoor play", "imaginative play"],
-    "age_groups": ["2-4 years"],
-    "needs": ["imaginative_play", "learning"],
-    "activity_type": "play"
+    "activity_type": "play",
+    "trip_types": ["flight", "road_trip", "cruise", "general"],
+    "weather": [],
+    "age_groups": ["0m-6m", "6m-12m"],
+    "is_essential": false
   }
 ]

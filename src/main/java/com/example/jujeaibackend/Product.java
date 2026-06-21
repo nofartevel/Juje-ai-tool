@@ -15,12 +15,16 @@ public class Product {
     private List<String> age_groups;
     private List<String> needs;
     private String activity_type;
+    private List<String> trip_types;
+    private List<String> weather;
+    private boolean is_essential;
 
     public Product() {
     }
 
     public Product(String id, String name, String link, String image, String section, String why,
-                   List<String> keywords, List<String> use_cases, List<String> age_groups, List<String> needs) {
+                   List<String> keywords, List<String> use_cases, List<String> age_groups, List<String> needs,
+                   List<String> trip_types, List<String> weather, boolean is_essential) {
         this.id = id;
         this.name = name;
         this.link = link;
@@ -31,6 +35,9 @@ public class Product {
         this.use_cases = use_cases;
         this.age_groups = age_groups;
         this.needs = needs;
+        this.trip_types = trip_types;
+        this.weather = weather;
+        this.is_essential = is_essential;
     }
 
     public String getId() {
@@ -119,5 +126,29 @@ public class Product {
 
     public void setActivity_type(String activity_type) {
         this.activity_type = activity_type;
+    }
+
+    public List<String> getTrip_types() {
+        return trip_types;
+    }
+
+    public void setTrip_types(List<String> trip_types) {
+        this.trip_types = trip_types;
+    }
+
+    public List<String> getWeather() {
+        return weather;
+    }
+
+    public void setWeather(List<String> weather) {
+        this.weather = weather;
+    }
+
+    public boolean is_essential() {
+        return is_essential;
+    }
+
+    public void setIs_essential(boolean is_essential) {
+        this.is_essential = is_essential;
     }
 }
