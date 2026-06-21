@@ -6,6 +6,7 @@
     <title>JUJE</title>
 
     <link rel="stylesheet" href="/styles.css">
+    <script src="/analytics.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
@@ -327,6 +328,10 @@
 
         const startTime = performance.now();
         renderLoadingScreen();
+        
+        // Track session start
+        JujeAnalytics.trackSessionStart(tripContext);
+
         try {
             const res = await fetch('/api/v1/generate-travel-plan', {
                 method: 'POST',
@@ -341,12 +346,19 @@
             console.log("Parsed data:", data);
             
             if (!res.ok) {
+                JujeAnalytics.trackPlanGenerated(false, data.message || "Failed to generate plan", [], []);
                 alert(data.message || "Failed to generate plan");
                 renderIntroScreen();
                 return;
             }
 
             currentPlan = data;
+            
+            // Track successful generation
+            const products = (data.recommendedProducts || []).map(p => ({ productId: p.id, productName: p.name }));
+            const categories = (data.packingChecklist || []).map(c => c.categoryName);
+            JujeAnalytics.trackPlanGenerated(true, null, products, categories);
+
             const parseEndTime = performance.now();
             console.log(`[PERF] Frontend JSON Parse: ${Math.round(parseEndTime - fetchEndTime)}ms`);
 
@@ -570,7 +582,7 @@
                                             if (p.age_groups) tags.push(p.age_groups);
                                             
                                             return `
-                                                <a href="${p.link}" target="_blank" class="product-row">
+                                                <a href="${p.link}" target="_blank" class="product-row-card" onclick="JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
                                                     <img src="${p.image}" onerror="this.src='/logo.png'" class="product-row-thumb">
                                                     <div class="product-row-info">
                                                         <h5 class="product-row-name">${p.name}</h5>
@@ -672,6 +684,7 @@
     }
 
     async function generatePDF() {
+        JujeAnalytics.trackPrintClick();
         if (!currentPlan || !currentPlan.packingChecklist) {
             console.error('[DEBUG_LOG] No current plan or packing checklist data available');
             alert('No packing checklist data found. Please generate a plan first.');
@@ -808,6 +821,7 @@
     }
 
     async function savePlan() {
+        JujeAnalytics.trackShareClick();
         try {
             const res = await fetch('/api/v1/save-plan', {
                 method: 'POST',

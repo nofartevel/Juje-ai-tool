@@ -12,13 +12,94 @@ public class HomeController {
     private final ProductService productService;
     private final SessionService sessionService;
     private final OpenAiSelectorService openAiSelectorService;
+    private final AnalyticsService analyticsService;
 
     public HomeController(ProductService productService,
                           SessionService sessionService,
-                          OpenAiSelectorService openAiSelectorService) {
+                          OpenAiSelectorService openAiSelectorService,
+                          AnalyticsService analyticsService) {
         this.sessionService = sessionService;
         this.productService = productService;
         this.openAiSelectorService = openAiSelectorService;
+        this.analyticsService = analyticsService;
+    }
+
+    @PostMapping("/api/v1/analytics/session-start")
+    public ResponseEntity<?> sessionStart(@RequestBody Map<String, Object> payload) {
+        String sessionId = (String) payload.get("sessionId");
+        Map<String, Object> contextMap = (Map<String, Object>) payload.get("context");
+        
+        TripContext context = null;
+        if (contextMap != null) {
+            context = new TripContext();
+            try {
+                if (contextMap.get("tripType") != null) {
+                    context.setTripType(TripType.valueOf((String) contextMap.get("tripType")));
+                }
+                if (contextMap.get("weather") != null) {
+                    context.setWeather(WeatherType.valueOf((String) contextMap.get("weather")));
+                }
+                if (contextMap.get("durationDays") != null) {
+                    context.setDurationDays((Integer) contextMap.get("durationDays"));
+                }
+                
+                List<Map<String, Integer>> childrenRaw = (List<Map<String, Integer>>) contextMap.get("children");
+                if (childrenRaw != null) {
+                    List<ChildDetail> children = new ArrayList<>();
+                    for (Map<String, Integer> c : childrenRaw) {
+                        children.add(new ChildDetail(c.get("ageInMonths") != null ? c.get("ageInMonths") : c.get("ageMonths")));
+                    }
+                    context.setChildren(children);
+                }
+            } catch (Exception e) {
+                System.err.println("Error mapping TripContext for analytics: " + e.getMessage());
+            }
+        }
+        
+        analyticsService.startSession(sessionId, context);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/admin/sessions")
+    public List<SessionAnalytics> getSessions() {
+        return analyticsService.getAllSessions();
+    }
+
+    @PostMapping("/api/v1/analytics/plan-generated")
+    public ResponseEntity<?> planGenerated(@RequestBody Map<String, Object> payload) {
+        String sessionId = (String) payload.get("sessionId");
+        boolean success = (boolean) payload.get("success");
+        String errorMessage = (String) payload.get("errorMessage");
+        List<Map<String, String>> productsRaw = (List<Map<String, String>>) payload.get("products");
+        List<String> categories = (List<String>) payload.get("categories");
+
+        List<SessionAnalytics.ProductInfo> products = new ArrayList<>();
+        if (productsRaw != null) {
+            for (Map<String, String> p : productsRaw) {
+                products.add(new SessionAnalytics.ProductInfo(p.get("productId"), p.get("productName")));
+            }
+        }
+
+        analyticsService.planGenerated(sessionId, success, errorMessage, products, categories);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/analytics/product-click")
+    public ResponseEntity<?> productClick(@RequestBody Map<String, String> payload) {
+        analyticsService.productClick(payload.get("sessionId"), payload.get("productId"), payload.get("productName"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/analytics/print-click")
+    public ResponseEntity<?> printClick(@RequestBody Map<String, String> payload) {
+        analyticsService.printClick(payload.get("sessionId"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/analytics/share-click")
+    public ResponseEntity<?> shareClick(@RequestBody Map<String, String> payload) {
+        analyticsService.shareClick(payload.get("sessionId"));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/api/v1/generate-travel-plan")

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>JUJE - Your Travel Plan</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/analytics.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -180,7 +181,7 @@
                                         <div id="prod-cat-${idx}" class="category-content" style="display: none;">
                                             ${categorizedProducts[catKey].map(p => {
                                                 return `
-                                                    <a href="${p.link}" target="_blank" class="product-row">
+                                                    <a href="${p.link}" target="_blank" class="product-row" onclick="JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
                                                         <img src="${p.image}" onerror="this.src='/logo.png'" class="product-row-thumb">
                                                         <div class="product-row-info">
                                                             <h5 class="product-row-name">${p.name}</h5>
@@ -258,6 +259,7 @@
     loadPlan();
 
     async function generatePDF() {
+        JujeAnalytics.trackPrintClick();
         if (!currentPlanData || !currentPlanData.packingChecklist) {
             console.error('[DEBUG_LOG] No current plan data available');
             alert('No packing checklist data found.');
