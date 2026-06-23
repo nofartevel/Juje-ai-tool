@@ -82,7 +82,7 @@
             const categorizedProducts = {};
             if (currentPlan.recommendedProducts) {
                 currentPlan.recommendedProducts.forEach(p => {
-                    const cat = p.category || 'OTHER';
+                    const cat = p.category || p.section || 'OTHER';
                     if (!categorizedProducts[cat]) categorizedProducts[cat] = [];
                     categorizedProducts[cat].push(p);
                 });

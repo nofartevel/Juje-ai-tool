@@ -58,40 +58,103 @@ public class OpenAiSelectorService {
             List<Integer> childAges = context.getChildren() != null ? context.getChildren().stream().map(ChildDetail::getAgeMonths).toList() : List.of();
             String tripTypeStr = context.getTripType().name();
 
+            List<String> removedByTrip = new java.util.ArrayList<>();
+            List<String> removedByAge = new java.util.ArrayList<>();
+            List<String> removedByWeather = new java.util.ArrayList<>();
+            List<String> inclusionReasons = new java.util.ArrayList<>();
+
             List<Product> filteredProducts = allProducts.stream()
                     .filter(p -> {
-                        // 1. Match by trip type
-                        boolean matchesTrip = (p.getTrip_types() != null && (p.getTrip_types().contains("general") || p.getTrip_types().contains(tripTypeStr.toLowerCase())));
-                        if (!matchesTrip) {
-                            matchesTrip = p.getActivity_type() != null &&
+                        StringBuilder reason = new StringBuilder();
+                        reason.append("Product: ").append(p.getId()).append("\nReason:\n");
+
+                        // 1. Trip Type Matching
+                        boolean matchesTrip = (p.getTrip_types() == null || p.getTrip_types().isEmpty() || 
+                                               p.getTrip_types().contains("general") || 
+                                               p.getTrip_types().contains(tripTypeStr.toLowerCase()));
+                        
+                        boolean activityMatch = p.getActivity_type() != null &&
                                              (p.getActivity_type().equalsIgnoreCase("GENERAL") ||
                                               p.getActivity_type().equalsIgnoreCase(tripTypeStr));
+
+                        boolean hotWeatherBeachOverride = false;
+                        if (!matchesTrip && !activityMatch && "HOT".equalsIgnoreCase(weatherStr)) {
+                            if (p.getTrip_types() != null && p.getTrip_types().contains("beach")) {
+                                hotWeatherBeachOverride = true;
+                            }
                         }
-                        if (!matchesTrip && p.is_essential()) matchesTrip = true;
 
-                        // 2. Match by weather
-                        boolean matchesWeather = p.getWeather() == null || p.getWeather().isEmpty() || p.getWeather().stream().anyMatch(w -> w.equalsIgnoreCase(weatherStr));
+                        boolean finalTripMatch = matchesTrip || activityMatch || hotWeatherBeachOverride;
 
-                        // 3. Match by age group
+                        reason.append("* trip_type match = ").append(matchesTrip || activityMatch);
+                        if (hotWeatherBeachOverride) reason.append(" (HOT weather beach override)");
+                        reason.append("\n");
+
+                        if (!finalTripMatch) {
+                            removedByTrip.add(p.getId() + ": trip_type mismatch (Product types: " + p.getTrip_types() + ", Activity: " + p.getActivity_type() + ")");
+                            return false;
+                        }
+
+                        // 2. Age Group Matching
                         boolean matchesAge = true;
                         if (p.getAge_groups() != null && !p.getAge_groups().isEmpty() && !childAges.isEmpty()) {
                             matchesAge = false;
                             for (Integer ageMonths : childAges) {
-                                String group = getAgeGroup(ageMonths);
-                                if (p.getAge_groups().contains(group)) {
+                                List<String> groups = getAgeGroups(ageMonths);
+                                if (p.getAge_groups().stream().anyMatch(groups::contains)) {
                                     matchesAge = true;
                                     break;
                                 }
                             }
                         }
+                        reason.append("* age match = ").append(matchesAge).append("\n");
+                        if (!matchesAge) {
+                            removedByAge.add(p.getId() + ": age mismatch (Product ages: " + p.getAge_groups() + ", Child ages: " + childAges.stream().map(this::getAgeGroups).toList() + ")");
+                            return false;
+                        }
 
-                        return matchesTrip && matchesWeather && matchesAge;
-                    })
+                        // 3. Weather Matching
+                        boolean matchesWeather = p.getWeather() == null || p.getWeather().isEmpty() || p.getWeather().stream().anyMatch(w -> w.equalsIgnoreCase(weatherStr));
+                        reason.append("* weather match = ").append(matchesWeather).append("\n");
+                        if (!matchesWeather) {
+                            removedByWeather.add(p.getId() + ": weather mismatch");
+                            return false;
+                        }
+
+                        inclusionReasons.add(reason.toString());
+                        return true;
+                    }).toList();
+
+            System.out.println("Total products: " + allProducts.size());
+            
+            System.out.println("\nIncluded Products Reasoning:");
+            inclusionReasons.forEach(r -> System.out.println(r));
+
+            if (!removedByTrip.isEmpty()) {
+                System.out.println("\nRemoved by trip_type filter:");
+                removedByTrip.forEach(reason -> System.out.println("- " + reason));
+            }
+
+            if (!removedByAge.isEmpty()) {
+                System.out.println("\nRemoved by age filter:");
+                removedByAge.forEach(reason -> System.out.println("- " + reason));
+            }
+
+            if (!removedByWeather.isEmpty()) {
+                System.out.println("\nRemoved by weather filter:");
+                removedByWeather.forEach(reason -> System.out.println("- " + reason));
+            }
+
+            System.out.println("\nFinal products returned: " + filteredProducts.size());
+
+            // Sort products: is_essential first
+            List<Product> sortedProducts = filteredProducts.stream()
+                    .sorted((p1, p2) -> Boolean.compare(p2.is_essential(), p1.is_essential()))
                     .toList();
 
             // OPTIMIZATION: Send only essential product metadata
             String productsJson = objectMapper.writeValueAsString(
-                    filteredProducts.stream().map(p -> {
+                    sortedProducts.stream().map(p -> {
                         Map<String, Object> productMap = new java.util.HashMap<>();
                         productMap.put("id", p.getId());
                         productMap.put("name", p.getName());
@@ -135,7 +198,6 @@ public class OpenAiSelectorService {
                 - IMPORTANT: Use SHORT, SCANNABLE item names (e.g., "Lightweight outfits" instead of "Lightweight breathable cotton outfits for 24-month-old").
                 - forgottenItems: Exactly 5 high-value, practical reminders specific to this exact trip scenario and child ages.
                 - travelTips: Exactly 5 highly personalized tips. Be specific, actionable, and reference the child's age and trip circumstances.
-                - recommendedProducts: Select ALL relevant products from the Product Bank that match the user's trip context. Do not artificially limit the count. If many products are relevant, include all of them.
                 
                 DO NOT include basic essentials like passports or diapers (these are added automatically).
                 Focus on the "Value-Add" items that make the trip smoother.
@@ -147,7 +209,6 @@ public class OpenAiSelectorService {
                   ],
                   "forgottenItems": ["Reminder 1", "Reminder 2", "Reminder 3", "Reminder 4", "Reminder 5"],
                   "travelTips": ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5"],
-                  "recommendedProducts": [ { "id": "product_id", "why": "short explanation" } ],
                   "travelResources": []
                 }
                 """.formatted(contextJson, productsJson);
@@ -168,12 +229,6 @@ public class OpenAiSelectorService {
             System.out.println("[DEBUG] Raw AI JSON: " + jsonText);
 
             TravelPlan plan = objectMapper.readValue(jsonText, TravelPlan.class);
-            if (plan.getRecommendedProducts() != null) {
-                System.out.println("[DEBUG] AI Selected Product IDs: " + 
-                    plan.getRecommendedProducts().stream().map(Product::getId).toList());
-            } else {
-                System.out.println("[DEBUG] AI Selected ZERO products.");
-            }
             long parseTime = System.currentTimeMillis();
             System.out.println("[PERF] JSON Parsing: " + (parseTime - apiTime) + "ms");
             
@@ -189,17 +244,10 @@ public class OpenAiSelectorService {
             plan.setPackingChecklist(fullChecklist);
 
             System.out.println("[DEBUG] Catalog Total Products: " + allProducts.size());
-            System.out.println("[DEBUG] Filtered Products (TripType=" + tripTypeStr + "): " + filteredProducts.size());
+            System.out.println("[DEBUG] Filtered Products (TripType=" + tripTypeStr + ", Weather=" + weatherStr + "): " + filteredProducts.size());
 
-            // Enrich recommended products
-            List<Product> recommended = new java.util.ArrayList<>();
-            if (plan.getRecommendedProducts() != null) {
-                recommended.addAll(plan.getRecommendedProducts().stream()
-                        .map(p -> productService.getProductById(p.getId()))
-                        .filter(java.util.Objects::nonNull)
-                        .toList());
-            }
-            plan.setRecommendedProducts(recommended);
+            // Use backend-filtered and sorted products directly
+            plan.setRecommendedProducts(sortedProducts);
             plan.setContext(context);
 
             System.out.println("[PERF] Total Backend Time: " + (System.currentTimeMillis() - startTime) + "ms");
@@ -248,13 +296,15 @@ public class OpenAiSelectorService {
     }
 
 
-    private String getAgeGroup(int ageMonths) {
-        if (ageMonths <= 6) return "0m-6m";
-        if (ageMonths <= 12) return "6m-12m";
-        if (ageMonths <= 24) return "1y-2y";
-        if (ageMonths <= 48) return "2y-4y";
-        if (ageMonths <= 84) return "4y-7y";
-        return "7y+";
+    private List<String> getAgeGroups(int ageMonths) {
+        List<String> groups = new java.util.ArrayList<>();
+        if (ageMonths <= 6) groups.add("0m-6m");
+        if (ageMonths >= 6 && ageMonths <= 12) groups.add("6m-12m");
+        if (ageMonths >= 12 && ageMonths <= 24) groups.add("1y-2y");
+        if (ageMonths >= 24 && ageMonths <= 48) groups.add("2y-4y");
+        if (ageMonths >= 48 && ageMonths <= 84) groups.add("4y-7y");
+        if (ageMonths >= 84) groups.add("7y+");
+        return groups;
     }
 
     private String extractJsonFromResponse(Response response) {
