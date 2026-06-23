@@ -791,6 +791,25 @@ h2 {
 }
 
 @media (max-width: 640px) {
+    .product-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .product-row-main {
+        margin-bottom: 12px;
+    }
+
+    .product-row-thumb {
+        width: 72px;
+        height: 72px;
+    }
+
+    .product-row-cta {
+        width: 100%;
+        justify-content: center;
+    }
+
     .input {
         width: 100%;
         font-size: 16px;
@@ -944,11 +963,88 @@ h2 {
     justify-content: center;
 }
 
-/* Compact Product Row Styling */
+/* Product UI Rebuild */
+.product-card a,
+.product-card a:visited,
+.product-card a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
 .product-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.product-thumb {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-title {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+  text-decoration: none;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.product-description {
+  font-size: 12px;
+  line-height: 1.35;
+  color: #6f5b52;
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.product-cta {
+  display: inline-flex;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--primary);
+}
+
+/* Compact Product Row Styling (Legacy - keeping for safety but overriding if classes match) */
+.product-row-legacy {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 18px;
+    padding: 16px;
     background: var(--white);
     border-bottom: 1px solid var(--border);
     gap: 16px;
@@ -958,9 +1054,16 @@ h2 {
     color: inherit;
 }
 
-.product-row:hover {
+.product-row-legacy:hover {
     background: var(--bg-soft);
-    transform: translateX(4px);
+}
+
+.product-row-main {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+    align-items: flex-start;
 }
 
 .product-row-thumb {
@@ -970,6 +1073,7 @@ h2 {
     object-fit: cover;
     background: var(--bg-soft);
     flex-shrink: 0;
+    border: 1px solid var(--border);
 }
 
 .product-row-info {
@@ -982,6 +1086,7 @@ h2 {
     font-weight: 800;
     color: var(--text);
     margin: 0 0 4px;
+    text-decoration: none;
 }
 
 .product-row-desc {
@@ -993,6 +1098,7 @@ h2 {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-decoration: none;
 }
 
 .product-metadata {
@@ -1003,25 +1109,43 @@ h2 {
 
 .tag-mini {
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 2px 8px;
+    padding: 3px 10px;
     background: var(--secondary);
     color: var(--text);
     border-radius: 100px;
+    display: inline-block;
+}
+
+.tag-essential {
+    background: #FFF0F0;
+    color: #D04040;
 }
 
 .product-row-cta {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
     color: var(--primary);
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    border: 1.5px solid var(--primary);
+    padding: 8px 14px;
+    border-radius: 8px;
+    width: fit-content;
+    background: transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.product-row-legacy:hover .product-row-cta {
+    background: var(--primary);
+    color: var(--white);
 }
 
 .section-collapsible {

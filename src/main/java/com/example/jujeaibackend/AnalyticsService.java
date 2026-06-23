@@ -15,7 +15,10 @@ public class AnalyticsService {
         session.setCreatedAt(LocalDateTime.now());
         if (context != null) {
             session.setTripType(context.getTripType());
-            session.setChildrenAges(context.getChildren());
+            if (context.getChildren() != null) {
+                // Defensive copy to ensure we capture current state
+                session.setChildrenAges(new ArrayList<>(context.getChildren()));
+            }
             session.setWeather(context.getWeather());
             session.setDurationDays(context.getDurationDays());
         }

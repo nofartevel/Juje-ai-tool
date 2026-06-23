@@ -43,14 +43,18 @@ public class HomeController {
                     context.setDurationDays((Integer) contextMap.get("durationDays"));
                 }
                 
-                List<Map<String, Integer>> childrenRaw = (List<Map<String, Integer>>) contextMap.get("children");
-                if (childrenRaw != null) {
                     List<ChildDetail> children = new ArrayList<>();
-                    for (Map<String, Integer> c : childrenRaw) {
-                        children.add(new ChildDetail(c.get("ageInMonths") != null ? c.get("ageInMonths") : c.get("ageMonths")));
+                    for (Map<String, Object> c : (List<Map<String, Object>>) contextMap.get("children")) {
+                        Object ageVal = c.get("ageInMonths");
+                        if (ageVal == null) ageVal = c.get("ageMonths");
+                        
+                        if (ageVal instanceof Integer) {
+                            children.add(new ChildDetail((Integer) ageVal));
+                        } else if (ageVal instanceof Long) {
+                            children.add(new ChildDetail(((Long) ageVal).intValue()));
+                        }
                     }
                     context.setChildren(children);
-                }
             } catch (Exception e) {
                 System.err.println("Error mapping TripContext for analytics: " + e.getMessage());
             }

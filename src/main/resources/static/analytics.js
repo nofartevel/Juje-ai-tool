@@ -1,9 +1,9 @@
 const JujeAnalytics = {
     sessionId: null,
 
-    init() {
+    init(forceNew = false) {
         this.sessionId = sessionStorage.getItem('juje_session_id');
-        if (!this.sessionId) {
+        if (!this.sessionId || forceNew) {
             this.sessionId = 's_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
             sessionStorage.setItem('juje_session_id', this.sessionId);
         }

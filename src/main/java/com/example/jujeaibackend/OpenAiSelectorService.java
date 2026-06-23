@@ -34,7 +34,12 @@ public class OpenAiSelectorService {
     );
 
     public OpenAiSelectorService(ProductService productService) {
-        this.client = OpenAIOkHttpClient.fromEnv();
+        String apiKey = System.getenv("OPENAI_API_KEY");
+        if (apiKey != null && !apiKey.isBlank()) {
+            this.client = OpenAIOkHttpClient.fromEnv();
+        } else {
+            this.client = null;
+        }
         this.objectMapper = new ObjectMapper();
         this.productService = productService;
     }
@@ -48,12 +53,40 @@ public class OpenAiSelectorService {
         try {
             List<Product> allProducts = productService.getAllProducts();
 
-            // OPTIMIZATION: Pre-filter products based on trip type to reduce prompt size
+            // Include all products that match the trip context
+            String weatherStr = context.getWeather() != null ? context.getWeather().name() : "";
+            List<Integer> childAges = context.getChildren() != null ? context.getChildren().stream().map(ChildDetail::getAgeMonths).toList() : List.of();
             String tripTypeStr = context.getTripType().name();
+
             List<Product> filteredProducts = allProducts.stream()
-                    .filter(p -> p.getActivity_type() == null || 
-                                 p.getActivity_type().equalsIgnoreCase("GENERAL") || 
-                                 p.getActivity_type().equalsIgnoreCase(tripTypeStr))
+                    .filter(p -> {
+                        // 1. Match by trip type
+                        boolean matchesTrip = (p.getTrip_types() != null && (p.getTrip_types().contains("general") || p.getTrip_types().contains(tripTypeStr.toLowerCase())));
+                        if (!matchesTrip) {
+                            matchesTrip = p.getActivity_type() != null &&
+                                             (p.getActivity_type().equalsIgnoreCase("GENERAL") ||
+                                              p.getActivity_type().equalsIgnoreCase(tripTypeStr));
+                        }
+                        if (!matchesTrip && p.is_essential()) matchesTrip = true;
+
+                        // 2. Match by weather
+                        boolean matchesWeather = p.getWeather() == null || p.getWeather().isEmpty() || p.getWeather().stream().anyMatch(w -> w.equalsIgnoreCase(weatherStr));
+
+                        // 3. Match by age group
+                        boolean matchesAge = true;
+                        if (p.getAge_groups() != null && !p.getAge_groups().isEmpty() && !childAges.isEmpty()) {
+                            matchesAge = false;
+                            for (Integer ageMonths : childAges) {
+                                String group = getAgeGroup(ageMonths);
+                                if (p.getAge_groups().contains(group)) {
+                                    matchesAge = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        return matchesTrip && matchesWeather && matchesAge;
+                    })
                     .toList();
 
             // OPTIMIZATION: Send only essential product metadata
@@ -98,10 +131,11 @@ public class OpenAiSelectorService {
                 - Focus on specialized advice that a generic search engine wouldn't provide.
                 
                 OUTPUT REQUIREMENTS:
-                - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs. Use highly descriptive item names.
+                - packingChecklist: Detailed categories and items. Focus on age-specific gear, clothing layers for the weather, and feeding/sleep needs.
+                - IMPORTANT: Use SHORT, SCANNABLE item names (e.g., "Lightweight outfits" instead of "Lightweight breathable cotton outfits for 24-month-old").
                 - forgottenItems: Exactly 5 high-value, practical reminders specific to this exact trip scenario and child ages.
                 - travelTips: Exactly 5 highly personalized tips. Be specific, actionable, and reference the child's age and trip circumstances.
-                - recommendedProducts: Select at least 6-10 of the MOST RELEVANT products from the Product Bank (if available).
+                - recommendedProducts: Select ALL relevant products from the Product Bank that match the user's trip context. Do not artificially limit the count. If many products are relevant, include all of them.
                 
                 DO NOT include basic essentials like passports or diapers (these are added automatically).
                 Focus on the "Value-Add" items that make the trip smoother.
@@ -157,44 +191,13 @@ public class OpenAiSelectorService {
             System.out.println("[DEBUG] Catalog Total Products: " + allProducts.size());
             System.out.println("[DEBUG] Filtered Products (TripType=" + tripTypeStr + "): " + filteredProducts.size());
 
-            // Enrich recommended products and apply fallback if needed
+            // Enrich recommended products
             List<Product> recommended = new java.util.ArrayList<>();
             if (plan.getRecommendedProducts() != null) {
                 recommended.addAll(plan.getRecommendedProducts().stream()
                         .map(p -> productService.getProductById(p.getId()))
                         .filter(java.util.Objects::nonNull)
                         .toList());
-            }
-            System.out.println("[DEBUG] Products selected after mapping IDs: " + recommended.size());
-
-            // Fallback for products: ensure at least 6 products if relevant ones exist
-            if (recommended.size() < 6) {
-                System.out.println("[DEBUG] Applying product fallback. Current size: " + recommended.size());
-                
-                // Collect existing IDs to avoid duplicates
-                java.util.Set<String> existingIds = recommended.stream()
-                        .map(Product::getId)
-                        .collect(java.util.stream.Collectors.toSet());
-
-                List<Product> fallbackProducts = allProducts.stream()
-                        .filter(p -> !existingIds.contains(p.getId()))
-                        .filter(p -> {
-                            // Match by trip type (activity_type)
-                            boolean matchesTrip = p.getActivity_type() != null && 
-                                                 (p.getActivity_type().equalsIgnoreCase("GENERAL") || 
-                                                  p.getActivity_type().equalsIgnoreCase(tripTypeStr) ||
-                                                  (tripTypeStr.equals("FLIGHT") && p.getActivity_type().equalsIgnoreCase("TRAVEL")) ||
-                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("TRAVEL")) ||
-                                                  (tripTypeStr.equals("FLIGHT") && p.getActivity_type().equalsIgnoreCase("PLAY")) ||
-                                                  (tripTypeStr.equals("ROAD_TRIP") && p.getActivity_type().equalsIgnoreCase("PLAY")));
-                            
-                            return matchesTrip;
-                        })
-                        .limit(8 - recommended.size())
-                        .toList();
-                
-                System.out.println("[DEBUG] Adding " + fallbackProducts.size() + " fallback products");
-                recommended.addAll(fallbackProducts);
             }
             plan.setRecommendedProducts(recommended);
             plan.setContext(context);
@@ -244,6 +247,15 @@ public class OpenAiSelectorService {
         return fallback;
     }
 
+
+    private String getAgeGroup(int ageMonths) {
+        if (ageMonths <= 6) return "0m-6m";
+        if (ageMonths <= 12) return "6m-12m";
+        if (ageMonths <= 24) return "1y-2y";
+        if (ageMonths <= 48) return "2y-4y";
+        if (ageMonths <= 84) return "4y-7y";
+        return "7y+";
+    }
 
     private String extractJsonFromResponse(Response response) {
         String raw = response.toString();

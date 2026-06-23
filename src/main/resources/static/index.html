@@ -329,7 +329,8 @@
         const startTime = performance.now();
         renderLoadingScreen();
         
-        // Track session start
+        // Track session start (force new session for every new plan)
+        JujeAnalytics.init(true);
         JujeAnalytics.trackSessionStart(tripContext);
 
         try {
@@ -503,21 +504,31 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Highlight Card -->
+                    <div class="status-card status-good" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+                        <div style="font-weight: 700; color: var(--text);">
+                            ⭐ ${products.length} products matched to your trip
+                        </div>
+                        <button class="btn btn-primary" style="min-height: auto; padding: 8px 16px; font-size: 13px;" onclick="document.getElementById('gear-content').scrollIntoView({behavior: 'smooth'}); if(document.getElementById('gear-content').style.display === 'none') toggleSection('gear-content', 'gear-icon');">
+                            View Recommendations
+                        </button>
+                    </div>
                     
                     <div class="summary-metrics" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
-                        <div class="metric-item">
+                        <div class="metric-item" onclick="document.getElementById('checklist-content').scrollIntoView({behavior: 'smooth'}); if(document.getElementById('checklist-content').style.display === 'none') toggleSection('checklist-content', 'checklist-icon');" style="cursor: pointer;">
                             <div class="metric-value">${totalItemsCount}</div>
                             <div class="metric-label">Items</div>
                         </div>
-                        <div class="metric-item">
+                        <div class="metric-item" onclick="document.getElementById('tips-content').scrollIntoView({behavior: 'smooth'}); if(document.getElementById('tips-content').style.display === 'none') toggleSection('tips-content', 'tips-icon');" style="cursor: pointer;">
                             <div class="metric-value">${tips.length}</div>
                             <div class="metric-label">Tips</div>
                         </div>
-                        <div class="metric-item">
+                        <div class="metric-item" onclick="document.getElementById('reminders-content').scrollIntoView({behavior: 'smooth'}); if(document.getElementById('reminders-content').style.display === 'none') toggleSection('reminders-content', 'reminders-icon');" style="cursor: pointer;">
                             <div class="metric-value">${forgottenItems.length}</div>
                             <div class="metric-label">Forget</div>
                         </div>
-                        <div class="metric-item">
+                        <div class="metric-item" onclick="document.getElementById('gear-content').scrollIntoView({behavior: 'smooth'}); if(document.getElementById('gear-content').style.display === 'none') toggleSection('gear-content', 'gear-icon');" style="cursor: pointer;">
                             <div class="metric-value">${products.length}</div>
                             <div class="metric-label">Gear</div>
                         </div>
@@ -525,53 +536,21 @@
                 </div>
 
                 <div class="result-dashboard">
-                    <!-- 1. Packing Checklist (Open by default) -->
-                    <div class="section-collapsible">
-                        <div class="section-header" onclick="toggleSection('checklist-content', 'checklist-icon')">
-                            <div>
-                                <h3><span>📦</span> What To Pack</h3>
-                                <div class="section-header-desc">Essential items for your family trip</div>
-                            </div>
-                            <span id="checklist-icon" style="color: var(--primary); font-size: 12px;">▲</span>
-                        </div>
-                        <div id="checklist-content" class="section-content" style="display: block;">
-                            <div class="accordion">
-                                ${checklist.map((cat, i) => `
-                                    <div class="category-collapsible">
-                                        <div class="category-header" onclick="toggleAccordion(${i})">
-                                            <div class="category-header-info">
-                                                <div class="category-header-title">${cat.categoryName}</div>
-                                                <div class="category-preview">${(cat.items || []).slice(0, 3).join(', ')}...</div>
-                                            </div>
-                                            <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
-                                        </div>
-                                        <div id="acc-content-${i}" class="category-content" style="display: none; padding: 20px 24px;">
-                                            <ul style="list-style: none; padding: 0; margin: 0;">
-                                                ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Products / Gear (Collapsed by default) -->
+                    <!-- 1. Products / Gear (Open by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('gear-content', 'gear-icon')">
                             <div>
                                 <h3><span>🛒</span> Recommended Gear</h3>
                                 <div class="section-header-desc">Curated gear for your specific needs</div>
                             </div>
-                            <span id="gear-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                            <span id="gear-icon" style="color: var(--primary); font-size: 12px;">▲</span>
                         </div>
-                        <div id="gear-content" class="section-content" style="display: none;">
+                        <div id="gear-content" class="section-content" style="display: block;">
                             ${Object.keys(categorizedProducts).length > 0 ? Object.keys(categorizedProducts).map((catKey, idx) => `
                                 <div class="category-collapsible">
                                     <div class="category-header" onclick="toggleSection('prod-cat-${idx}', 'prod-cat-icon-${idx}')">
                                         <div class="category-header-info">
-                                            <div class="category-header-title">${categoryIcons[catKey.toUpperCase()] || '⭐'} ${categoryNames[catKey.toUpperCase()] || catKey}</div>
-                                            <div class="category-preview">${categorizedProducts[catKey].slice(0, 2).map(p => p.name).join(', ')}...</div>
+                                            <div class="category-header-title">${categoryNames[catKey.toUpperCase()] || catKey} (${categorizedProducts[catKey].length} products)</div>
                                         </div>
                                         <span id="prod-cat-icon-${idx}" style="font-size: 10px;">▼</span>
                                     </div>
@@ -582,19 +561,17 @@
                                             if (p.age_groups) tags.push(p.age_groups);
                                             
                                             return `
-                                                <a href="${p.link}" target="_blank" class="product-row-card" onclick="JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
-                                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-row-thumb">
-                                                    <div class="product-row-info">
-                                                        <h5 class="product-row-name">${p.name}</h5>
-                                                        <p class="product-row-desc">${p.why || ''}</p>
-                                                        <div class="product-metadata">
+                                                <div class="product-row" onclick="window.open('${p.link}', '_blank'); JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
+                                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-thumb">
+                                                    <div class="product-info">
+                                                        <div class="product-title">${p.name}</div>
+                                                        <div class="product-description">${p.why || ''}</div>
+                                                        <div class="product-tags">
                                                             ${tags.map(t => `<span class="tag-mini">${t}</span>`).join('')}
                                                         </div>
-                                                        <div class="product-row-cta">
-                                                            See Product →
-                                                        </div>
+                                                        <a class="product-cta">View product →</a>
                                                     </div>
-                                                </a>
+                                                </div>
                                             `;
                                         }).join('')}
                                     </div>
@@ -607,7 +584,7 @@
                         </div>
                     </div>
 
-                    <!-- 3. Travel Tips (Collapsed by default) -->
+                    <!-- 2. Travel Tips (Collapsed by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('tips-content', 'tips-icon')">
                             <div>
@@ -627,7 +604,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. Things Parents Forget (Collapsed by default) -->
+                    <!-- 3. Things Parents Forget (Collapsed by default) -->
                     <div class="section-collapsible">
                         <div class="section-header" onclick="toggleSection('reminders-content', 'reminders-icon')">
                             <div>
@@ -643,6 +620,36 @@
                                     <span style="font-size: 15px; font-weight: 600;">${item}</span>
                                 </li>`).join('')}
                             </ul>
+                        </div>
+                    </div>
+
+                    <!-- 4. Packing Checklist (Collapsed by default) -->
+                    <div class="section-collapsible">
+                        <div class="section-header" onclick="toggleSection('checklist-content', 'checklist-icon')">
+                            <div>
+                                <h3><span>📦</span> What To Pack</h3>
+                                <div class="section-header-desc">Essential items for your family trip</div>
+                            </div>
+                            <span id="checklist-icon" style="color: var(--primary); font-size: 12px;">▼</span>
+                        </div>
+                        <div id="checklist-content" class="section-content" style="display: none;">
+                            <div class="accordion">
+                                ${checklist.map((cat, i) => `
+                                    <div class="category-collapsible">
+                                        <div class="category-header" onclick="toggleAccordion(${i})">
+                                            <div class="category-header-info">
+                                                <div class="category-header-title">${cat.categoryName} (${(cat.items || []).length} items)</div>
+                                            </div>
+                                            <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
+                                        </div>
+                                        <div id="acc-content-${i}" class="category-content" style="display: none; padding: 20px 24px;">
+                                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                                ${(cat.items || []).map(item => `<li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 14px; line-height: 1.4;"><input type="checkbox" style="margin-right: 12px; margin-top: 3px; accent-color: var(--primary); width: 18px; height: 18px; flex-shrink: 0;"> <span>${item}</span></li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
 
