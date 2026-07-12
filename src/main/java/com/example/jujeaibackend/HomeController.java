@@ -36,6 +36,15 @@ public class HomeController {
                 if (contextMap.get("tripType") != null) {
                     context.setTripType(TripType.valueOf((String) contextMap.get("tripType")));
                 }
+                if (contextMap.get("transportType") != null) {
+                    context.setTransportType(TransportType.valueOf((String) contextMap.get("transportType")));
+                }
+                if (contextMap.get("destinationTypes") != null) {
+                    List<String> types = (List<String>) contextMap.get("destinationTypes");
+                    context.setDestinationTypes(types.stream()
+                            .map(DestinationType::valueOf)
+                            .toList());
+                }
                 if (contextMap.get("weather") != null) {
                     context.setWeather(WeatherType.valueOf((String) contextMap.get("weather")));
                 }

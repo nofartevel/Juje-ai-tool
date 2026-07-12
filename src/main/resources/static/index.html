@@ -50,6 +50,8 @@
 <script>
     let tripContext = {
         tripType: null,
+        transportType: null,
+        destinationTypes: [],
         children: [],
         durationDays: 7,
         weather: "HOT"
@@ -78,10 +80,10 @@
     }
 
     function renderIntroScreen() {
-        updateHeader(0, 3, "");
+        updateHeader(0, 4, "");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
-            <div class="hero">
+            <div class="hero intro-hero">
                 <div class="trust-signals" style="margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                     <span class="trust-badge" style="background: var(--secondary); color: var(--text); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;">✨ Built for families on the move</span>
                     <div style="display: flex; gap: 12px; font-size: 12px; color: var(--muted); font-weight: 600;">
@@ -101,57 +103,40 @@
                     <div class="v-prop-row">✅ Gear recommendations</div>
                 </div>
 
-                <button class="btn btn-primary btn-full" onclick="renderTripTypeStep()">Start Planning →</button>
+                <button class="btn btn-primary btn-full" onclick="renderTransportStep()">Start Planning →</button>
             </div>
         `;
     }
 
-    function renderTripTypeStep() {
-        updateHeader(1, 3, "Trip");
+    function renderTransportStep() {
+        updateHeader(1, 4, "Transport");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
-            <div class="nav-controls">
-                <button class="btn-back" onclick="renderIntroScreen()">← Back</button>
-            </div>
+            <div class="btn-back" onclick="renderIntroScreen()">← Back</div>
             <div class="hero">
-                <h1 class="hero-title">Where are you headed?</h1>
-                <p class="hero-subtitle">Choose your trip type to get started</p>
+                <h1 class="hero-title">How are you getting there?</h1>
+                <p class="hero-subtitle">Choose your transportation method</p>
                 
-                <div class="category-grid">
-                    <div class="trip-card" onclick="setTripType('FLIGHT')">
-                        <span class="trip-icon">✈️</span>
-                        <div class="trip-info">
-                            <span class="trip-label">Flight</span>
+                <div class="selectable-grid">
+                    <div class="selectable-card" onclick="setTransportType('FLIGHT', this)">
+                        <div class="selectable-icon">✈️</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Flight</span>
+                            <span class="selectable-sub">Standard air travel</span>
                         </div>
                     </div>
-                    <div class="trip-card" onclick="setTripType('ROAD_TRIP')">
-                        <span class="trip-icon">🚗</span>
-                        <div class="trip-info">
-                            <span class="trip-label">Road Trip</span>
+                    <div class="selectable-card" onclick="setTransportType('ROAD_TRIP', this)">
+                        <div class="selectable-icon">🚗</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Road Trip</span>
+                            <span class="selectable-sub">Driving long distance</span>
                         </div>
                     </div>
-                    <div class="trip-card" onclick="setTripType('BEACH')">
-                        <span class="trip-icon">🏖️</span>
-                        <div class="trip-info">
-                            <span class="trip-label">Beach</span>
-                        </div>
-                    </div>
-                    <div class="trip-card" onclick="setTripType('CRUISE')">
-                        <span class="trip-icon">🚢</span>
-                        <div class="trip-info">
-                            <span class="trip-label">Cruise</span>
-                        </div>
-                    </div>
-                    <div class="trip-card" onclick="setTripType('CAMPING')">
-                        <span class="trip-icon">🏕️</span>
-                        <div class="trip-info">
-                            <span class="trip-label">Camping</span>
-                        </div>
-                    </div>
-                    <div class="trip-card" onclick="setTripType('GENERAL')">
-                        <span class="trip-icon">🌍</span>
-                        <div class="trip-info">
-                            <span class="trip-label">General</span>
+                    <div class="selectable-card" onclick="setTransportType('CRUISE', this)">
+                        <div class="selectable-icon">🚢</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Cruise</span>
+                            <span class="selectable-sub">Voyage by sea</span>
                         </div>
                     </div>
                 </div>
@@ -159,18 +144,119 @@
         `;
     }
 
-    function setTripType(type) {
+    function setTransportType(type, element) {
+        if (element) {
+            element.classList.add('selected');
+        }
+        tripContext.transportType = type;
         tripContext.tripType = type;
-        renderFamilyStep();
+        setTimeout(() => renderDestinationStep(), 150);
+    }
+
+    function renderDestinationStep() {
+        updateHeader(2, 4, "Destination");
+        const screen = document.getElementById("screen");
+        screen.innerHTML = `
+            <div class="btn-back" onclick="renderTransportStep()">← Back</div>
+            <div class="hero">
+                <h1 class="hero-title">What kind of trip is this?</h1>
+                <p class="hero-subtitle">Choose one or more</p>
+                
+                <div class="selectable-grid">
+                    <div class="selectable-card ${tripContext.destinationTypes.includes('BEACH') ? 'selected' : ''}" 
+                         onclick="toggleDestinationType('BEACH', this)"
+                         role="checkbox" 
+                         aria-checked="${tripContext.destinationTypes.includes('BEACH')}"
+                         tabindex="0">
+                        <div class="selectable-icon">🏖️</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Beach</span>
+                            <span class="selectable-sub">Sun, sand and water</span>
+                        </div>
+                        <div class="selection-indicator">${tripContext.destinationTypes.includes('BEACH') ? '✓' : '○'}</div>
+                    </div>
+                    <div class="selectable-card ${tripContext.destinationTypes.includes('RESORT') ? 'selected' : ''}" 
+                         onclick="toggleDestinationType('RESORT', this)"
+                         role="checkbox" 
+                         aria-checked="${tripContext.destinationTypes.includes('RESORT')}"
+                         tabindex="0">
+                        <div class="selectable-icon">🏨</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Resort</span>
+                            <span class="selectable-sub">Hotel, pool and all-inclusive stays</span>
+                        </div>
+                        <div class="selection-indicator">${tripContext.destinationTypes.includes('RESORT') ? '✓' : '○'}</div>
+                    </div>
+                    <div class="selectable-card ${tripContext.destinationTypes.includes('CITY') ? 'selected' : ''}" 
+                         onclick="toggleDestinationType('CITY', this)"
+                         role="checkbox" 
+                         aria-checked="${tripContext.destinationTypes.includes('CITY')}"
+                         tabindex="0">
+                        <div class="selectable-icon">🏙️</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">City</span>
+                            <span class="selectable-sub">Sightseeing and urban exploration</span>
+                        </div>
+                        <div class="selection-indicator">${tripContext.destinationTypes.includes('CITY') ? '✓' : '○'}</div>
+                    </div>
+                    <div class="selectable-card ${tripContext.destinationTypes.includes('CAMPING') ? 'selected' : ''}" 
+                         onclick="toggleDestinationType('CAMPING', this)"
+                         role="checkbox" 
+                         aria-checked="${tripContext.destinationTypes.includes('CAMPING')}"
+                         tabindex="0">
+                        <div class="selectable-icon">🏕️</div>
+                        <div class="selectable-info">
+                            <span class="selectable-label">Camping</span>
+                            <span class="selectable-sub">Outdoor stays and nature trips</span>
+                        </div>
+                        <div class="selection-indicator">${tripContext.destinationTypes.includes('CAMPING') ? '✓' : '○'}</div>
+                    </div>
+                </div>
+
+                <div id="selection-counter" class="selection-counter">
+                    ${tripContext.destinationTypes.length > 0 ? tripContext.destinationTypes.length + ' selected' : ''}
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <button id="dest-continue-btn" class="btn btn-primary btn-full" onclick="renderFamilyStep()" ${tripContext.destinationTypes.length === 0 ? 'disabled' : ''}>Continue</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function toggleDestinationType(type, element) {
+        const index = tripContext.destinationTypes.indexOf(type);
+        const indicator = element.querySelector('.selection-indicator');
+        
+        if (index > -1) {
+            tripContext.destinationTypes.splice(index, 1);
+            element.classList.remove('selected');
+            element.setAttribute('aria-checked', 'false');
+            if (indicator) indicator.innerText = '○';
+        } else {
+            tripContext.destinationTypes.push(type);
+            element.classList.add('selected');
+            element.setAttribute('aria-checked', 'true');
+            if (indicator) indicator.innerText = '✓';
+        }
+        
+        const count = tripContext.destinationTypes.length;
+        const continueBtn = document.getElementById('dest-continue-btn');
+        if (continueBtn) {
+            continueBtn.disabled = count === 0;
+        }
+
+        const counter = document.getElementById('selection-counter');
+        if (counter) {
+            counter.innerText = count > 0 ? count + ' selected' : '';
+        }
     }
 
     function renderFamilyStep() {
-        updateHeader(2, 3, "Family");
+        updateHeader(3, 4, "Family");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
-            <div class="nav-controls">
-                <button class="btn-back" onclick="renderTripTypeStep()">← Back</button>
-            </div>
+            <div class="btn-back" onclick="renderDestinationStep()">← Back</div>
             <div class="hero">
                 <h1 class="hero-title">Who's coming along? 👨‍👩‍👧‍👦</h1>
                 <p class="hero-subtitle">Age helps us personalize your checklist and tips</p>
@@ -261,12 +347,10 @@
     }
 
     function renderLogisticsStep() {
-        updateHeader(3, 3, "Details");
+        updateHeader(4, 4, "Details");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
-            <div class="nav-controls">
-                <button class="btn-back" onclick="renderFamilyStep()">← Back</button>
-            </div>
+            <div class="btn-back" onclick="renderFamilyStep()">← Back</div>
             <div class="hero">
                 <h1 class="hero-title">Let's personalize your plan ✨</h1>
                 <p class="hero-subtitle">Almost there! Just a few more details</p>
@@ -383,7 +467,7 @@
             'CAMPING': '⛺',
             'GENERAL': '🌍'
         };
-        const icon = iconMap[tripContext.tripType] || '✨';
+        const icon = iconMap[tripContext.transportType] || iconMap[tripContext.tripType] || '✨';
         const loadingMessages = [
             "Building your personalized family travel plan...",
             "Creating your packing checklist...",

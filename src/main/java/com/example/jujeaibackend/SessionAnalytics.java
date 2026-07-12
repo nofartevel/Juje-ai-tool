@@ -8,6 +8,8 @@ public class SessionAnalytics {
     private String sessionId;
     private LocalDateTime createdAt;
     private TripType tripType;
+    private TransportType transportType;
+    private List<DestinationType> destinationTypes;
     private List<ChildDetail> childrenAges;
     private WeatherType weather;
     private int durationDays;
@@ -62,6 +64,10 @@ public class SessionAnalytics {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public TripType getTripType() { return tripType; }
     public void setTripType(TripType tripType) { this.tripType = tripType; }
+    public TransportType getTransportType() { return transportType; }
+    public void setTransportType(TransportType transportType) { this.transportType = transportType; }
+    public List<DestinationType> getDestinationTypes() { return destinationTypes; }
+    public void setDestinationTypes(List<DestinationType> destinationTypes) { this.destinationTypes = destinationTypes; }
     public List<ChildDetail> getChildrenAges() { return childrenAges; }
     public void setChildrenAges(List<ChildDetail> childrenAges) { this.childrenAges = childrenAges; }
     public WeatherType getWeather() { return weather; }

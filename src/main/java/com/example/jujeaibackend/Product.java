@@ -16,7 +16,10 @@ public class Product {
     private List<String> needs;
     private String activity_type;
     private List<String> trip_types;
+    private List<String> transport_types;
+    private List<String> destination_types;
     private List<String> weather;
+    private String product_scope;
     private boolean is_essential;
 
     public Product() {
@@ -24,7 +27,7 @@ public class Product {
 
     public Product(String id, String name, String link, String image, String section, String why,
                    List<String> keywords, List<String> use_cases, List<String> age_groups, List<String> needs,
-                   List<String> trip_types, List<String> weather, boolean is_essential) {
+                   List<String> trip_types, List<String> weather, String product_scope, boolean is_essential) {
         this.id = id;
         this.name = name;
         this.link = link;
@@ -37,6 +40,7 @@ public class Product {
         this.needs = needs;
         this.trip_types = trip_types;
         this.weather = weather;
+        this.product_scope = product_scope;
         this.is_essential = is_essential;
     }
 
@@ -136,12 +140,36 @@ public class Product {
         this.trip_types = trip_types;
     }
 
+    public List<String> getTransport_types() {
+        return transport_types;
+    }
+
+    public void setTransport_types(List<String> transport_types) {
+        this.transport_types = transport_types;
+    }
+
+    public List<String> getDestination_types() {
+        return destination_types;
+    }
+
+    public void setDestination_types(List<String> destination_types) {
+        this.destination_types = destination_types;
+    }
+
     public List<String> getWeather() {
         return weather;
     }
 
     public void setWeather(List<String> weather) {
         this.weather = weather;
+    }
+
+    public String getProduct_scope() {
+        return product_scope;
+    }
+
+    public void setProduct_scope(String product_scope) {
+        this.product_scope = product_scope;
     }
 
     public boolean is_essential() {

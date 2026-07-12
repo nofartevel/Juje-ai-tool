@@ -110,7 +110,7 @@
             tbody.innerHTML = allSessions.map((s, index) => `
                 <tr onclick="showDetails(${index})">
                     <td>${formatDate(s.createdAt)}</td>
-                    <td>${s.tripType || '-'}</td>
+                    <td>${s.transportType || '-'} / ${s.destinationTypes ? s.destinationTypes.join(' + ') : (s.destinationType || '-')}</td>
                     <td>${s.childrenAges ? s.childrenAges.map(c => formatAge(c.ageMonths || c.ageInMonths)).join('; ') : '-'}</td>
                     <td>${s.weather || '-'}</td>
                     <td>${s.durationDays || '-'}</td>
@@ -189,7 +189,8 @@
                 <p><strong>Time:</strong> ${formatDate(s.createdAt)}</p>
                 <hr>
                 <h3>Trip Context</h3>
-                <p><strong>Type:</strong> ${s.tripType}</p>
+                <p><strong>Transport:</strong> ${s.transportType || '-'}</p>
+                <p><strong>Destinations:</strong> ${s.destinationTypes ? s.destinationTypes.join(', ') : (s.destinationType || '-')}</p>
                 <p><strong>Weather:</strong> ${s.weather}</p>
                 <p><strong>Duration:</strong> ${s.durationDays} days</p>
                 <p><strong>Children:</strong> ${s.childrenAges ? s.childrenAges.map(c => formatAge(c.ageMonths || c.ageInMonths)).join(', ') : 'None'}</p>

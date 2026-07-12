@@ -15,6 +15,8 @@ public class AnalyticsService {
         session.setCreatedAt(LocalDateTime.now());
         if (context != null) {
             session.setTripType(context.getTripType());
+            session.setTransportType(context.getTransportType());
+            session.setDestinationTypes(context.getDestinationTypes());
             if (context.getChildren() != null) {
                 // Defensive copy to ensure we capture current state
                 session.setChildrenAges(new ArrayList<>(context.getChildren()));

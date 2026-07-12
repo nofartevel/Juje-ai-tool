@@ -54,13 +54,14 @@ public class OpenAiSelectorService {
             List<Product> allProducts = productService.getAllProducts();
 
             // Include all products that match the trip context
-            String weatherStr = context.getWeather() != null ? context.getWeather().name() : "";
+            String weatherStr = context.getWeather() != null ? context.getWeather().name().toLowerCase() : "";
             List<Integer> childAges = context.getChildren() != null ? context.getChildren().stream().map(ChildDetail::getAgeMonths).toList() : List.of();
-            String tripTypeStr = context.getTripType().name();
+            String transportStr = context.getTransportType() != null ? context.getTransportType().name().toLowerCase() : "";
+            List<String> destinationTypes = context.getDestinationTypes() != null 
+                    ? context.getDestinationTypes().stream().map(t -> t.name().toLowerCase()).toList() 
+                    : List.of();
 
-            List<String> removedByTrip = new java.util.ArrayList<>();
-            List<String> removedByAge = new java.util.ArrayList<>();
-            List<String> removedByWeather = new java.util.ArrayList<>();
+            List<String> removedByFilter = new java.util.ArrayList<>();
             List<String> inclusionReasons = new java.util.ArrayList<>();
 
             List<Product> filteredProducts = allProducts.stream()
@@ -68,34 +69,33 @@ public class OpenAiSelectorService {
                         StringBuilder reason = new StringBuilder();
                         reason.append("Product: ").append(p.getId()).append("\nReason:\n");
 
-                        // 1. Trip Type Matching
-                        boolean matchesTrip = (p.getTrip_types() == null || p.getTrip_types().isEmpty() || 
-                                               p.getTrip_types().contains("general") || 
-                                               p.getTrip_types().contains(tripTypeStr.toLowerCase()));
+                        // 1. Context Matching based on product_scope
+                        String scope = p.getProduct_scope() != null ? p.getProduct_scope() : "universal";
+                        boolean matchesContext = false;
                         
-                        boolean activityMatch = p.getActivity_type() != null &&
-                                             (p.getActivity_type().equalsIgnoreCase("GENERAL") ||
-                                              p.getActivity_type().equalsIgnoreCase(tripTypeStr));
+                        if ("universal".equalsIgnoreCase(scope)) {
+                            // Universal products match if they are NOT destination-specific OR they match at least one selected destination
+                            boolean hasDestinations = p.getDestination_types() != null && !p.getDestination_types().isEmpty();
+                            boolean matchesDestination = !hasDestinations || destinationTypes.stream().anyMatch(p.getDestination_types()::contains);
 
-                        boolean hotWeatherBeachOverride = false;
-                        if (!matchesTrip && !activityMatch && "HOT".equalsIgnoreCase(weatherStr)) {
-                            if (p.getTrip_types() != null && p.getTrip_types().contains("beach")) {
-                                hotWeatherBeachOverride = true;
-                            }
+                            // AND they are NOT transport-specific OR they match the transport
+                            boolean hasTransports = p.getTransport_types() != null && !p.getTransport_types().isEmpty();
+                            boolean matchesTransport = !hasTransports || p.getTransport_types().contains(transportStr);
+                            
+                            matchesContext = matchesDestination && matchesTransport;
+                        } else if ("transport_specific".equalsIgnoreCase(scope)) {
+                            matchesContext = p.getTransport_types() != null && p.getTransport_types().contains(transportStr);
+                        } else if ("destination_specific".equalsIgnoreCase(scope)) {
+                            // Intersection check
+                            matchesContext = p.getDestination_types() != null && destinationTypes.stream().anyMatch(p.getDestination_types()::contains);
                         }
 
-                        boolean finalTripMatch = matchesTrip || activityMatch || hotWeatherBeachOverride;
-
-                        reason.append("* trip_type match = ").append(matchesTrip || activityMatch);
-                        if (hotWeatherBeachOverride) reason.append(" (HOT weather beach override)");
-                        reason.append("\n");
-
-                        if (!finalTripMatch) {
-                            removedByTrip.add(p.getId() + ": trip_type mismatch (Product types: " + p.getTrip_types() + ", Activity: " + p.getActivity_type() + ")");
+                        if (!matchesContext) {
+                            removedByFilter.add(p.getId() + ": context mismatch (Scope: " + scope + ")");
                             return false;
                         }
 
-                        // 2. Age Group Matching
+                        // 4. Age Group Matching
                         boolean matchesAge = true;
                         if (p.getAge_groups() != null && !p.getAge_groups().isEmpty() && !childAges.isEmpty()) {
                             matchesAge = false;
@@ -107,49 +107,42 @@ public class OpenAiSelectorService {
                                 }
                             }
                         }
-                        reason.append("* age match = ").append(matchesAge).append("\n");
                         if (!matchesAge) {
-                            removedByAge.add(p.getId() + ": age mismatch (Product ages: " + p.getAge_groups() + ", Child ages: " + childAges.stream().map(this::getAgeGroups).toList() + ")");
+                            removedByFilter.add(p.getId() + ": age mismatch");
                             return false;
                         }
 
-                        // 3. Weather Matching
+                        // 5. Weather Matching
                         boolean matchesWeather = p.getWeather() == null || p.getWeather().isEmpty() || p.getWeather().stream().anyMatch(w -> w.equalsIgnoreCase(weatherStr));
-                        reason.append("* weather match = ").append(matchesWeather).append("\n");
                         if (!matchesWeather) {
-                            removedByWeather.add(p.getId() + ": weather mismatch");
+                            removedByFilter.add(p.getId() + ": weather mismatch");
                             return false;
                         }
 
-                        inclusionReasons.add(reason.toString());
                         return true;
                     }).toList();
 
-            System.out.println("Total products: " + allProducts.size());
-            
-            System.out.println("\nIncluded Products Reasoning:");
-            inclusionReasons.forEach(r -> System.out.println(r));
-
-            if (!removedByTrip.isEmpty()) {
-                System.out.println("\nRemoved by trip_type filter:");
-                removedByTrip.forEach(reason -> System.out.println("- " + reason));
-            }
-
-            if (!removedByAge.isEmpty()) {
-                System.out.println("\nRemoved by age filter:");
-                removedByAge.forEach(reason -> System.out.println("- " + reason));
-            }
-
-            if (!removedByWeather.isEmpty()) {
-                System.out.println("\nRemoved by weather filter:");
-                removedByWeather.forEach(reason -> System.out.println("- " + reason));
-            }
-
-            System.out.println("\nFinal products returned: " + filteredProducts.size());
-
-            // Sort products: is_essential first
+            // Sort products: 
+            // 1. Matches destination + transport
+            // 2. Matches destination
+            // 3. Universal product (no destination specified in metadata)
+            // 4. Transport-only product
             List<Product> sortedProducts = filteredProducts.stream()
-                    .sorted((p1, p2) -> Boolean.compare(p2.is_essential(), p1.is_essential()))
+                    .sorted((p1, p2) -> {
+                        // Scoring
+                        int score1 = calculateProductScore(p1, transportStr, destinationTypes);
+                        int score2 = calculateProductScore(p2, transportStr, destinationTypes);
+                        
+                        if (score1 != score2) {
+                            return score2 - score1; // Higher score first
+                        }
+
+                        // Tie-break with is_essential
+                        if (p1.is_essential() != p2.is_essential()) {
+                            return p2.is_essential() ? 1 : -1;
+                        }
+                        return 0;
+                    })
                     .toList();
 
             // OPTIMIZATION: Send only essential product metadata
@@ -163,7 +156,10 @@ public class OpenAiSelectorService {
                         productMap.put("age_groups", p.getAge_groups() == null ? List.of() : p.getAge_groups());
                         productMap.put("activity_type", p.getActivity_type());
                         productMap.put("trip_types", p.getTrip_types() == null ? List.of() : p.getTrip_types());
+                        productMap.put("transport_types", p.getTransport_types() == null ? List.of() : p.getTransport_types());
+                        productMap.put("destination_types", p.getDestination_types() == null ? List.of() : p.getDestination_types());
                         productMap.put("weather", p.getWeather() == null ? List.of() : p.getWeather());
+                        productMap.put("product_scope", p.getProduct_scope());
                         productMap.put("is_essential", p.is_essential());
                         return productMap;
                     }).toList()
@@ -185,7 +181,7 @@ public class OpenAiSelectorService {
                 
                 PERSONALIZATION IS THE TOP PRIORITY:
                 1. Reference child ages (in months) throughout the tips, reminders, and checklist. An 8-month-old, 18-month-old, and 4-year-old have very different needs.
-                2. Trip Type is the PRIMARY driver. A FLIGHT, BEACH, or ROAD_TRIP requires fundamentally different items and advice.
+                2. Transport Type and Destination Types are the PRIMARY drivers. User selected %d destination styles. Combine their needs (e.g. if Beach and City are selected, address both).
                 3. Account for weather conditions (HOT/COLD/MIXED).
                 
                 CONTENT GUIDELINES:
@@ -211,7 +207,7 @@ public class OpenAiSelectorService {
                   "travelTips": ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5"],
                   "travelResources": []
                 }
-                """.formatted(contextJson, productsJson);
+                """.formatted(contextJson, productsJson, destinationTypes.size());
 
             long promptTime = System.currentTimeMillis();
             System.out.println("[PERF] Prompt Building: " + (promptTime - startTime) + "ms");
@@ -244,7 +240,7 @@ public class OpenAiSelectorService {
             plan.setPackingChecklist(fullChecklist);
 
             System.out.println("[DEBUG] Catalog Total Products: " + allProducts.size());
-            System.out.println("[DEBUG] Filtered Products (TripType=" + tripTypeStr + ", Weather=" + weatherStr + "): " + filteredProducts.size());
+            System.out.println("[DEBUG] Filtered Products (Transport=" + transportStr + ", Destinations=" + destinationTypes + ", Weather=" + weatherStr + "): " + filteredProducts.size());
 
             // Use backend-filtered and sorted products directly
             plan.setRecommendedProducts(sortedProducts);
@@ -295,6 +291,18 @@ public class OpenAiSelectorService {
         return fallback;
     }
 
+
+    private int calculateProductScore(Product p, String transportStr, List<String> destinationTypes) {
+        boolean matchesDest = p.getDestination_types() != null && destinationTypes.stream().anyMatch(p.getDestination_types()::contains);
+        boolean matchesTransport = p.getTransport_types() != null && p.getTransport_types().contains(transportStr);
+        boolean hasDestMetadata = p.getDestination_types() != null && !p.getDestination_types().isEmpty();
+        
+        if (matchesDest && matchesTransport) return 4;
+        if (matchesDest) return 3;
+        if (!hasDestMetadata) return 2; // Universal
+        if (matchesTransport) return 1;
+        return 0;
+    }
 
     private List<String> getAgeGroups(int ageMonths) {
         List<String> groups = new java.util.ArrayList<>();

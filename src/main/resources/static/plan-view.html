@@ -112,16 +112,49 @@
                 'OTHER': 'Other'
             };
 
+            const tripTypeEmojis = {
+                'FLIGHT': '✈️',
+                'ROAD_TRIP': '🚗',
+                'CRUISE': '🚢'
+            };
+
+            const destinationTypeEmojis = {
+                'BEACH': '🏖️',
+                'RESORT': '🏨',
+                'CITY': '🏙️',
+                'CAMPING': '⛺'
+            };
+
+            const destinationTypeNames = {
+                'BEACH': 'Beach',
+                'RESORT': 'Resort',
+                'CITY': 'City',
+                'CAMPING': 'Camping'
+            };
+
+            const ctx = currentPlan.context || {};
+            const transportEmoji = tripTypeEmojis[ctx.transportType] || '🎒';
+            
+            const destTypes = ctx.destinationTypes || (ctx.destinationType ? [ctx.destinationType] : []);
+            const destEmoji = destTypes.map(t => destinationTypeEmojis[t] || '').join('');
+            const destName = destTypes.map(t => destinationTypeNames[t] || t).join(' + ') || 'Travel Plan';
+            
+            const childrenCount = ctx.children ? ctx.children.length : 0;
+            const duration = ctx.durationDays || 0;
+            const weather = ctx.weather ? ctx.weather.charAt(0).toUpperCase() + ctx.weather.slice(1).toLowerCase() : "";
+
             content.innerHTML = `
                 <div class="result-container" style="animation: fadeInUp 0.5s ease;">
                     <!-- Summary Header -->
                     <div class="summary-header">
-                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-                            <div style="font-size: 40px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">🎒</div>
-                            <div>
-                                <h3>Shared Travel Plan</h3>
-                                <div style="font-size: 14px; color: var(--muted); font-weight: 700;">
-                                    Curated for your family
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="font-size: 40px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">${transportEmoji}</div>
+                                <div>
+                                    <h3>${destName}</h3>
+                                    <div style="font-size: 14px; color: var(--muted); font-weight: 700;">
+                                        ${duration} Days • ${childrenCount} ${childrenCount === 1 ? 'Child' : 'Children'} • ${weather} Weather
+                                    </div>
                                 </div>
                             </div>
                         </div>

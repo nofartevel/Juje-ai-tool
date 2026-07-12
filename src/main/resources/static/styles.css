@@ -1348,6 +1348,93 @@ h2 {
     margin-bottom: 16px;
 }
 
+.selectable-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.selectable-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-soft);
+    text-align: left;
+    position: relative;
+}
+
+.selectable-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow);
+}
+
+.selectable-card.selected {
+    border-color: var(--primary);
+    background: var(--secondary);
+    box-shadow: var(--shadow);
+}
+
+.selectable-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.selectable-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1;
+}
+
+.selection-indicator {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: transparent;
+}
+
+.selectable-card.selected .selection-indicator {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.selection-counter {
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    min-height: 20px;
+}
+
+.selectable-label {
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--text);
+}
+
+.selectable-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
 .category-btn {
     padding: 12px 14px;
     border-radius: 14px;
