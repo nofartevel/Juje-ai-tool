@@ -19,6 +19,65 @@ public class SessionAnalytics {
     private Boolean shareClicked = false;
     private String generationStatus; // "SUCCESS" or "FAILED"
     private String errorMessage;
+    private List<FunnelStep> completedSteps = new ArrayList<>();
+    private List<ProductImpression> productImpressions = new ArrayList<>();
+    private List<AnalyticsEvent> timeline = new ArrayList<>();
+
+    public static class FunnelStep {
+        private String stepName;
+        private LocalDateTime timestamp;
+
+        public FunnelStep() {}
+        public FunnelStep(String stepName, LocalDateTime timestamp) {
+            this.stepName = stepName;
+            this.timestamp = timestamp;
+        }
+
+        public String getStepName() { return stepName; }
+        public void setStepName(String stepName) { this.stepName = stepName; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    }
+
+    public static class ProductImpression {
+        private String productId;
+        private String productName;
+        private LocalDateTime timestamp;
+
+        public ProductImpression() {}
+        public ProductImpression(String productId, String productName, LocalDateTime timestamp) {
+            this.productId = productId;
+            this.productName = productName;
+            this.timestamp = timestamp;
+        }
+
+        public String getProductId() { return productId; }
+        public void setProductId(String productId) { this.productId = productId; }
+        public String getProductName() { return productName; }
+        public void setProductName(String productName) { this.productName = productName; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    }
+
+    public static class AnalyticsEvent {
+        private String name;
+        private String detail;
+        private LocalDateTime timestamp;
+
+        public AnalyticsEvent() {}
+        public AnalyticsEvent(String name, String detail, LocalDateTime timestamp) {
+            this.name = name;
+            this.detail = detail;
+            this.timestamp = timestamp;
+        }
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public String getDetail() { return detail; }
+        public void setDetail(String detail) { this.detail = detail; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    }
 
     public static class ProductInfo {
         private String productId;
@@ -87,4 +146,13 @@ public class SessionAnalytics {
     public void setGenerationStatus(String generationStatus) { this.generationStatus = generationStatus; }
     public String getErrorMessage() { return errorMessage; }
     public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+
+    public List<FunnelStep> getCompletedSteps() { return completedSteps; }
+    public void setCompletedSteps(List<FunnelStep> completedSteps) { this.completedSteps = completedSteps; }
+
+    public List<ProductImpression> getProductImpressions() { return productImpressions; }
+    public void setProductImpressions(List<ProductImpression> productImpressions) { this.productImpressions = productImpressions; }
+
+    public List<AnalyticsEvent> getTimeline() { return timeline; }
+    public void setTimeline(List<AnalyticsEvent> timeline) { this.timeline = timeline; }
 }

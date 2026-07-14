@@ -35,39 +35,7 @@ public class HomeController {
         
         TripContext context = null;
         if (contextMap != null) {
-            context = new TripContext();
-            try {
-                if (contextMap.get("tripType") != null) {
-                    context.setTripType(TripType.valueOf((String) contextMap.get("tripType")));
-                }
-                if (contextMap.get("transportType") != null) {
-                    context.setTransportType(TransportType.valueOf((String) contextMap.get("transportType")));
-                }
-                if (contextMap.get("destinationTypes") != null) {
-                    List<String> types = (List<String>) contextMap.get("destinationTypes");
-                    context.setDestinationTypes(types.stream()
-                            .map(DestinationType::valueOf)
-                            .toList());
-                }
-                if (contextMap.get("weather") != null) {
-                    context.setWeather(WeatherType.valueOf((String) contextMap.get("weather")));
-                }
-                
-                    List<ChildDetail> children = new ArrayList<>();
-                    for (Map<String, Object> c : (List<Map<String, Object>>) contextMap.get("children")) {
-                        Object ageVal = c.get("ageInMonths");
-                        if (ageVal == null) ageVal = c.get("ageMonths");
-                        
-                        if (ageVal instanceof Integer) {
-                            children.add(new ChildDetail((Integer) ageVal));
-                        } else if (ageVal instanceof Long) {
-                            children.add(new ChildDetail(((Long) ageVal).intValue()));
-                        }
-                    }
-                    context.setChildren(children);
-            } catch (Exception e) {
-                System.err.println("Error mapping TripContext for analytics: " + e.getMessage());
-            }
+            context = mapTripContext(contextMap);
         }
         
         analyticsService.startSession(sessionId, context);
@@ -114,6 +82,60 @@ public class HomeController {
     public ResponseEntity<?> shareClick(@RequestBody Map<String, String> payload) {
         analyticsService.shareClick(payload.get("sessionId"));
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/analytics/track-step")
+    public ResponseEntity<?> trackStep(@RequestBody Map<String, Object> payload) {
+        String sessionId = (String) payload.get("sessionId");
+        String stepName = (String) payload.get("stepName");
+        Map<String, Object> contextMap = (Map<String, Object>) payload.get("context");
+
+        TripContext context = null;
+        if (contextMap != null) {
+            context = mapTripContext(contextMap);
+        }
+
+        analyticsService.trackStep(sessionId, stepName, context);
+        return ResponseEntity.ok().build();
+    }
+
+    private TripContext mapTripContext(Map<String, Object> contextMap) {
+        TripContext context = new TripContext();
+        try {
+            if (contextMap.get("tripType") != null) {
+                context.setTripType(TripType.valueOf((String) contextMap.get("tripType")));
+            }
+            if (contextMap.get("transportType") != null) {
+                context.setTransportType(TransportType.valueOf((String) contextMap.get("transportType")));
+            }
+            if (contextMap.get("destinationTypes") != null) {
+                List<String> types = (List<String>) contextMap.get("destinationTypes");
+                context.setDestinationTypes(types.stream()
+                        .map(DestinationType::valueOf)
+                        .toList());
+            }
+            if (contextMap.get("weather") != null) {
+                context.setWeather(WeatherType.valueOf((String) contextMap.get("weather")));
+            }
+
+            if (contextMap.get("children") != null) {
+                List<ChildDetail> children = new ArrayList<>();
+                for (Map<String, Object> c : (List<Map<String, Object>>) contextMap.get("children")) {
+                    Object ageVal = c.get("ageInMonths");
+                    if (ageVal == null) ageVal = c.get("ageMonths");
+
+                    if (ageVal instanceof Integer) {
+                        children.add(new ChildDetail((Integer) ageVal));
+                    } else if (ageVal instanceof Long) {
+                        children.add(new ChildDetail(((Long) ageVal).intValue()));
+                    }
+                }
+                context.setChildren(children);
+            }
+        } catch (Exception e) {
+            System.err.println("Error mapping TripContext: " + e.getMessage());
+        }
+        return context;
     }
 
     @PostMapping("/api/v1/generate-travel-plan")

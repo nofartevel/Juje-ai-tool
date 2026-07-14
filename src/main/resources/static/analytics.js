@@ -52,6 +52,7 @@ const JujeAnalytics = {
                     productName
                 })
             });
+            this.trackStep('Product Clicked', null);
         } catch (e) { console.error('Analytics error:', e); }
     },
 
@@ -73,6 +74,21 @@ const JujeAnalytics = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ sessionId: this.sessionId })
+            });
+        } catch (e) { console.error('Analytics error:', e); }
+    },
+
+    async trackStep(stepName, context) {
+        this.init();
+        try {
+            await fetch('/api/v1/analytics/track-step', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: this.sessionId,
+                    stepName,
+                    context
+                })
             });
         } catch (e) { console.error('Analytics error:', e); }
     }

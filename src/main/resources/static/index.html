@@ -108,6 +108,7 @@
     }
 
     function renderTransportStep() {
+        JujeAnalytics.trackStep('Transport Selected', tripContext);
         updateHeader(1, 4, "Transport");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
@@ -153,6 +154,7 @@
     }
 
     function renderDestinationStep() {
+        JujeAnalytics.trackStep('Destination Selected', tripContext);
         updateHeader(2, 4, "Destination");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
@@ -252,6 +254,7 @@
     }
 
     function renderFamilyStep() {
+        JujeAnalytics.trackStep('Family Details Completed', tripContext);
         updateHeader(3, 4, "Family");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
@@ -346,6 +349,7 @@
     }
 
     function renderLogisticsStep() {
+        JujeAnalytics.trackStep('Weather Selected', tripContext);
         updateHeader(4, 4, "Details");
         const screen = document.getElementById("screen");
         screen.innerHTML = `
@@ -428,6 +432,7 @@
             const products = (data.recommendedProducts || []).map(p => ({ productId: p.id, productName: p.name }));
             const categories = (data.packingChecklist || []).map(c => c.categoryName);
             JujeAnalytics.trackPlanGenerated(true, null, products, categories);
+            JujeAnalytics.trackStep('Plan Generated', tripContext);
 
             const parseEndTime = performance.now();
             console.log(`[PERF] Frontend JSON Parse: ${Math.round(parseEndTime - fetchEndTime)}ms`);
@@ -776,6 +781,7 @@
 
     async function generatePDF() {
         JujeAnalytics.trackPrintClick();
+        JujeAnalytics.trackStep('Print Clicked', tripContext);
         if (!currentPlan || !currentPlan.packingChecklist) {
             console.error('[DEBUG_LOG] No current plan or packing checklist data available');
             alert('No packing checklist data found. Please generate a plan first.');
@@ -911,6 +917,7 @@
 
     async function savePlan() {
         JujeAnalytics.trackShareClick();
+        JujeAnalytics.trackStep('Share Clicked', tripContext);
         
         let planId = null;
 
