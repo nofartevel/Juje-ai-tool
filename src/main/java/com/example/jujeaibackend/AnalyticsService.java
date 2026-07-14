@@ -22,7 +22,6 @@ public class AnalyticsService {
                 session.setChildrenAges(new ArrayList<>(context.getChildren()));
             }
             session.setWeather(context.getWeather());
-            session.setDurationDays(context.getDurationDays());
         }
         sessions.put(sessionId, session);
     }

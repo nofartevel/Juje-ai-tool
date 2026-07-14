@@ -178,36 +178,6 @@ input {
     color: var(--text);
 }
 
-.duration-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--bg-soft);
-    padding: 4px 16px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-}
-
-.duration-field {
-    border: none;
-    background: none;
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary);
-    width: 60px;
-    text-align: center;
-    padding: 8px 0;
-}
-
-.duration-field:focus {
-    outline: none;
-}
-
-.duration-unit {
-    font-weight: 700;
-    color: var(--muted);
-    font-size: 16px;
-}
 
 /* Results Dashboard Styling */
 .result-dashboard {

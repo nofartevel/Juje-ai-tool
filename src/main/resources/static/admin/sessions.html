@@ -64,7 +64,6 @@
                 <th>Trip Type</th>
                 <th>Ages</th>
                 <th>Weather</th>
-                <th>Duration</th>
                 <th>Products Shown</th>
                 <th>Clicks</th>
                 <th>Printed</th>
@@ -113,7 +112,6 @@
                     <td>${s.transportType || '-'} / ${s.destinationTypes ? s.destinationTypes.join(' + ') : (s.destinationType || '-')}</td>
                     <td>${s.childrenAges ? s.childrenAges.map(c => formatAge(c.ageMonths || c.ageInMonths)).join('; ') : '-'}</td>
                     <td>${s.weather || '-'}</td>
-                    <td>${s.durationDays || '-'}</td>
                     <td>${s.generatedProducts ? s.generatedProducts.length : 0}</td>
                     <td>${s.clickedProducts ? s.clickedProducts.length : 0}</td>
                     <td>${s.printClicked ? '✅' : '❌'}</td>
@@ -192,7 +190,6 @@
                 <p><strong>Transport:</strong> ${s.transportType || '-'}</p>
                 <p><strong>Destinations:</strong> ${s.destinationTypes ? s.destinationTypes.join(', ') : (s.destinationType || '-')}</p>
                 <p><strong>Weather:</strong> ${s.weather}</p>
-                <p><strong>Duration:</strong> ${s.durationDays} days</p>
                 <p><strong>Children:</strong> ${s.childrenAges ? s.childrenAges.map(c => formatAge(c.ageMonths || c.ageInMonths)).join(', ') : 'None'}</p>
                 <hr>
                 <h3>Generation Status</h3>

@@ -140,7 +140,6 @@
             const destName = destTypes.map(t => destinationTypeNames[t] || t).join(' + ') || 'Travel Plan';
             
             const childrenCount = ctx.children ? ctx.children.length : 0;
-            const duration = ctx.durationDays || 0;
             const weather = ctx.weather ? ctx.weather.charAt(0).toUpperCase() + ctx.weather.slice(1).toLowerCase() : "";
 
             content.innerHTML = `
@@ -153,7 +152,7 @@
                                 <div>
                                     <h3>${destName}</h3>
                                     <div style="font-size: 14px; color: var(--muted); font-weight: 700;">
-                                        ${duration} Days • ${childrenCount} ${childrenCount === 1 ? 'Child' : 'Children'} • ${weather} Weather
+                                        ${childrenCount} ${childrenCount === 1 ? 'Child' : 'Children'} • ${weather} Weather
                                     </div>
                                 </div>
                             </div>
@@ -316,7 +315,6 @@
         console.log('[DEBUG_LOG] TravelPlan found: true');
         console.log('[DEBUG_LOG] tripType:', context.tripType);
         console.log('[DEBUG_LOG] children:', context.children ? context.children.length : 0);
-        console.log('[DEBUG_LOG] durationDays:', context.durationDays);
         console.log('[DEBUG_LOG] weather:', context.weather);
         console.log('[DEBUG_LOG] packingChecklist size:', checklist.length);
 
@@ -358,10 +356,9 @@
 
             const tripType = tripTypeMap[context.tripType] || context.tripType || "Travel Plan";
             const childrenCount = context.children ? context.children.length : 0;
-            const duration = context.durationDays || 0;
             const weather = context.weather ? (context.weather.charAt(0).toUpperCase() + context.weather.slice(1).toLowerCase()) : "Family Trip";
 
-            const summaryText = `${tripType} • ${childrenCount} ${childrenCount === 1 ? 'child' : 'children'} • ${duration} days • ${weather}`;
+            const summaryText = `${tripType} • ${childrenCount} ${childrenCount === 1 ? 'child' : 'children'} • ${weather}`;
             doc.text(summaryText, pageWidth / 2, 30, { align: "center" });
 
             // 2b. Generation Date

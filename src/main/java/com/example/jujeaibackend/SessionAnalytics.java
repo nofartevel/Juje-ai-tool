@@ -12,12 +12,11 @@ public class SessionAnalytics {
     private List<DestinationType> destinationTypes;
     private List<ChildDetail> childrenAges;
     private WeatherType weather;
-    private int durationDays;
     private List<ProductInfo> generatedProducts = new ArrayList<>();
     private List<ProductClick> clickedProducts = new ArrayList<>();
     private List<String> checklistCategories = new ArrayList<>();
-    private boolean printClicked;
-    private boolean shareClicked;
+    private Boolean printClicked = false;
+    private Boolean shareClicked = false;
     private String generationStatus; // "SUCCESS" or "FAILED"
     private String errorMessage;
 
@@ -72,18 +71,18 @@ public class SessionAnalytics {
     public void setChildrenAges(List<ChildDetail> childrenAges) { this.childrenAges = childrenAges; }
     public WeatherType getWeather() { return weather; }
     public void setWeather(WeatherType weather) { this.weather = weather; }
-    public int getDurationDays() { return durationDays; }
-    public void setDurationDays(int durationDays) { this.durationDays = durationDays; }
     public List<ProductInfo> getGeneratedProducts() { return generatedProducts; }
     public void setGeneratedProducts(List<ProductInfo> generatedProducts) { this.generatedProducts = generatedProducts; }
     public List<ProductClick> getClickedProducts() { return clickedProducts; }
     public void setClickedProducts(List<ProductClick> clickedProducts) { this.clickedProducts = clickedProducts; }
     public List<String> getChecklistCategories() { return checklistCategories; }
     public void setChecklistCategories(List<String> checklistCategories) { this.checklistCategories = checklistCategories; }
-    public boolean isPrintClicked() { return printClicked; }
-    public void setPrintClicked(boolean printClicked) { this.printClicked = printClicked; }
-    public boolean isShareClicked() { return shareClicked; }
-    public void setShareClicked(boolean shareClicked) { this.shareClicked = shareClicked; }
+    public Boolean getPrintClicked() { return printClicked; }
+    public void setPrintClicked(Boolean printClicked) { this.printClicked = printClicked; }
+    public boolean isPrintClicked() { return Boolean.TRUE.equals(printClicked); }
+    public Boolean getShareClicked() { return shareClicked; }
+    public void setShareClicked(Boolean shareClicked) { this.shareClicked = shareClicked; }
+    public boolean isShareClicked() { return Boolean.TRUE.equals(shareClicked); }
     public String getGenerationStatus() { return generationStatus; }
     public void setGenerationStatus(String generationStatus) { this.generationStatus = generationStatus; }
     public String getErrorMessage() { return errorMessage; }

@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Map;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class HomeController {
@@ -13,6 +16,7 @@ public class HomeController {
     private final SessionService sessionService;
     private final OpenAiSelectorService openAiSelectorService;
     private final AnalyticsService analyticsService;
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     public HomeController(ProductService productService,
                           SessionService sessionService,
@@ -47,9 +51,6 @@ public class HomeController {
                 }
                 if (contextMap.get("weather") != null) {
                     context.setWeather(WeatherType.valueOf((String) contextMap.get("weather")));
-                }
-                if (contextMap.get("durationDays") != null) {
-                    context.setDurationDays((Integer) contextMap.get("durationDays"));
                 }
                 
                     List<ChildDetail> children = new ArrayList<>();
@@ -134,32 +135,72 @@ public class HomeController {
 
     @PostMapping("/api/v1/save-plan")
     public ResponseEntity<?> savePlan(@RequestBody TravelPlan plan) {
-        if (plan != null) {
-            System.out.println("TravelPlan found: true");
-            TripContext context = plan.getContext();
-            if (context != null) {
-                System.out.println("tripType: " + context.getTripType());
-                System.out.println("children: " + (context.getChildren() != null ? context.getChildren().size() : 0));
-                System.out.println("durationDays: " + context.getDurationDays());
-                System.out.println("weather: " + context.getWeather());
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                System.out.println("Plan payload: " + mapper.writeValueAsString(plan));
+            } catch (Exception e) {
+                System.err.println("Could not log plan payload: " + e.getMessage());
             }
-            List<ChecklistCategory> checklist = plan.getPackingChecklist();
-            if (checklist != null) {
-                System.out.println("packingChecklist size: " + checklist.size());
-                System.out.println("");
-                for (ChecklistCategory cat : checklist) {
-                    int itemCount = cat.getItems() != null ? cat.getItems().size() : 0;
-                    System.out.println(cat.getCategoryName() + ": " + itemCount + " items");
+            
+            if (plan != null) {
+                // Log the payload details for debugging
+                if (plan.getRecommendedProducts() != null) {
+                    for (Product p : plan.getRecommendedProducts()) {
+                        if (p.getIs_essential() == null) {
+                            System.out.println("DEBUG: Product " + (p.getId() != null ? p.getId() : "unknown") + " has NULL is_essential");
+                        }
+                    }
+                }
+                System.out.println("TravelPlan found: true");
+                TripContext context = plan.getContext();
+                if (context != null) {
+                    System.out.println("Context presence: true");
+                    System.out.println("tripType: " + context.getTripType());
+                    System.out.println("children: " + (context.getChildren() != null ? context.getChildren().size() : 0));
+                    System.out.println("weather: " + context.getWeather());
+                } else {
+                    System.out.println("Context presence: false");
+                }
+                List<ChecklistCategory> checklist = plan.getPackingChecklist();
+                if (checklist != null) {
+                    System.out.println("packingChecklist size: " + checklist.size());
+                    System.out.println("Raw checklist items: " + checklist);
+                    for (ChecklistCategory cat : checklist) {
+                        if (cat == null) {
+                            System.out.println("Skipping null checklist category");
+                            continue;
+                        }
+                        int itemCount = cat.getItems() != null ? cat.getItems().size() : 0;
+                        System.out.println(
+                            (cat.getCategoryName() != null ? cat.getCategoryName() : "Unnamed category")
+                            + ": " + itemCount + " items"
+                        );
+                    }
+
+                    // Sanitize checklist before saving
+                    List<ChecklistCategory> cleanedChecklist = checklist.stream()
+                            .filter(Objects::nonNull)
+                            .toList();
+                    plan.setPackingChecklist(cleanedChecklist);
+                } else {
+                    System.out.println("packingChecklist size: null");
                 }
             } else {
-                System.out.println("Categories: 0");
+                System.out.println("TravelPlan found: false");
             }
-        } else {
-            System.out.println("TravelPlan found: false");
-        }
 
-        String id = sessionService.saveTravelPlan(plan);
-        return ResponseEntity.ok(Map.of("id", id));
+            String id = sessionService.saveTravelPlan(plan);
+            System.out.println("Generated plan id: " + id);
+            return ResponseEntity.ok(Map.of("id", id));
+        } catch (Exception e) {
+            System.err.println("ERROR in /api/v1/save-plan:");
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "Save Failed",
+                "message", e.getMessage()
+            ));
+        }
     }
 
     @GetMapping("/api/v1/plan/{id}")
@@ -171,16 +212,21 @@ public class HomeController {
             if (context != null) {
                 System.out.println("tripType: " + context.getTripType());
                 System.out.println("children: " + (context.getChildren() != null ? context.getChildren().size() : 0));
-                System.out.println("durationDays: " + context.getDurationDays());
                 System.out.println("weather: " + context.getWeather());
             }
             List<ChecklistCategory> checklist = plan.getPackingChecklist();
             if (checklist != null) {
                 System.out.println("packingChecklist size: " + checklist.size());
-                System.out.println("");
                 for (ChecklistCategory cat : checklist) {
+                    if (cat == null) {
+                        System.out.println("Skipping null checklist category");
+                        continue;
+                    }
                     int itemCount = cat.getItems() != null ? cat.getItems().size() : 0;
-                    System.out.println(cat.getCategoryName() + ": " + itemCount + " items");
+                    System.out.println(
+                        (cat.getCategoryName() != null ? cat.getCategoryName() : "Unnamed category")
+                        + ": " + itemCount + " items"
+                    );
                 }
             } else {
                 System.out.println("Categories: 0");
@@ -195,7 +241,6 @@ public class HomeController {
         TripContext context = new TripContext();
         context.setTripType(TripType.FLIGHT);
         context.setChildren(List.of(new ChildDetail(18))); // 18 months
-        context.setDurationDays(7);
         context.setWeather(WeatherType.HOT);
         return generateTravelPlan(context);
     }

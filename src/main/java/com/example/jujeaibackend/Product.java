@@ -20,14 +20,14 @@ public class Product {
     private List<String> destination_types;
     private List<String> weather;
     private String product_scope;
-    private boolean is_essential;
+    private Boolean is_essential = false;
 
     public Product() {
     }
 
     public Product(String id, String name, String link, String image, String section, String why,
                    List<String> keywords, List<String> use_cases, List<String> age_groups, List<String> needs,
-                   List<String> trip_types, List<String> weather, String product_scope, boolean is_essential) {
+                   List<String> trip_types, List<String> weather, String product_scope, Boolean is_essential) {
         this.id = id;
         this.name = name;
         this.link = link;
@@ -41,7 +41,7 @@ public class Product {
         this.trip_types = trip_types;
         this.weather = weather;
         this.product_scope = product_scope;
-        this.is_essential = is_essential;
+        this.is_essential = is_essential != null ? is_essential : false;
     }
 
     public String getId() {
@@ -172,11 +172,15 @@ public class Product {
         this.product_scope = product_scope;
     }
 
-    public boolean is_essential() {
+    public Boolean getIs_essential() {
         return is_essential;
     }
 
-    public void setIs_essential(boolean is_essential) {
+    public void setIs_essential(Boolean is_essential) {
         this.is_essential = is_essential;
+    }
+
+    public boolean is_essential() {
+        return Boolean.TRUE.equals(is_essential);
     }
 }

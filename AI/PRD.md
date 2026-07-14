@@ -11,7 +11,7 @@ The app features a high-impact landing page that immediately communicates value,
 1.  **High-Impact Landing**: Headline "Traveling with kids? We've got you covered ✈️" and a non-interactive value list (Checklists, Tips, Reminders, Gear).
 2.  **Step 1: Trip Type Selection**: Visual cards for Flight, Road Trip, Beach Vacation, Cruise, Camping, General Travel.
 3.  **Step 2: Family Details**: User-friendly age entry (Months/Years) optimized for mobile. Includes "Back" button to Step 1.
-4.  **Step 3: Trip Details**: Duration (numeric input) and Weather (visual cards). Includes "Back" button to Step 2.
+4.  **Step 3: Trip Details**: Weather (visual cards). Includes "Back" button to Step 2.
 5.  **Plan Generation**: Engaging loading screen with travel-themed animations.
 6.  **Results Dashboard**: A premium, context-aware travel plan presented as a modern dashboard with a clear hierarchy:
     *   **Packing Checklist**: Interactive and open by default for immediate action.
@@ -30,11 +30,10 @@ The app features a high-impact landing page that immediately communicates value,
 
 ### 4.2. Visual Selection Components
 *   **Weather Selector**: Visual cards (Hot, Mixed, Cold) with icons instead of dropdowns for better mobile usability.
-*   **Duration Input**: Numeric-only input field optimized for mobile keyboards, replacing sliders or generic text fields.
 
 ### 4.3. Results Dashboard
 *   **Dashboard Layout**: Content is organized into distinct, polished sections in a dashboard hierarchy.
-*   **Trip Summary Header**: A compact header at the top displaying trip type, family composition, duration, and weather, alongside key metrics (total items, tips, reminders, gear).
+*   **Trip Summary Header**: A compact header at the top displaying trip type, family composition, and weather, alongside key metrics (total items, tips, reminders, gear).
 *   **Collapsed Sections**: Most primary sections (Gear, Tips, Reminders) are collapsed by default to maximize scanability and provide a "dashboard" feel. The Packing Checklist is expanded by default for immediate action.
 *   **Priority Hierarchy**:
     1.  **Packing Checklist**: Interactive list with categories (Expanded by default).

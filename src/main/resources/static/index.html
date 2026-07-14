@@ -53,7 +53,6 @@
         transportType: null,
         destinationTypes: [],
         children: [],
-        durationDays: 7,
         weather: "HOT"
     };
     let currentPlan = null;
@@ -353,22 +352,8 @@
             <div class="btn-back" onclick="renderFamilyStep()">← Back</div>
             <div class="hero">
                 <h1 class="hero-title">Let's personalize your plan ✨</h1>
-                <p class="hero-subtitle">Almost there! Just a few more details</p>
+                <p class="hero-subtitle">Almost there! Just one last detail.</p>
                 
-                <div class="input-group">
-                    <label>How long is your trip?</label>
-                    <div class="duration-input-wrapper">
-                        <input type="number" 
-                               value="${tripContext.durationDays}" 
-                               onchange="tripContext.durationDays = parseInt(this.value)" 
-                               class="duration-field" 
-                               inputmode="numeric" 
-                               pattern="[0-9]*"
-                               placeholder="e.g. 7">
-                        <span class="duration-unit">Days</span>
-                    </div>
-                </div>
-
                 <div class="input-group">
                     <label>What weather do you expect?</label>
                     <div class="weather-grid">
@@ -555,7 +540,7 @@
                 <div style="text-align: center; margin-bottom: 20px;">
                     <img src="/logo.png" alt="JUJE logo" style="height: 50px; margin-bottom: 10px;">
                     <div style="font-size: 14px; color: #666; font-weight: 700;">
-                        ${tripContext.tripType.replace(/_/g, ' ')} • ${tripContext.children.length} Child${tripContext.children.length > 1 ? 'ren' : ''} • ${tripContext.durationDays} Days • ${tripContext.weather}
+                        ${tripContext.tripType.replace(/_/g, ' ')} • ${tripContext.children.length} Child${tripContext.children.length > 1 ? 'ren' : ''} • ${tripContext.weather}
                     </div>
                 </div>
                 <h1 style="text-align: center; margin-bottom: 30px;">Packing Checklist</h1>
@@ -584,7 +569,7 @@
                         <div>
                             <h3>${tripContext.tripType.replace(/_/g, ' ')}</h3>
                             <div style="font-size: 14px; color: var(--muted); font-weight: 700;">
-                                ${tripContext.children.length} Children • ${tripContext.durationDays} Days • ${tripContext.weather}
+                                ${tripContext.children.length} Children • ${tripContext.weather}
                             </div>
                         </div>
                     </div>
@@ -788,7 +773,6 @@
         console.log('[DEBUG_LOG] TravelPlan found: true');
         console.log('[DEBUG_LOG] tripType:', context.tripType);
         console.log('[DEBUG_LOG] children:', context.children ? context.children.length : 0);
-        console.log('[DEBUG_LOG] durationDays:', context.durationDays);
         console.log('[DEBUG_LOG] weather:', context.weather);
         console.log('[DEBUG_LOG] packingChecklist size:', checklist.length);
         
@@ -830,10 +814,9 @@
             
             const tripType = tripTypeMap[context.tripType] || context.tripType || "Travel Plan";
             const childrenCount = context.children ? context.children.length : 0;
-            const duration = context.durationDays || 0;
             const weather = context.weather ? (context.weather.charAt(0).toUpperCase() + context.weather.slice(1).toLowerCase()) : "Family Trip";
             
-            const summaryText = `${tripType} • ${childrenCount} ${childrenCount === 1 ? 'child' : 'children'} • ${duration} days • ${weather}`;
+            const summaryText = `${tripType} • ${childrenCount} ${childrenCount === 1 ? 'child' : 'children'} • ${weather}`;
             doc.text(summaryText, pageWidth / 2, 30, { align: "center" });
 
             // 2b. Generation Date
@@ -913,40 +896,84 @@
 
     async function savePlan() {
         JujeAnalytics.trackShareClick();
+        
+        let planId = null;
+
+        // Stage A: Save plan
         try {
-            const res = await fetch('/api/v1/save-plan', {
+            // Normalize products before saving
+            if (currentPlan && currentPlan.recommendedProducts) {
+                currentPlan.recommendedProducts.forEach(p => {
+                    p.is_essential = p.is_essential === true;
+                });
+            }
+
+            console.log("Saving plan with payload:", currentPlan);
+            const response = await fetch('/api/v1/save-plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(currentPlan)
             });
 
-            if (!res.ok) {
-                throw new Error("Failed to save plan");
+            const responseText = await response.text();
+            console.log("Save plan response status:", response.status);
+            console.log("Save plan response body:", responseText);
+
+            if (!response.ok) {
+                console.error("Save plan failed:", response.status, responseText);
+                alert("Could not save the plan. Please try again.");
+                return;
             }
 
-            const data = await res.json();
-            const shareUrl = window.location.origin + '/plan-view.html?id=' + data.id;
+            const data = JSON.parse(responseText);
+            planId = data.id;
+            console.log("Confirmed returned plan id:", planId);
+
+            if (!planId) {
+                console.error("Save plan failed: No ID in response");
+                alert("Could not save the plan. Please try again.");
+                return;
+            }
+        } catch (error) {
+            console.error("Save plan error:", error);
+            alert("Could not save the plan. Please try again.");
+            return;
+        }
+
+        // Stage B: Share
+        try {
+            const shareUrl = window.location.origin + '/plan-view.html?id=' + planId;
+            console.log("Generated share URL:", shareUrl);
 
             if (navigator.share) {
-                await navigator.share({
-                    title: "My JUJE Family Travel Plan",
-                    text: "Here’s a family travel plan with packing checklist, tips and gear recommendations 💛",
-                    url: shareUrl
-                });
+                try {
+                    await navigator.share({
+                        title: "My JUJE Family Travel Plan",
+                        text: "Here’s a family travel plan with packing checklist, tips and gear recommendations 💛",
+                        url: shareUrl
+                    });
+                } catch (shareError) {
+                    console.error("Share failed:", shareError);
+                    copyToClipboard(shareUrl);
+                    alert("Your plan was saved, but the share menu could not open. The link has been copied.");
+                }
             } else {
-                const dummy = document.createElement("input");
-                document.body.appendChild(dummy);
-                dummy.value = shareUrl;
-                dummy.select();
-                document.execCommand("copy");
-                document.body.removeChild(dummy);
+                copyToClipboard(shareUrl);
                 alert("Share link copied to clipboard! 📋\n\n" + shareUrl);
             }
-
         } catch (error) {
-            console.error(error);
-            alert("Something went wrong while saving or sharing the plan.");
+            console.error("Share failed:", error);
+            alert("Something went wrong while sharing the plan.");
         }
+    }
+
+    function copyToClipboard(text) {
+        const dummy = document.createElement("input");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
     }
 
 

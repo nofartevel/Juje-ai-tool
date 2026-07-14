@@ -10,7 +10,6 @@ The system will leverage the existing Spring Boot backend and OpenAI integration
 public class TripContext {
     private TripType tripType;
     private List<ChildDetail> children;
-    private int durationDays;
     private WeatherType weather;
 }
 
@@ -82,7 +81,7 @@ The AI strategy prioritizes **high personalization** over raw generation speed. 
 *   **Non-destructive Navigation**: Back buttons enabled on all wizard steps to preserve user input.
 *   **State Management**: Use a "Wizard" pattern to collect `TripContext`.
 *   **Age Input**: Allow parents to enter age in months/years; optimized for mobile with numeric keyboards and placeholder-based inputs.
-*   **Visual Inputs**: Weather selection via visual cards (icons + labels) and duration via numeric-optimized fields.
+*   **Visual Inputs**: Weather selection via visual cards (icons + labels).
 *   **Loading Experience**: Travel-themed animations and progress reassurances based on selected `tripType`.
 *   **Result Dashboard**:
     *   **Premium Layout**: Sections presented as distinct cards with a dashboard feel and clear hierarchy.
