@@ -615,37 +615,42 @@
                             <span id="gear-icon" style="color: var(--primary); font-size: 12px;">▲</span>
                         </div>
                         <div id="gear-content" class="section-content" style="display: block;">
-                            ${Object.keys(categorizedProducts).length > 0 ? Object.keys(categorizedProducts).map((catKey, idx) => `
-                                <div class="category-collapsible">
-                                    <div class="category-header" onclick="toggleSection('prod-cat-${idx}', 'prod-cat-icon-${idx}')">
-                                        <div class="category-header-info">
-                                            <div class="category-header-title">${categoryNames[catKey.toUpperCase()] || catKey} (${categorizedProducts[catKey].length} products)</div>
-                                        </div>
-                                        <span id="prod-cat-icon-${idx}" style="font-size: 10px;">▼</span>
-                                    </div>
-                                    <div id="prod-cat-${idx}" class="category-content" style="display: none;">
-                                        ${categorizedProducts[catKey].map(p => {
-                                            const tags = [];
-                                            if (p.activity_type) tags.push(p.activity_type.replace(/_/g, ' '));
-                                            if (p.age_groups) tags.push(p.age_groups);
-                                            
-                                            return `
-                                                <div class="product-row" onclick="window.open('${p.link}', '_blank'); JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
-                                                    <img src="${p.image}" onerror="this.src='/logo.png'" class="product-thumb">
-                                                    <div class="product-info">
-                                                        <div class="product-title">${p.name}</div>
-                                                        <div class="product-description">${p.why || ''}</div>
-                                                        <div class="product-tags">
-                                                            ${tags.map(t => `<span class="tag-mini">${t}</span>`).join('')}
-                                                        </div>
-                                                        <a class="product-cta">View product →</a>
+                            ${Object.keys(categorizedProducts).length > 0 ? Object.keys(categorizedProducts).map((catKey, idx) => {
+                                const products = categorizedProducts[catKey];
+                                const initialCount = 6;
+                                const hasMore = products.length > initialCount;
+                                
+                                return `
+                                    <div class="gear-category-section">
+                                        <h4 class="gear-category-title">
+                                            <span style="margin-right: 8px;">${categoryIcons[catKey.toUpperCase()] || '⭐'}</span>
+                                            ${categoryNames[catKey.toUpperCase()] || catKey} · ${products.length}
+                                        </h4>
+                                        <div class="product-grid" id="grid-${idx}">
+                                            ${products.map((p, pIdx) => `
+                                                <article class="product-card ${pIdx >= initialCount ? 'hidden-product' : ''}" 
+                                                         onclick="window.open('${p.link}', '_blank'); JujeAnalytics.trackProductClick('${p.id}', '${p.name.replace(/'/g, "\\'")}');">
+                                                    <div class="product-image-container">
+                                                        <img src="${p.image}" onerror="this.src='/logo.png'" class="product-image">
                                                     </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
+                                                    <div class="product-content">
+                                                        <h3 class="product-name">${p.name}</h3>
+                                                        <p class="product-reason">${p.why || ''}</p>
+                                                        <a class="product-button">View Product</a>
+                                                    </div>
+                                                </article>
+                                            `).join('')}
+                                        </div>
+                                        ${hasMore ? `
+                                            <div style="text-align: center; margin-top: 16px;">
+                                                <button id="btn-more-${idx}" class="btn-show-more" onclick="toggleShowMore(${idx})">
+                                                    Show ${products.length - initialCount} more
+                                                </button>
+                                            </div>
+                                        ` : ''}
                                     </div>
-                                </div>
-                            `).join('') : `
+                                `;
+                            }).join('') : `
                                 <div style="text-align: center; padding: 40px 20px; color: var(--muted);">
                                     <p>No products returned for this trip context.</p>
                                 </div>
@@ -707,7 +712,7 @@
                                     <div class="category-collapsible">
                                         <div class="category-header" onclick="toggleAccordion(${i})">
                                             <div class="category-header-info">
-                                                <div class="category-header-title">${cat.categoryName} (${(cat.items || []).length} items)</div>
+                                                <div class="category-header-title">${cat.categoryName} · ${(cat.items || []).length}</div>
                                             </div>
                                             <span id="acc-icon-${i}" style="color: var(--primary); font-size: 12px;">▼</span>
                                         </div>
@@ -738,6 +743,7 @@
     function toggleSection(contentId, iconId) {
         const content = document.getElementById(contentId);
         const icon = document.getElementById(iconId);
+        if (!content || !icon) return;
         if (content.style.display === "none") {
             content.style.display = "block";
             icon.innerText = "▲";
@@ -745,6 +751,15 @@
             content.style.display = "none";
             icon.innerText = "▼";
         }
+    }
+
+    function toggleShowMore(catIdx) {
+        const grid = document.getElementById(`grid-${catIdx}`);
+        const btn = document.getElementById(`btn-more-${catIdx}`);
+        const cards = grid.querySelectorAll('.product-card.hidden-product');
+        
+        cards.forEach(card => card.classList.remove('hidden-product'));
+        btn.style.display = 'none';
     }
 
     function toggleAccordion(i) {
