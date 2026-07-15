@@ -1,7 +1,16 @@
 const JujeAnalytics = {
+    visitorId: null,
     sessionId: null,
 
     init(forceNew = false) {
+        // Visitor ID (persistent in localStorage)
+        this.visitorId = localStorage.getItem('juje-visitor-id');
+        if (!this.visitorId) {
+            this.visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            localStorage.setItem('juje-visitor-id', this.visitorId);
+        }
+
+        // Session ID (per visit in sessionStorage)
         this.sessionId = sessionStorage.getItem('juje_session_id');
         if (!this.sessionId || forceNew) {
             this.sessionId = 's_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
@@ -16,6 +25,7 @@ const JujeAnalytics = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    visitorId: this.visitorId,
                     sessionId: this.sessionId,
                     context: context
                 })
@@ -23,18 +33,20 @@ const JujeAnalytics = {
         } catch (e) { console.error('Analytics error:', e); }
     },
 
-    async trackPlanGenerated(success, errorMessage, products, categories) {
+    async trackPlanGenerated(success, errorMessage, products, categories, context) {
         this.init();
         try {
             await fetch('/api/v1/analytics/plan-generated', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    visitorId: this.visitorId,
                     sessionId: this.sessionId,
                     success,
                     errorMessage,
                     products: products || [],
-                    categories: categories || []
+                    categories: categories || [],
+                    context: context
                 })
             });
         } catch (e) { console.error('Analytics error:', e); }
@@ -47,6 +59,7 @@ const JujeAnalytics = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    visitorId: this.visitorId,
                     sessionId: this.sessionId,
                     productId,
                     productName
@@ -62,7 +75,10 @@ const JujeAnalytics = {
             await fetch('/api/v1/analytics/print-click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sessionId: this.sessionId })
+                body: JSON.stringify({ 
+                    visitorId: this.visitorId,
+                    sessionId: this.sessionId 
+                })
             });
         } catch (e) { console.error('Analytics error:', e); }
     },
@@ -73,7 +89,10 @@ const JujeAnalytics = {
             await fetch('/api/v1/analytics/share-click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sessionId: this.sessionId })
+                body: JSON.stringify({ 
+                    visitorId: this.visitorId,
+                    sessionId: this.sessionId 
+                })
             });
         } catch (e) { console.error('Analytics error:', e); }
     },
@@ -85,6 +104,7 @@ const JujeAnalytics = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    visitorId: this.visitorId,
                     sessionId: this.sessionId,
                     stepName,
                     context

@@ -420,7 +420,7 @@
             console.log("Parsed data:", data);
             
             if (!res.ok) {
-                JujeAnalytics.trackPlanGenerated(false, data.message || "Failed to generate plan", [], []);
+                JujeAnalytics.trackPlanGenerated(false, data.message || "Failed to generate plan", [], [], tripContext);
                 alert(data.message || "Failed to generate plan");
                 renderIntroScreen();
                 return;
@@ -431,7 +431,7 @@
             // Track successful generation
             const products = (data.recommendedProducts || []).map(p => ({ productId: p.id, productName: p.name }));
             const categories = (data.packingChecklist || []).map(c => c.categoryName);
-            JujeAnalytics.trackPlanGenerated(true, null, products, categories);
+            JujeAnalytics.trackPlanGenerated(true, null, products, categories, tripContext);
             JujeAnalytics.trackStep('Plan Generated', tripContext);
 
             const parseEndTime = performance.now();

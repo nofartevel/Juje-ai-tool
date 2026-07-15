@@ -30,6 +30,7 @@ public class HomeController {
 
     @PostMapping("/api/v1/analytics/session-start")
     public ResponseEntity<?> sessionStart(@RequestBody Map<String, Object> payload) {
+        String visitorId = (String) payload.get("visitorId");
         String sessionId = (String) payload.get("sessionId");
         Map<String, Object> contextMap = (Map<String, Object>) payload.get("context");
         
@@ -38,7 +39,7 @@ public class HomeController {
             context = mapTripContext(contextMap);
         }
         
-        analyticsService.startSession(sessionId, context);
+        analyticsService.startSession(visitorId, sessionId, context);
         return ResponseEntity.ok().build();
     }
 
@@ -49,11 +50,13 @@ public class HomeController {
 
     @PostMapping("/api/v1/analytics/plan-generated")
     public ResponseEntity<?> planGenerated(@RequestBody Map<String, Object> payload) {
+        String visitorId = (String) payload.get("visitorId");
         String sessionId = (String) payload.get("sessionId");
         boolean success = (boolean) payload.get("success");
         String errorMessage = (String) payload.get("errorMessage");
         List<Map<String, String>> productsRaw = (List<Map<String, String>>) payload.get("products");
         List<String> categories = (List<String>) payload.get("categories");
+        Map<String, Object> contextMap = (Map<String, Object>) payload.get("context");
 
         List<SessionAnalytics.ProductInfo> products = new ArrayList<>();
         if (productsRaw != null) {
@@ -62,7 +65,12 @@ public class HomeController {
             }
         }
 
-        analyticsService.planGenerated(sessionId, success, errorMessage, products, categories);
+        TripContext context = null;
+        if (contextMap != null) {
+            context = mapTripContext(contextMap);
+        }
+
+        analyticsService.planGenerated(visitorId, sessionId, success, errorMessage, products, categories, context);
         return ResponseEntity.ok().build();
     }
 
@@ -86,6 +94,7 @@ public class HomeController {
 
     @PostMapping("/api/v1/analytics/track-step")
     public ResponseEntity<?> trackStep(@RequestBody Map<String, Object> payload) {
+        String visitorId = (String) payload.get("visitorId");
         String sessionId = (String) payload.get("sessionId");
         String stepName = (String) payload.get("stepName");
         Map<String, Object> contextMap = (Map<String, Object>) payload.get("context");
@@ -95,7 +104,7 @@ public class HomeController {
             context = mapTripContext(contextMap);
         }
 
-        analyticsService.trackStep(sessionId, stepName, context);
+        analyticsService.trackStep(visitorId, sessionId, stepName, context);
         return ResponseEntity.ok().build();
     }
 
